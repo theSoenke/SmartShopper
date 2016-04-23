@@ -3,4 +3,7 @@ var app = express()
 
 app.use(require('./controllers'))
 
-app.listen(3000)
+var port = process.env.PORT || 3000
+app.listen(port, function () {
+  console.log('listening at port %s', port)
+})
