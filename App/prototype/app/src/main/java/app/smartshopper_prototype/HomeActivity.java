@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -44,6 +45,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        // TODO: Braucht man das Menü wirklich? Die Einstellungen sind schließlich auch über die NavigationView zugänglich.
         getMenuInflater().inflate(R.menu.home_menu, menu);
         return true;
     }
@@ -57,6 +59,7 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(getApplicationContext(), "TODO: Hier Einstellungen anzeigen", Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -69,18 +72,14 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        if (id == R.id.nav_person) {
+            Toast.makeText(getApplicationContext(), "TODO: Hier normale Listen anzeigen", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_group) {
+            Toast.makeText(getApplicationContext(), "TODO: Hier Gruppenlisten anzeigen", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_share) {
-
+            Toast.makeText(getApplicationContext(), "TODO: Hier Kontakte anzeigen", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_send) {
-
+            Toast.makeText(getApplicationContext(), "TODO: Hier Einstellungen anzeigen", Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_layout);
