@@ -8,11 +8,6 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include
-        layout="@layout/home_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <include layout="@layout/home_content" />
 
     <include layout="@layout/home_nav" />
