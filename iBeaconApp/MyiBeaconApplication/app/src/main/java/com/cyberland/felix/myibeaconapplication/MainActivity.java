@@ -11,18 +11,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.RemoteException;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
@@ -43,7 +39,6 @@ public class MainActivity extends Activity implements BeaconConsumer {
     public String major;
     public String minor;
     public String distance;
-
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -142,4 +137,8 @@ public class MainActivity extends Activity implements BeaconConsumer {
         } catch (RemoteException e) {
         }
     }
+
+
+
+
 }
