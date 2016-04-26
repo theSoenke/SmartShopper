@@ -1,5 +1,6 @@
 package app.smartshopper_prototype;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -66,7 +67,7 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Toast.makeText(getApplicationContext(), "TODO: Hier Einstellungen anzeigen", Toast.LENGTH_SHORT).show();
+            openSettings();
             return true;
         }
 
@@ -96,7 +97,7 @@ public class HomeActivity extends AppCompatActivity
 //                fragmentClass = ContactsFragment.class;
 //                break;
             case R.id.nav_settings:
-                Toast.makeText(HomeActivity.this, "The settings view is not implemented yet :(", Toast.LENGTH_SHORT).show();
+                openSettings();
                 return true;
 //                fragmentClass = SettingsFragment.class;
 //                break;
@@ -109,6 +110,13 @@ public class HomeActivity extends AppCompatActivity
         drawer.closeDrawers();
 
         return true;
+    }
+
+    /**
+     * Switches to the settings activity.
+     */
+    private void openSettings() {
+        this.startActivity(new Intent(this, SettingsActivity.class));
     }
 
     /**
