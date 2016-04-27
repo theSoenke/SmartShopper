@@ -19,14 +19,17 @@ echo '[Unit]
 Description=High-performance, schema-free document-oriented database
 
 [Service]
-User=mongod
-Group=mongod
+User=mongodb
+Group=mongodb
 OPTIONS=--quiet -f /etc/mongod.conf
 ExecStart=/usr/bin/mongod $OPTIONS run
 PIDFile=/var/run/mongodb/mongod.pid
 
 [Install]
 WantedBy=multi-user.target' > /lib/systemd/system/mongod.service
+
+mkdir -p /data/db
+chown -R mongodb /data/db
 
 systemctl daemon-reload
 systemctl enable mongod
