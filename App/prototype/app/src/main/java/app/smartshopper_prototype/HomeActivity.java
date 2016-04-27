@@ -37,7 +37,9 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.home_nav);
         navigationView.setNavigationItemSelectedListener(this);
 
-        _oldSelectedMenuItem = null;
+        _oldSelectedMenuItem = navigationView.getMenu().getItem(0).getSubMenu().getItem(0);
+        _oldSelectedMenuItem.setChecked(true);
+
         switchToFragment(SingleListFragment.class, null);
     }
 
