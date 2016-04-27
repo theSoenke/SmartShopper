@@ -21,7 +21,6 @@ function createProduct () {
 
     console.log('product saved')
   })
-  console.log('test');
 }
 
 module.exports = router
