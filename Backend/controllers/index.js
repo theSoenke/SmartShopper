@@ -5,8 +5,8 @@ mongoose.connect('mongodb://localhost/test')
 var Product = require('../models/product')
 
 router.get('/', function (req, res, next) {
-  createProduct()
   res.json('test')
+  createProduct()
 })
 
 function createProduct () {
