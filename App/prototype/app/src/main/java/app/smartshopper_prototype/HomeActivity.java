@@ -38,6 +38,7 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         _oldSelectedMenuItem = null;
+        switchToFragment(SingleListFragment.class, null);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        // TODO: Braucht man das Menü wirklich? Die Einstellungen sind schließlich auch über die NavigationView zugänglich.
+        // TODO: Do we really need this menu? The settings are accessible via the navigation view as well.
         getMenuInflater().inflate(R.menu.home_menu, menu);
         return true;
     }
@@ -142,11 +143,13 @@ public class HomeActivity extends AppCompatActivity
         fragmentTransaction.addToBackStack(null); // puts the transaction onto the stack
         fragmentTransaction.commit(); //
 
-        // Highlight the selected item has been done by NavigationView
-        selectedItem.setChecked(true);
-        // Save the current item to uncheck it when another item has been clicked
-        _oldSelectedMenuItem = selectedItem;
-        // Set action bar title
-        setTitle(selectedItem.getTitle());
+        if(selectedItem != null) {
+            // Highlight the selected item has been done by NavigationView
+            selectedItem.setChecked(true);
+            // Save the current item to uncheck it when another item has been clicked
+            _oldSelectedMenuItem = selectedItem;
+            // Set action bar title
+            setTitle(selectedItem.getTitle());
+        }
     }
 }
