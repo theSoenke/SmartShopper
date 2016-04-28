@@ -1,11 +1,15 @@
 package com.cyberland.felix.myibeaconapplication;
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.RemoteException;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -44,6 +48,26 @@ public class MainActivity extends Activity implements BeaconConsumer {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M){
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED)
+            {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("This app needs location access");
+                builder.setMessage("Please grant location access so this app can detect beacons");
+                builder.setPositiveButton(android.R.string.ok,null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener(){
+                    @TargetApi(Build.VERSION_CODES.M)
+                    @Override
+                    public void onDismiss(DialogInterface dialog)
+                    {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+                    }
+                });
+                builder.show();
+            }
+        }
+
         setContentView(R.layout.activity_main);
 
         UUIDValue = (TextView) findViewById(R.id.UUIDValue);
@@ -54,15 +78,6 @@ public class MainActivity extends Activity implements BeaconConsumer {
         trilaterationTool = new TrilaterationTool();
 
 
-    /*
-    mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
-    mBluetoothAdapter.startLeScan(new BluetoothAdapter.LeScanCallback() {
-        @Override
-        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-            Log.d(TAG, "Scanned BLE device with mac: " + device.getAddress());
-        }
-    });
-     */
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         beaconManager.bind(this);
@@ -137,6 +152,32 @@ public class MainActivity extends Activity implements BeaconConsumer {
         try {
             beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
         } catch (RemoteException e) {
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_COARSE_LOCATION: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "coarse location permission granted");
+                } else {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Functionality limited");
+                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                        }
+
+                    });
+                    builder.show();
+                }
+                return;
+            }
         }
     }
 
