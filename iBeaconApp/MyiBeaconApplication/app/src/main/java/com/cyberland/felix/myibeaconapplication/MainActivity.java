@@ -1,12 +1,6 @@
 package com.cyberland.felix.myibeaconapplication;
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -14,6 +8,8 @@ import android.os.RemoteException;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
+import com.cyberland.felix.myibeaconapplication.Trilateration.TrilaterationTool;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -40,6 +36,8 @@ public class MainActivity extends Activity implements BeaconConsumer {
     public String minor;
     public String distance;
 
+    public TrilaterationTool trilaterationTool;
+
     private BluetoothAdapter mBluetoothAdapter;
 
 
@@ -52,6 +50,8 @@ public class MainActivity extends Activity implements BeaconConsumer {
         majorValue = (TextView) findViewById(R.id.majorValue);
         minorValue = (TextView) findViewById(R.id.minorValue);
         distanceValue = (TextView) findViewById(R.id.distanceValue);
+
+        trilaterationTool = new TrilaterationTool();
 
 
     /*
@@ -114,6 +114,8 @@ public class MainActivity extends Activity implements BeaconConsumer {
                       major = ""+beacons.iterator().next().getId2();
                     minor= ""+beacons.iterator().next().getId3();
                     distance = ""+beacons.iterator().next().getDistance();
+
+                    Log.i(TAG,trilaterationTool.beaconTrilateration(beacons).toString());
 
 
                     runOnUiThread(new Runnable() {
