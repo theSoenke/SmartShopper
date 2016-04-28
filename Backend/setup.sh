@@ -21,8 +21,7 @@ Description=High-performance, schema-free document-oriented database
 [Service]
 User=mongodb
 Group=mongodb
-OPTIONS=--quiet -f /etc/mongod.conf
-ExecStart=/usr/bin/mongod $OPTIONS run
+ExecStart=/usr/bin/mongod --quiet -f /etc/mongod.conf run
 PIDFile=/var/run/mongodb/mongod.pid
 
 [Install]
@@ -47,7 +46,7 @@ cd /var/www/SmartShopper/Backend
 npm install
 
 su web
-pm2 start app.js -i 0 --name "api"
+pm2 start app.js --name "api"
 pm2 startup systemd
 
 # pm2 reload api
