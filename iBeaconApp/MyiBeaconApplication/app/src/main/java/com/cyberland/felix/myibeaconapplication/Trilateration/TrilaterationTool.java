@@ -1,8 +1,6 @@
 package com.cyberland.felix.myibeaconapplication.Trilateration;
 
-import android.graphics.Point;
-import android.graphics.PointF;
-import android.util.Log;
+
 
 import org.altbeacon.beacon.Beacon;
 
@@ -22,7 +20,7 @@ public class TrilaterationTool {
     Vector p1, p2, p3;
 
     //Distanzwerte zu den Beacons
-    double d1 = 0, d2= 0, d3=0;
+    double d1 = 2, d2= 2, d3=2;
 
     public TrilaterationTool()
     {
@@ -30,8 +28,8 @@ public class TrilaterationTool {
         p2 = new Vector(0, 4);
         p3 = new Vector(3, 3);
 
-        beaconID1 = 0;
-        beaconID2 = 0;
+        beaconID1 = 24286;
+        beaconID2 = 21333;
         beaconID3 = 0;
 
     }
