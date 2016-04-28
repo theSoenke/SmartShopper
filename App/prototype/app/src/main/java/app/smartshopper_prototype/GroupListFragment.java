@@ -48,6 +48,6 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         ListView list = (ListView) adapterView.findViewById(R.id.grouplist_list);
         String entry = list.getItemAtPosition(position).toString(); // get item at "position"
         Context context = view.getContext();
-        Toast.makeText(context, "Expand " + entry + " to show its participants", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "TODO: Expand " + entry + " to show its participants", Toast.LENGTH_SHORT).show();
     }
 }

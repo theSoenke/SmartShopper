@@ -1,22 +1,16 @@
 package app.smartshopper_prototype;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-
-import app.smartshopper_prototype.listTabs.SingleListPagerAdapter;
 
 public class SingleListFragment extends Fragment implements  AdapterView.OnItemClickListener{
 
@@ -45,9 +39,8 @@ public class SingleListFragment extends Fragment implements  AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         ListView list = (ListView) adapterView.findViewById(R.id.singlelist_list);
-        String entry = list.getItemAtPosition(position).toString(); // get item at "position"
+        // String entry = list.getItemAtPosition(position).toString(); // get item at "position"
+        // TODO: send entry to the DetailedSingleListActivity
         getActivity().startActivity(new Intent(SingleListFragment.this.getActivity(), DetailedSingleListActivity.class));
-//        Context context = view.getContext();
-//        Toast.makeText(context, "Show information about " + entry, Toast.LENGTH_SHORT).show();
     }
 }

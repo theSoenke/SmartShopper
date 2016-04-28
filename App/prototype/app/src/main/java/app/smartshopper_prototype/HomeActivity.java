@@ -102,8 +102,6 @@ public class HomeActivity extends AppCompatActivity
             case R.id.nav_settings:
                 openSettings();
                 return true;
-//                fragmentClass = SettingsFragment.class;
-//                break;
         }
 
         switchToFragment(fragmentClass, item);

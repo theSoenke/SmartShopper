@@ -3,10 +3,6 @@ package app.smartshopper_prototype.listTabs;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.view.View;
-import android.widget.Toast;
-
-import app.smartshopper_prototype.SingleListFragment;
 
 /**
  * Created by hauke on 28.04.16.

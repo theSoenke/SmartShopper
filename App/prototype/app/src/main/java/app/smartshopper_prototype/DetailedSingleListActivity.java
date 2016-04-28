@@ -17,9 +17,6 @@ public class DetailedSingleListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_view);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
-//        setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
