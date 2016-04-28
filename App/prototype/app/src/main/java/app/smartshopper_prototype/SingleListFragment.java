@@ -1,8 +1,11 @@
 package app.smartshopper_prototype;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,17 +16,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class SingleListFragment extends Fragment implements AdapterView.OnItemClickListener {
+import app.smartshopper_prototype.listTabs.SingleListPagerAdapter;
+
+public class SingleListFragment extends Fragment implements  AdapterView.OnItemClickListener{
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sinlge_list, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState){
+        View view = inflater.inflate(R.layout.fragment_sinlge_list, group, false);
 
         ListView list = (ListView) view.findViewById(R.id.singlelist_list);
 
@@ -47,7 +46,8 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         ListView list = (ListView) adapterView.findViewById(R.id.singlelist_list);
         String entry = list.getItemAtPosition(position).toString(); // get item at "position"
-        Context context = view.getContext();
-        Toast.makeText(context, "Show information about " + entry, Toast.LENGTH_SHORT).show();
+        getActivity().startActivity(new Intent(SingleListFragment.this.getActivity(), DetailedSingleListActivity.class));
+//        Context context = view.getContext();
+//        Toast.makeText(context, "Show information about " + entry, Toast.LENGTH_SHORT).show();
     }
 }
