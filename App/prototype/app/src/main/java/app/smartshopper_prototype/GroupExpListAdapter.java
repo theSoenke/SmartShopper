@@ -47,10 +47,10 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.simple_row, null);
+            convertView = infalInflater.inflate(R.layout.group_row, null);
         }
 
-        TextView childItem = (TextView) convertView.findViewById(R.id.rowTextView);
+        TextView childItem = (TextView) convertView.findViewById(R.id.rowChildTextView);
         childItem.setText(childText);
         return convertView;
 
@@ -84,11 +84,11 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.simple_row, null);
+            convertView = infalInflater.inflate(R.layout.group_row, null);
         }
 
         TextView groupItem = (TextView) convertView
-                .findViewById(R.id.rowTextView);
+                .findViewById(R.id.rowParentTextView);
         groupItem.setTypeface(null, Typeface.BOLD);
         groupItem.setText(headerTitle);
 
