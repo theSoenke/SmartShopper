@@ -7,13 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,19 +30,29 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         View view = inflater.inflate(R.layout.fragment_group_list, container, false);
 
         // TODO: Change this to an expandable list maybe (to see all participants)?
-        ListView list = (ListView) view.findViewById(R.id.grouplist_list);
+        ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
+        final List<String> listgroups = new ArrayList<String>();
+        listgroups.add("Geburtstag von Max Mustermann");
+        listgroups.add("Vereinstreffen");
+        listgroups.add("OE-Liste");
+        final HashMap<String, List<String>> childlists = new HashMap<>();
+        List<String> parent0childs = new ArrayList<String>();
+        List<String> parent1childs = new ArrayList<String>();
+        List<String> parent2childs = new ArrayList<String>();
+        parent0childs.add("Dieter");
+        parent0childs.add("Batman");
+        parent1childs.add("SpiderMan");
+        parent2childs.add("Ash Ketchum");
+        parent2childs.add("Professor Eich");
+        parent2childs.add("Rocko");
+        parent2childs.add("Misty");
+        childlists.put(listgroups.get(0), parent0childs);
+        childlists.put(listgroups.get(1), parent1childs);
+        childlists.put(listgroups.get(2), parent2childs);
 
+        ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists);
         // Create ArrayAdapter using the planet list.
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<>(getContext(), R.layout.simple_row, new ArrayList<String>());
-
-        listAdapter.add("Geburtstag von Max Mustermann");
-        listAdapter.add("Vereinstreffen");
-        listAdapter.add("OE-Liste");
-
-        list.setAdapter(listAdapter);
-
-        // to get notified about clicks on items
-        list.setOnItemClickListener(this);
+        list.setAdapter(adapter);
 
         return view;
     }

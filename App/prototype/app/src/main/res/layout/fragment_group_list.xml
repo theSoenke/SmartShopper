@@ -4,10 +4,13 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <ListView
-        android:id="@+id/grouplist_list"
+    <ExpandableListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/grouplist_list"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:contextClickable="true"
+        android:clickable="true"
+        android:choiceMode="multipleChoice" />
+
 </RelativeLayout>
