@@ -17,6 +17,13 @@ public class DetailedSingleListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_view);
 
+        String liste = "";
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            liste = extras.getString("list");
+        }
+
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -26,6 +33,7 @@ public class DetailedSingleListActivity extends AppCompatActivity {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.tab_view_pager);
+        viewPager.setTag(liste);
         SingleListPagerAdapter adapter = new SingleListPagerAdapter(getSupportFragmentManager(), 2);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));

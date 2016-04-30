@@ -39,8 +39,10 @@ public class SingleListFragment extends Fragment implements  AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         ListView list = (ListView) adapterView.findViewById(R.id.singlelist_list);
-        // String entry = list.getItemAtPosition(position).toString(); // get item at "position"
+        String entry = list.getItemAtPosition(position).toString(); // get item at "position"
         // TODO: send entry to the DetailedSingleListActivity
-        getActivity().startActivity(new Intent(SingleListFragment.this.getActivity(), DetailedSingleListActivity.class));
+        Intent i = new Intent(SingleListFragment.this.getActivity(), DetailedSingleListActivity.class);
+        i.putExtra("list", entry);
+        getActivity().startActivity(i);
     }
 }
