@@ -1,13 +1,14 @@
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
-var productSchema = new Schema({
+var listSchema = new Schema({
   name: String,
+  id: String,
   created_at: Date,
   updated_at: Date
 })
 
-productSchema.pre('save', function (next) {
+listSchema.pre('save', function (next) {
   var currentDate = new Date()
   this.updated_at = currentDate
 
@@ -18,6 +19,6 @@ productSchema.pre('save', function (next) {
   next()
 })
 
-var Product = mongoose.model('Product', productSchema)
+var List = mongoose.model('List', listSchema)
 
-module.exports = Product
+module.exports = List
