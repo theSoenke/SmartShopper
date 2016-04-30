@@ -97,8 +97,6 @@ public class HomeActivity extends AppCompatActivity
             case R.id.nav_contacs:
                 Toast.makeText(HomeActivity.this, "The contact view is not implemented yet :(", Toast.LENGTH_SHORT).show();
                 return true;
-//                fragmentClass = ContactsFragment.class;
-//                break;
             case R.id.nav_settings:
                 openSettings();
                 return true;
