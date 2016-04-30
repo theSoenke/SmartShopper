@@ -18,6 +18,7 @@ import java.util.List;
 
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    int expandedparent = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,10 +28,9 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_group_list, container, false);
 
-        // TODO: Change this to an expandable list maybe (to see all participants)?
-        ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
+        View view = inflater.inflate(R.layout.fragment_group_list, container, false);
+        final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
         final List<String> listgroups = new ArrayList<String>();
         listgroups.add("Geburtstag von Max Mustermann");
         listgroups.add("Vereinstreffen");
@@ -54,7 +54,17 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         // Create ArrayAdapter using the planet list.
         list.setAdapter(adapter);
 
+        list.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (expandedparent != -1) {
+                    list.collapseGroup(expandedparent);
+                }
+                expandedparent = groupPosition;
+            }
+        });
         return view;
+
     }
 
     @Override
