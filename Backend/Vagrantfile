@@ -5,7 +5,7 @@
 # cd /var/www/SmartShopper/Backend && nodemon -L app.js
 # localhost:3000
 
-$script = <<SCRIPT
+$setup = <<SCRIPT
 apt-get update
 apt-get install -y curl git
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
@@ -15,34 +15,25 @@ echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse" 
 apt-get update
 apt-get install -y nodejs
 apt-get install -y mongodb-org
-npm install -g nodemon
-
-# setup mongodb
-echo '[Unit]
-Description=High-performance, schema-free document-oriented database
-
-[Service]
-User=mongodb
-Group=mongodb
-ExecStart=/usr/bin/mongod --quiet -f /etc/mongod.conf run
-PIDFile=/var/run/mongodb/mongod.pid
-
-[Install]
-WantedBy=multi-user.target' > /lib/systemd/system/mongod.service
+sudo npm install -g nodemon
 
 mkdir -p /data/db
 chown -R mongodb /data/db
+SCRIPT
 
-systemctl daemon-reload
-systemctl enable mongod
-systemctl start mongod
-exit
+$start = <<SCRIPT
+mongod --fork --logpath /var/log/mongodb.log
 SCRIPT
 
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/xenial64"
   config.vm.network :forwarded_port, guest: 3000, host: 3000
-  #config.vm.provision :shell, :path => "setup.sh"
-  config.vm.provision :shell, :inline => $script
-  config.vm.synced_folder "./", "/var/www/SmartShopper/Backend"
+
+  config.vm.provision :shell, :inline => $setup
+  config.vm.synced_folder ".", "/var/www/SmartShopper/Backend"
+  config.vm.provision :shell, run:"always", :inline => $start
+
+  config.vm.provider :virtualbox do |vb|
+    vb.name = "SmartShopper"
+  end
 end
