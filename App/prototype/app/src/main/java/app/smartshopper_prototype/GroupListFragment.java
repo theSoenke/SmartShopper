@@ -42,42 +42,35 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         List<String> parent1childs = new ArrayList<String>();
         List<String> parent2childs = new ArrayList<String>();
 
-        parent0childs.add("Dieter");
-        parent0childs.add("Batman");
+        parent0childs.add("Dieter\n" +
+                "Batman");
 
-        parent1childs.add("SpiderMan");
+        parent1childs.add("SpiderMan\n" +
+                "Ronny Schäfer");
 
-        parent2childs.add("Ash Ketchum");
-        parent2childs.add("Professor Eich");
-        parent2childs.add("Rocko");
-        parent2childs.add("Misty");
+        parent2childs.add("Ash Ketchum\n" +
+                "Professor Eich\n" +
+                "Rocko\n" +
+                "Misty");
 
         childlists.put(listgroups.get(0), parent0childs);
         childlists.put(listgroups.get(1), parent1childs);
         childlists.put(listgroups.get(2), parent2childs);
 
-        ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists);
+        ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists){
+            @Override
+            public void OnIndicatorClick(boolean isExpanded, int groupPosition) {
+                if(isExpanded){
+                    list.collapseGroup(groupPosition);
+                }else{
+                    list.collapseGroup(expandedparent);
+                    list.expandGroup(groupPosition);
+                    expandedparent = groupPosition;
+                }
+            }
+        };
         // Create ArrayAdapter using the planet list.
         list.setAdapter(adapter);
-
-        list.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                if (expandedparent != -1) {
-                    list.collapseGroup(expandedparent);
-                }
-                expandedparent = groupPosition;
-            }
-        });
-        list.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-//                list.collapseGroup(expandedparent);
-                if(groupPosition == expandedparent){
-                    expandedparent = -1;
-                }
-            }
-        });
 
         return view;
 

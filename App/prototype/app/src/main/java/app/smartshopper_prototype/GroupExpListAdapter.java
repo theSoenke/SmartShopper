@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -78,8 +80,10 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
         return groupPosition;
     }
 
+    public void OnIndicatorClick(boolean isExpanded, int position){ }
+
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
+    public View getGroupView(final int groupPosition, final boolean isExpanded,
                              View convertView, ViewGroup parent) {
         String headerTitle = (String) getGroup(groupPosition);
         if (convertView == null) {
@@ -90,14 +94,48 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
 
         TextView groupItem = (TextView) convertView
                 .findViewById(R.id.rowParentTextView);
-        groupItem.setTypeface(null, Typeface.BOLD);
         groupItem.setText(headerTitle);
+
+        groupItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext(), "TODO: Change view to item list (like the one for single lists).", Toast.LENGTH_LONG).show();
+            }
+        });
 
         // Create group indicator (up/down arrow) based in the row status
         ImageView image = (ImageView) convertView.findViewById(R.id.rowGroupIndicator);
         int resource = isExpanded ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down ;
         image.setImageResource(resource);
         image.setVisibility(convertView.VISIBLE);
+        image.setTag(groupPosition);
+
+        image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = (Integer)v.getTag();
+                    OnIndicatorClick(isExpanded ,position);
+
+            }
+        });
+
+//        image.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+//            @Override
+//            public void onGroupExpand(int groupPosition) {
+//                if (expandedparent != -1) {
+//                    list.collapseGroup(expandedparent);
+//                }
+//                expandedparent = groupPosition;
+//            }
+//        });
+//        image.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+//            @Override
+//            public void onGroupCollapse(int groupPosition) {
+//                if (groupPosition == expandedparent) {
+//                    expandedparent = -1;
+//                }
+//            }
+//        });
 
         return convertView;
     }
