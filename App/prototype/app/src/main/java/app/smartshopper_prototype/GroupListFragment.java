@@ -3,6 +3,7 @@ package app.smartshopper_prototype;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,17 +36,22 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         listgroups.add("Geburtstag von Max Mustermann");
         listgroups.add("Vereinstreffen");
         listgroups.add("OE-Liste");
+
         final HashMap<String, List<String>> childlists = new HashMap<>();
         List<String> parent0childs = new ArrayList<String>();
         List<String> parent1childs = new ArrayList<String>();
         List<String> parent2childs = new ArrayList<String>();
+
         parent0childs.add("Dieter");
         parent0childs.add("Batman");
+
         parent1childs.add("SpiderMan");
+
         parent2childs.add("Ash Ketchum");
         parent2childs.add("Professor Eich");
         parent2childs.add("Rocko");
         parent2childs.add("Misty");
+
         childlists.put(listgroups.get(0), parent0childs);
         childlists.put(listgroups.get(1), parent1childs);
         childlists.put(listgroups.get(2), parent2childs);
@@ -61,6 +67,15 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                     list.collapseGroup(expandedparent);
                 }
                 expandedparent = groupPosition;
+            }
+        });
+        list.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+//                list.collapseGroup(expandedparent);
+                if(groupPosition == expandedparent){
+                    expandedparent = -1;
+                }
             }
         });
 
