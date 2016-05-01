@@ -63,6 +63,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                 expandedparent = groupPosition;
             }
         });
+
         return view;
 
     }

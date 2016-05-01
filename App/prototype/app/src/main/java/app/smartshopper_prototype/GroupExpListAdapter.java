@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -91,6 +92,12 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.rowParentTextView);
         groupItem.setTypeface(null, Typeface.BOLD);
         groupItem.setText(headerTitle);
+
+        // Create group indicator (up/down arrow) based in the row status
+        ImageView image = (ImageView) convertView.findViewById(R.id.rowGroupIndicator);
+        int resource = isExpanded ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down ;
+        image.setImageResource(resource);
+        image.setVisibility(convertView.VISIBLE);
 
         return convertView;
     }
