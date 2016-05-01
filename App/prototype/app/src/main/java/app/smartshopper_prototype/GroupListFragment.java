@@ -3,7 +3,6 @@ package app.smartshopper_prototype;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,7 @@ import java.util.List;
 
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    int expandedparent = -1;
+    int expandedParent = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,9 +62,9 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                 if(isExpanded){
                     list.collapseGroup(groupPosition);
                 }else{
-                    list.collapseGroup(expandedparent);
+                    list.collapseGroup(expandedParent);
                     list.expandGroup(groupPosition);
-                    expandedparent = groupPosition;
+                    expandedParent = groupPosition;
                 }
             }
         };
@@ -73,7 +72,6 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         list.setAdapter(adapter);
 
         return view;
-
     }
 
     @Override

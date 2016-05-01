@@ -1,12 +1,10 @@
 package app.smartshopper_prototype;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,7 +78,14 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
         return groupPosition;
     }
 
-    public void OnIndicatorClick(boolean isExpanded, int position){ }
+    /**
+     * Will be called when the indicator of the parent group item is clicked.
+     *
+     * @param isExpanded True when the group item is already extended, false if not.
+     * @param position   The position of the group item in the view.
+     */
+    public void OnIndicatorClick(boolean isExpanded, int position) {
+    }
 
     @Override
     public View getGroupView(final int groupPosition, final boolean isExpanded,
@@ -92,6 +97,19 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
             convertView = infalInflater.inflate(R.layout.group_row, null);
         }
 
+        createGroupItem(convertView, headerTitle);
+        createIndicator(isExpanded, convertView, groupPosition);
+
+        return convertView;
+    }
+
+    /**
+     * Creates the group item (TextView) with the given header title.
+     *
+     * @param convertView The view this item is on.
+     * @param headerTitle The title of the header.
+     */
+    private void createGroupItem(View convertView, String headerTitle){
         TextView groupItem = (TextView) convertView
                 .findViewById(R.id.rowParentTextView);
         groupItem.setText(headerTitle);
@@ -102,42 +120,27 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
                 Toast.makeText(view.getContext(), "TODO: Change view to item list (like the one for single lists).", Toast.LENGTH_LONG).show();
             }
         });
+    }
 
-        // Create group indicator (up/down arrow) based in the row status
+    /**
+     * Creates the indicator for the group item and sets a click listener to the image of the indicator.
+     *
+     * @param isExpanded The status of the group item if it's expanded (true) or not (false).
+     * @param convertView The view object this is in.
+     * @param groupPosition The position of the group list item.
+     */
+    private void createIndicator(final boolean isExpanded, View convertView, final int groupPosition){
         ImageView image = (ImageView) convertView.findViewById(R.id.rowGroupIndicator);
-        int resource = isExpanded ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down ;
+        int resource = isExpanded ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down;
         image.setImageResource(resource);
         image.setVisibility(convertView.VISIBLE);
-        image.setTag(groupPosition);
 
         image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = (Integer)v.getTag();
-                    OnIndicatorClick(isExpanded ,position);
-
+            @Override
+            public void onClick(View v) {
+                OnIndicatorClick(isExpanded, groupPosition);
             }
         });
-
-//        image.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-//            @Override
-//            public void onGroupExpand(int groupPosition) {
-//                if (expandedparent != -1) {
-//                    list.collapseGroup(expandedparent);
-//                }
-//                expandedparent = groupPosition;
-//            }
-//        });
-//        image.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-//            @Override
-//            public void onGroupCollapse(int groupPosition) {
-//                if (groupPosition == expandedparent) {
-//                    expandedparent = -1;
-//                }
-//            }
-//        });
-
-        return convertView;
     }
 
     @Override

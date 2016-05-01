@@ -21,9 +21,6 @@ public class SingleListTabFragment extends Fragment implements AdapterView.OnIte
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState){
-
-
-
         View view = inflater.inflate(R.layout.fragment_sinlge_list, group, false);
 
         ListView list = (ListView) view.findViewById(R.id.singlelist_list);
