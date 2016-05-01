@@ -6,7 +6,7 @@ var router = express.Router()
 router.use(require('./lists'))
 
 router.get('/', function (req, res) {
-  res.send('Server running')
+  res.send('Server running6')
 })
 
 // products
