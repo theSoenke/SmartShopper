@@ -1,22 +1,23 @@
 'use strict'
 
-var express = require('express')
-var bodyParser = require('body-parser')
+const express = require('express')
+const bodyParser = require('body-parser')
 
-var router = express.Router()
-var jsonParser = bodyParser.json()
-
-var List = require('../models/list')
+const router = express.Router()
+const jsonParser = bodyParser.json()
+const List = require('../models/list')
+const Product = require('../models/product')
 
 router
   .post('/list/:name', jsonParser, function (req, res) {
-    if (!req.body.products) {
+    let products = req.body.products
+    let name = req.params.name
+    if (!products) {
       return res.sendStatus(400)
     }
 
-  // var name = req.params.name
-  // var products = req.body.products
-  // createList(name, items)
+    createList(name, products)
+    res.json({'name': name, 'products': products})
   })
   .put('/list:name', jsonParser, function (req, res) {
     var name = req.params.name
@@ -28,8 +29,23 @@ router
   })
 
 function createList (listName, products) {
-  var list = new List({
-    name: listName
+  let productList = []
+
+  products.forEach(function (obj) {
+    Product.findOne({'name': obj.id}, function (err, docs) {
+      if (err) {
+        throw err
+      }
+      console.log(docs)
+    // productList.push(docs)
+    })
+  })
+
+  // console.log(productList)
+
+  let list = new List({
+    name: listName,
+    products: productList
   })
 
   list.save(function (err) {

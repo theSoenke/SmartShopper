@@ -1,0 +1,14 @@
+{
+  "products": [
+    {
+      "name": "test",
+      "market": "test_market",
+      "id": "0"
+    },
+    {
+      "name": "test2",
+      "market": "test2_market",
+      "id": "1"
+    }
+  ]
+}

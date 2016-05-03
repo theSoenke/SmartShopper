@@ -7,6 +7,7 @@
 
 $setup = <<SCRIPT
 apt-get update
+apt-get upgrade
 apt-get install -y curl git
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
@@ -28,6 +29,7 @@ SCRIPT
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/xenial64"
   config.vm.network :forwarded_port, guest: 3000, host: 3000
+  config.vm.network :forwarded_port, guest: 27017, host: 27017
 
   config.vm.provision :shell, :inline => $setup
   config.vm.synced_folder ".", "/var/www/SmartShopper/Backend"
