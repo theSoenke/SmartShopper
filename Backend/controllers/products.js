@@ -26,10 +26,11 @@ router
 
 function importProducts (products) {
   products.forEach(function (obj) {
+    // TODO check for duplicates and empty objects
     let product = new Product({
       name: obj.name
     })
-
+    console.log(product)
     createProduct(product)
   })
 }
@@ -39,8 +40,6 @@ function createProduct (product) {
     if (err) {
       throw err
     }
-
-    console.log('product created')
   })
 }
 

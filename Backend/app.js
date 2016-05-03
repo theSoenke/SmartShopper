@@ -1,11 +1,12 @@
 'use strict'
 
 const express = require('express')
+const config = require('./config')
 const app = express()
 
 app.use(require('./controllers'))
 
-let port = process.env.PORT || 3000
+let port = config.web.port
 let server = app.listen(port, onListening)
 
 function onListening () {
