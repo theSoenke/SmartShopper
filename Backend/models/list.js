@@ -2,11 +2,10 @@
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const Product = require('./product')
 
 let listSchema = new Schema({
   name: String,
-  products: [Product],
+  products: [String],
   created_at: Date,
   updated_at: Date
 })

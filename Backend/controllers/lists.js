@@ -6,7 +6,6 @@ const bodyParser = require('body-parser')
 const router = express.Router()
 const jsonParser = bodyParser.json()
 const List = require('../models/list')
-const Product = require('../models/product')
 
 router
   .post('/list/:name', jsonParser, function (req, res) {
@@ -20,11 +19,11 @@ router
     res.json({'name': name, 'products': products})
   })
   .put('/list:name', jsonParser, function (req, res) {
-    var name = req.params.name
+    let name = req.params.name
     res.json('update: ' + name)
   })
   .delete('/list:name', function (req, res) {
-    var name = req.params.name
+    let name = req.params.name
     res.json('delete: ' + name)
   })
 
@@ -32,16 +31,9 @@ function createList (listName, products) {
   let productList = []
 
   products.forEach(function (obj) {
-    Product.findOne({'name': obj.id}, function (err, docs) {
-      if (err) {
-        throw err
-      }
-      console.log(docs)
-    // productList.push(docs)
-    })
+    // TODO check id validity
+    productList.push(obj.id)
   })
-
-  // console.log(productList)
 
   let list = new List({
     name: listName,
@@ -52,8 +44,6 @@ function createList (listName, products) {
     if (err) {
       throw err
     }
-
-    console.log('list created')
   })
 }
 
