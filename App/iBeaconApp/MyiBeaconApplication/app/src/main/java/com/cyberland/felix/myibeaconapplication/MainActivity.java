@@ -26,7 +26,6 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
-import java.util.StringTokenizer;
 
 
 public class MainActivity extends Activity implements BeaconConsumer {
@@ -34,16 +33,16 @@ public class MainActivity extends Activity implements BeaconConsumer {
     private BeaconManager beaconManager;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
-    TextView UUIDValue;
-    TextView majorValue;
-    TextView minorValue;
-    TextView distanceValue;
+    TextView DistanzView1;
+    TextView DistanzView2;
+    TextView DistanzView3;
+    TextView DistanzView4;
     TextView localisationValue;
 
-    public String UUID;
-    public String major;
-    public String minor;
-    public String distance;
+    public String distanz1;
+    public String distanz2;
+    public String distanz3;
+    public String distanz4;
     public String localisationString;
 
     public TrilaterationTool trilaterationTool;
@@ -78,10 +77,10 @@ public class MainActivity extends Activity implements BeaconConsumer {
 
         setContentView(R.layout.activity_main);
 
-        UUIDValue = (TextView) findViewById(R.id.UUIDValue);
-        majorValue = (TextView) findViewById(R.id.majorValue);
-        minorValue = (TextView) findViewById(R.id.minorValue);
-        distanceValue = (TextView) findViewById(R.id.distanceValue);
+        DistanzView1 = (TextView) findViewById(R.id.d1);
+        DistanzView2 = (TextView) findViewById(R.id.d2);
+        DistanzView3 = (TextView) findViewById(R.id.d3);
+        DistanzView4 = (TextView) findViewById(R.id.d4);
         localisationValue = (TextView) findViewById(R.id.localisation);
 
         trilaterationTool = new TrilaterationTool();
@@ -142,31 +141,35 @@ public class MainActivity extends Activity implements BeaconConsumer {
                             beacons)
                     {
                         Log.i(TAG, "Minor: " + b.getId3());
-                    }
 
-                    UUID = "" + beacons.iterator().next().getId1();
-                    major = "" + beacons.iterator().next().getId2();
-                    minor = "" + beacons.iterator().next().getId3();
-                    distance = "" + beacons.iterator().next().getDistance();
-                    if(beacons.size() > 3)
-                    {
-                        localisationString= trilaterationTool.trilaterateFourBeacons(beacons).toString();
+                        if (b.getId3().toInt() == trilaterationTool.beaconID1)
+                        {
+                            distanz1 = ""+ b.getDistance();
+                        }
+                        else if (b.getId3().toInt() == trilaterationTool.beaconID2)
+                        {
+                            distanz2 = ""+ b.getDistance();
+                        }
+                        else if (b.getId3().toInt() == trilaterationTool.beaconID3)
+                        {
+                            distanz3 = ""+ b.getDistance();
+                        }
+                        else if (b.getId3().toInt() == trilaterationTool.beaconID4)
+                        {
+                            distanz4 = ""+ b.getDistance();
+                        }
                     }
-                    else
-                    {
-                        localisationString=trilaterationTool.trilaterateThreeBeacons(beacons).toString();
-                    }
-
-
+                    trilaterationTool.updateDistances(beacons);
+                    localisationString= trilaterationTool.trilaterateFourBeacons(beacons).toString();
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run()
                         {
-                            UUIDValue.setText(UUID);
-                            majorValue.setText(major);
-                            minorValue.setText(minor);
-                            distanceValue.setText(distance);
+                            DistanzView1.setText(distanz1);
+                            DistanzView2.setText(distanz2);
+                            DistanzView3.setText(distanz3);
+                            DistanzView4.setText(distanz4);
                             localisationValue.setText(localisationString);
 
                         }
