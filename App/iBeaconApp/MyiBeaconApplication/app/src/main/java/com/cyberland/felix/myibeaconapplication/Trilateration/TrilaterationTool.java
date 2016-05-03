@@ -1,6 +1,8 @@
 package com.cyberland.felix.myibeaconapplication.Trilateration;
 
 
+import android.util.Log;
+
 import org.altbeacon.beacon.Beacon;
 
 import java.util.ArrayList;
@@ -14,13 +16,15 @@ public class TrilaterationTool {
 
     BeaconLocationTool beaconTool = new BeaconLocationTool();
 
+    Vector lastTrilateration = new Vector(0,0);
+
     public TrilaterationTool()
     {
 
 
     }
 
-    public Vector trilaterate(Collection<Beacon> beacons)
+    public Vector trilaterateFourBeacons(Collection<Beacon> beacons)
     {
         List<Vector> positions = new ArrayList<Vector>(4);
         List<Double> distances = new ArrayList<Double>(4);
@@ -28,22 +32,27 @@ public class TrilaterationTool {
         for (Beacon b :
                 beacons)
         {
-            if (beaconTool.beaconMap.containsKey(b.getId3()))
+            if (beaconTool.beaconMap.containsKey(b.getId3().toInt()))
             {
                 positions.add(beaconTool.getPosition(b));
                 distances.add(b.getDistance());
             }
         }
-        Vector t1 = trilaterate(positions.get(0), distances.get(0), positions.get(1), distances.get(1), positions.get(2), distances.get(2));
-        Vector t2 = trilaterate(positions.get(0), distances.get(0), positions.get(1), distances.get(1), positions.get(3), distances.get(3));
-        Vector t3 = trilaterate(positions.get(0), distances.get(0), positions.get(2), distances.get(2), positions.get(3), distances.get(3));
-        Vector t4 = trilaterate(positions.get(1), distances.get(1), positions.get(2), distances.get(2), positions.get(3), distances.get(3));
+        if (positions.size() >= 4)
+        {
+            Vector t1 = trilaterate(positions.get(0), distances.get(0), positions.get(1), distances.get(1), positions.get(2), distances.get(2));
+            Vector t2 = trilaterate(positions.get(0), distances.get(0), positions.get(1), distances.get(1), positions.get(3), distances.get(3));
+            Vector t3 = trilaterate(positions.get(0), distances.get(0), positions.get(2), distances.get(2), positions.get(3), distances.get(3));
+            Vector t4 = trilaterate(positions.get(1), distances.get(1), positions.get(2), distances.get(2), positions.get(3), distances.get(3));
 
-        return t1.plus(t2).plus(t3).plus(t4).geteilt(4);
+            lastTrilateration = t1.plus(t2).plus(t3).plus(t4).mal(1/4);
+            Log.i("4 er Trilateration","happend");
+        }
+        return lastTrilateration;
     }
 
     //Standpunktberechnung anhand einer gegebenen Collection von Beacons
-    public Vector beaconTrilateration3Beacons(Collection<Beacon> beacons)
+    public Vector trilaterateThreeBeacons(Collection<Beacon> beacons)
     {
 
         List<Vector> positions = new ArrayList<Vector>();
@@ -52,13 +61,18 @@ public class TrilaterationTool {
         for (Beacon b :
                 beacons)
         {
-            if (beaconTool.beaconMap.containsKey(b.getId3()))
+            if (beaconTool.beaconMap.containsKey(b.getId3().toInt()))
             {
                 positions.add(beaconTool.getPosition(b));
                 distances.add(b.getDistance());
             }
         }
-        return trilaterate(positions.get(0), distances.get(0), positions.get(1), distances.get(1), positions.get(2), distances.get(2));
+        if(positions.size() >= 3)
+        {
+            lastTrilateration = trilaterate(positions.get(0), distances.get(0), positions.get(1), distances.get(1), positions.get(2), distances.get(2));
+            Log.i("3 er Trilateration","happend");
+        }
+        return lastTrilateration;
     }
 
 

@@ -20,15 +20,15 @@ public class BeaconLocationTool {
 
     public BeaconLocationTool()
     {
-        p1 = new Vector(0, 0);
-        p2 = new Vector(0, 4);
-        p3 = new Vector(4, 0);
-        p4 = new Vector(4, 4);
+        p1 = new Vector(6.5, 0);
+        p2 = new Vector(7, 4.8);
+        p3 = new Vector(0, 48);
+        p4 = new Vector(0, 0);
 
-        beaconID1 = 24286;
-        beaconID2 = 21333;
-        beaconID3 = 624;
-        beaconID4 = 0;
+        beaconID1 = 24286; //Felix Beacon esti 008
+        beaconID2 = 1744; //esti003
+        beaconID3 = 21333; //esti005
+        beaconID4 = 41230; //elo e10
 
         beaconMap = new HashMap<>();
         beaconMap.put(beaconID1, p1);

@@ -1,9 +1,11 @@
 package com.cyberland.felix.myibeaconapplication;
+
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -11,6 +13,7 @@ import android.os.RemoteException;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.cyberland.felix.myibeaconapplication.Trilateration.TrilaterationTool;
@@ -23,6 +26,7 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
+import java.util.StringTokenizer;
 
 
 public class MainActivity extends Activity implements BeaconConsumer {
@@ -34,11 +38,13 @@ public class MainActivity extends Activity implements BeaconConsumer {
     TextView majorValue;
     TextView minorValue;
     TextView distanceValue;
+    TextView localisationValue;
 
     public String UUID;
     public String major;
     public String minor;
     public String distance;
+    public String localisationString;
 
     public TrilaterationTool trilaterationTool;
 
@@ -46,17 +52,19 @@ public class MainActivity extends Activity implements BeaconConsumer {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M){
-            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("This app needs location access");
                 builder.setMessage("Please grant location access so this app can detect beacons");
-                builder.setPositiveButton(android.R.string.ok,null);
-                builder.setOnDismissListener(new DialogInterface.OnDismissListener(){
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @TargetApi(Build.VERSION_CODES.M)
                     @Override
                     public void onDismiss(DialogInterface dialog)
@@ -74,6 +82,7 @@ public class MainActivity extends Activity implements BeaconConsumer {
         majorValue = (TextView) findViewById(R.id.majorValue);
         minorValue = (TextView) findViewById(R.id.minorValue);
         distanceValue = (TextView) findViewById(R.id.distanceValue);
+        localisationValue = (TextView) findViewById(R.id.localisation);
 
         trilaterationTool = new TrilaterationTool();
 
@@ -83,21 +92,26 @@ public class MainActivity extends Activity implements BeaconConsumer {
         beaconManager.bind(this);
 
 
-        try {
+        try
+        {
             PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), PackageManager.GET_PERMISSIONS);
-            Log.d(TAG, "SDK "+Build.VERSION.SDK_INT+" App Permissions:");
-            if (info.requestedPermissions != null) {
-                for (String p : info.requestedPermissions) {
+            Log.d(TAG, "SDK " + Build.VERSION.SDK_INT + " App Permissions:");
+            if (info.requestedPermissions != null)
+            {
+                for (String p : info.requestedPermissions)
+                {
                     int grantResult = this.checkPermission(p, android.os.Process.myPid(), android.os.Process.myUid());
-                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                        Log.d(TAG, p+" PERMISSION_GRANTED");
-                    }
-                    else {
-                        Log.d(TAG, p+" PERMISSION_DENIED: "+grantResult);
+                    if (grantResult == PackageManager.PERMISSION_GRANTED)
+                    {
+                        Log.d(TAG, p + " PERMISSION_GRANTED");
+                    } else
+                    {
+                        Log.d(TAG, p + " PERMISSION_DENIED: " + grantResult);
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             Log.d(TAG, "Cannot get permissions due to error", e);
         }
 
@@ -106,7 +120,8 @@ public class MainActivity extends Activity implements BeaconConsumer {
 
 
     @Override
-    protected void onDestroy() {
+    protected void onDestroy()
+    {
         super.onDestroy();
         beaconManager.unbind(this);
 
@@ -114,55 +129,75 @@ public class MainActivity extends Activity implements BeaconConsumer {
 
 
     @Override
-    public void onBeaconServiceConnect() {
+    public void onBeaconServiceConnect()
+    {
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
-            public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                if (beacons.size() > 0) {
-                    Log.i(TAG, "The first beacon I see is about " + beacons.iterator().next().getDistance() + " meters away.");
+            public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region)
+            {
+                Log.i(TAG,"BEacons in collection"+ beacons.size());
+                if (beacons.size() > 0)
+                {
+                    for (Beacon b :
+                            beacons)
+                    {
+                        Log.i(TAG, "Minor: " + b.getId3());
+                    }
 
-                    Log.i(TAG, "Reading..." + "\n" + "proximityUuid:" + " " + beacons.iterator().next().getId1() + "\n" +
-                            "major:" + " " + beacons.iterator().next().getId2() + "\n" +
-                            "minor:" + " " + beacons.iterator().next().getId3());
+                    UUID = "" + beacons.iterator().next().getId1();
+                    major = "" + beacons.iterator().next().getId2();
+                    minor = "" + beacons.iterator().next().getId3();
+                    distance = "" + beacons.iterator().next().getDistance();
+                    if(beacons.size() > 3)
+                    {
+                        localisationString= trilaterationTool.trilaterateFourBeacons(beacons).toString();
+                    }
+                    else
+                    {
+                        localisationString=trilaterationTool.trilaterateThreeBeacons(beacons).toString();
+                    }
 
-                    UUID = ""+beacons.iterator().next().getId1();
-                      major = ""+beacons.iterator().next().getId2();
-                    minor= ""+beacons.iterator().next().getId3();
-                    distance = ""+beacons.iterator().next().getDistance();
-
-                    Log.i(TAG,trilaterationTool.beaconTrilateration(beacons).toString());
 
 
                     runOnUiThread(new Runnable() {
                         @Override
-                        public void run() {
+                        public void run()
+                        {
                             UUIDValue.setText(UUID);
                             majorValue.setText(major);
                             minorValue.setText(minor);
                             distanceValue.setText(distance);
+                            localisationValue.setText(localisationString);
+
                         }
                     });
-
 
 
                 }
             }
         });
 
-        try {
+        try
+        {
             beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
-        } catch (RemoteException e) {
+        } catch (RemoteException e)
+        {
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_COARSE_LOCATION: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                                           String permissions[], int[] grantResults)
+    {
+        switch (requestCode)
+        {
+            case PERMISSION_REQUEST_COARSE_LOCATION:
+            {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
                     Log.d(TAG, "coarse location permission granted");
-                } else {
+                } else
+                {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Functionality limited");
                     builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
@@ -170,7 +205,8 @@ public class MainActivity extends Activity implements BeaconConsumer {
                     builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 
                         @Override
-                        public void onDismiss(DialogInterface dialog) {
+                        public void onDismiss(DialogInterface dialog)
+                        {
                         }
 
                     });
@@ -181,7 +217,11 @@ public class MainActivity extends Activity implements BeaconConsumer {
         }
     }
 
-
+    public void sendMessage(View view)
+    {
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+    }
 
 
 }
