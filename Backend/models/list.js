@@ -1,15 +1,18 @@
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
+'use strict'
 
-var listSchema = new Schema({
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const Product = require('./product')
+
+let listSchema = new Schema({
   name: String,
-  id: String,
+  products: [Product],
   created_at: Date,
   updated_at: Date
 })
 
 listSchema.pre('save', function (next) {
-  var currentDate = new Date()
+  let currentDate = new Date()
   this.updated_at = currentDate
 
   if (!this.created_at) {
@@ -19,6 +22,6 @@ listSchema.pre('save', function (next) {
   next()
 })
 
-var List = mongoose.model('List', listSchema)
+let List = mongoose.model('List', listSchema)
 
 module.exports = List

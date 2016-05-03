@@ -1,14 +1,16 @@
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
+'use strict'
 
-var marketSchema = new Schema({
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+let marketSchema = new Schema({
   name: String,
   created_at: Date,
   updated_at: Date
 })
 
 marketSchema.pre('save', function (next) {
-  var currentDate = new Date()
+  let currentDate = new Date()
   this.updated_at = currentDate
 
   if (!this.created_at) {
@@ -18,6 +20,6 @@ marketSchema.pre('save', function (next) {
   next()
 })
 
-var Market = mongoose.model('Market', marketSchema)
+let Market = mongoose.model('Market', marketSchema)
 
 module.exports = Market

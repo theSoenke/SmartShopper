@@ -1,24 +1,22 @@
 'use strict'
 
-var express = require('express')
+const express = require('express')
+const mongoose = require('mongoose')
+const router = express.Router()
 
-var router = express.Router()
+mongoose.connect('mongodb://localhost/test')
+
 router.use(require('./lists'))
+router.use(require('./products'))
 
 router.get('/', function (req, res) {
-  res.send('Server running6')
-})
-
-// products
-router.get('/products/:market', function (req, res) {
-  var market = req.params.market
-  res.json(market)
+  res.send('Server running')
 })
 
 // search
-router.get('/search/:market/:query', function (req, res) {
+router.get('/search/:query', function (req, res) {
   // var market = req.params.market
-  var query = req.params.query
+  let query = req.params.query
   res.json(query)
 })
 
