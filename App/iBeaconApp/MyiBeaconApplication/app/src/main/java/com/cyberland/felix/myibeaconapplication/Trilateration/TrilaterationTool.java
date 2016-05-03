@@ -1,66 +1,74 @@
 package com.cyberland.felix.myibeaconapplication.Trilateration;
 
 
-
 import org.altbeacon.beacon.Beacon;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Studium on 26.04.2016.
  */
 public class TrilaterationTool {
 
-    //Beacon IDs TODO
-    int beaconID1;
-    int beaconID2;
-    int beaconID3;
-
-    //Positionen passend zu den Beacons (Beispielwerte) TODO
-    Vector p1, p2, p3;
-
-    //Distanzwerte zu den Beacons
-    double d1 = 2, d2= 2, d3=2;
+    BeaconLocationTool beaconTool = new BeaconLocationTool();
 
     public TrilaterationTool()
     {
-        p1 = new Vector(0, 0);
-        p2 = new Vector(0, 4);
-        p3 = new Vector(3, 3);
 
-        beaconID1 = 24286;
-        beaconID2 = 21333;
-        beaconID3 = 0;
 
     }
 
-    //Standpunktberechnung anhand einer gegebenen Collection von Beacons
-    public Vector beaconTrilateration(Collection<Beacon> beacons)
+    public Vector trilaterate(Collection<Beacon> beacons)
     {
+        List<Vector> positions = new ArrayList<Vector>(4);
+        List<Double> distances = new ArrayList<Double>(4);
+
         for (Beacon b :
                 beacons)
         {
-            if (b.getId3().toInt() == beaconID1)
+            if (beaconTool.beaconMap.containsKey(b.getId3()))
             {
-                d1 = b.getDistance();
-            } else if (b.getId3().toInt() == beaconID2)
-            {
-                d2 = b.getDistance();
-            } else if (b.getId3().toInt() == beaconID3)
-            {
-                d3 = b.getDistance();
+                positions.add(beaconTool.getPosition(b));
+                distances.add(b.getDistance());
             }
         }
-        return trilaterate(p1, d1, p2, d2, p3, d3);
+        Vector t1 = trilaterate(positions.get(0), distances.get(0), positions.get(1), distances.get(1), positions.get(2), distances.get(2));
+        Vector t2 = trilaterate(positions.get(0), distances.get(0), positions.get(1), distances.get(1), positions.get(3), distances.get(3));
+        Vector t3 = trilaterate(positions.get(0), distances.get(0), positions.get(2), distances.get(2), positions.get(3), distances.get(3));
+        Vector t4 = trilaterate(positions.get(1), distances.get(1), positions.get(2), distances.get(2), positions.get(3), distances.get(3));
+
+        return t1.plus(t2).plus(t3).plus(t4).geteilt(4);
     }
+
+    //Standpunktberechnung anhand einer gegebenen Collection von Beacons
+    public Vector beaconTrilateration3Beacons(Collection<Beacon> beacons)
+    {
+
+        List<Vector> positions = new ArrayList<Vector>();
+        List<Double> distances = new ArrayList<Double>();
+
+        for (Beacon b :
+                beacons)
+        {
+            if (beaconTool.beaconMap.containsKey(b.getId3()))
+            {
+                positions.add(beaconTool.getPosition(b));
+                distances.add(b.getDistance());
+            }
+        }
+        return trilaterate(positions.get(0), distances.get(0), positions.get(1), distances.get(1), positions.get(2), distances.get(2));
+    }
+
 
     public static Vector trilaterate(Vector A, double dA, Vector B, double dB, Vector C, double dC)
     {
         Vector v = B.minus(A);
-        double y = Math.pow(dA, 2)/(2*v.laenge)-Math.pow(dB, 2)/(2*v.laenge)+v.laenge/2;
-        Vector r = v.mal(y/v.laenge);
-        Vector w = new Vector(-v.y,v.x);
-        double t = (Math.pow(dC, 2)-Math.pow(dA, 2)-Math.pow(C.x, 2)+Math.pow(A.x, 2)-Math.pow(C.y, 2)+Math.pow(A.y, 2)-r.x*2*(A.x-C.x)-r.y*2*(A.y-C.y))/(2*(w.x*(A.x-C.x)+w.y*(A.y-C.y)));
+        double y = Math.pow(dA, 2) / (2 * v.laenge) - Math.pow(dB, 2) / (2 * v.laenge) + v.laenge / 2;
+        Vector r = v.mal(y / v.laenge);
+        Vector w = new Vector(-v.y, v.x);
+        double t = (Math.pow(dC, 2) - Math.pow(dA, 2) - Math.pow(C.x, 2) + Math.pow(A.x, 2) - Math.pow(C.y, 2) + Math.pow(A.y, 2) - r.x * 2 * (A.x - C.x) - r.y * 2 * (A.y - C.y)) / (2 * (w.x * (A.x - C.x) + w.y * (A.y - C.y)));
         return r.plus(w.mal(t));
     }
 
