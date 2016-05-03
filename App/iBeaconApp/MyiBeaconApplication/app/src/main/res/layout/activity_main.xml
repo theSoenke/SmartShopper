@@ -1,3 +1,6 @@
+<ScrollView android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            xmlns:android="http://schemas.android.com/apk/res/android">
 <LinearLayout
     android:id="@+id/llmain"
     android:layout_width="match_parent"
@@ -27,12 +30,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="UUID: "
+            android:text="Distanz esti008: "
             android:padding="10dp"
             android:textSize="25sp"
             android:layout_weight="1"/>
         <TextView
-            android:id="@+id/UUIDValue"
+            android:id="@+id/d1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="no beacon detected"
@@ -54,12 +57,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Major: "
+            android:text="Distanz esti003: "
             android:padding="10dp"
             android:textSize="25sp"
             android:layout_weight="1"/>
         <TextView
-            android:id="@+id/majorValue"
+            android:id="@+id/d2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="no beacon detected"
@@ -81,12 +84,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Minor: "
+            android:text="Distanz esti005: "
             android:padding="10dp"
             android:textSize="25sp"
             android:layout_weight="1"/>
         <TextView
-            android:id="@+id/minorValue"
+            android:id="@+id/d3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="no beacon detected"
@@ -108,12 +111,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Entfernung: "
+            android:text="Distanz e10: "
             android:padding="10dp"
             android:textSize="25sp"
             android:layout_weight="1"/>
         <TextView
-            android:id="@+id/distanceValue"
+            android:id="@+id/d4"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="no beacon detected"
@@ -157,3 +160,4 @@
         android:text="@string/map"
         android:onClick="sendMessage" />
 </LinearLayout>
+</ScrollView>
