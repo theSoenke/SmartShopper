@@ -28,6 +28,11 @@ public class Vector
     {
         return new Vector(x-vector.x,y-vector.y);
     }
+    public Vector geteilt(double teiler)
+    {
+        return new Vector(x/teiler,y/teiler);
+    }
+
 
     @Override
     public boolean equals(Object o)
