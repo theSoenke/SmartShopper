@@ -30,7 +30,6 @@ function importProducts (products) {
     let product = new Product({
       name: obj.name
     })
-    console.log(product)
     createProduct(product)
   })
 }

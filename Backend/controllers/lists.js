@@ -18,11 +18,11 @@ router
     createList(name, products)
     res.json({'name': name, 'products': products})
   })
-  .put('/list:name', jsonParser, function (req, res) {
+  .put('/list/:name', jsonParser, function (req, res) {
     let name = req.params.name
     res.json('update: ' + name)
   })
-  .delete('/list:name', function (req, res) {
+  .delete('/list/:name', function (req, res) {
     let name = req.params.name
     res.json('delete: ' + name)
   })
