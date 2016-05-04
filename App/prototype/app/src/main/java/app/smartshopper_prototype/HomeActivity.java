@@ -141,13 +141,52 @@ public class HomeActivity extends AppCompatActivity
         fragmentTransaction.addToBackStack(null); // puts the transaction onto the stack
         fragmentTransaction.commit(); //
 
-        if(selectedItem != null) {
+        if (selectedItem != null) {
             // Highlight the selected item has been done by NavigationView
             selectedItem.setChecked(true);
             // Save the current item to uncheck it when another item has been clicked
             _oldSelectedMenuItem = selectedItem;
             // Set action bar title
             setTitle(selectedItem.getTitle());
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent i) {
+        String extrasource = i.getStringExtra("source");
+        String value = i.getStringExtra("value");
+
+        if (extrasource != null) {
+            switch (extrasource) {
+                case "SingleListFragment":
+                    switchToFragment(AddSingleListFragment.class, null);
+                    break;
+                case "AddSingleListFragment":
+                    Bundle b = new Bundle();
+                    b.putString("newList", value);
+                    SingleListFragment f = new SingleListFragment();
+                    f.setArguments(b);
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.beginTransaction()
+                            .replace(R.id.home_content, f)
+                            .commit();
+                    break;
+                case "GroupListFragment":
+                    switchToFragment(AddGroupListFragment.class, null);
+                    break;
+                case "AddGroupListFragment":
+                    String participants = i.getStringExtra("participants");
+                    Bundle bu = new Bundle();
+                    bu.putString("newList", value);
+                    bu.putString("participants", participants);
+                    GroupListFragment fr = new GroupListFragment();
+                    fr.setArguments(bu);
+                    FragmentManager fmng = getSupportFragmentManager();
+                    fmng.beginTransaction()
+                            .replace(R.id.home_content, fr)
+                            .commit();
+                    break;
+            }
         }
     }
 }

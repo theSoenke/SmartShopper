@@ -1,12 +1,15 @@
 package app.smartshopper_prototype;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -29,17 +32,24 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Bundle extras = getArguments();
+        String newList = "";
+        String newParticipants = "";
+
         View view = inflater.inflate(R.layout.fragment_group_list, container, false);
+        FloatingActionButton btAdGroupList = (FloatingActionButton) view.findViewById(R.id.fabAddGroupList);
         final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
         final List<String> listgroups = new ArrayList<String>();
         listgroups.add("Geburtstag von Max Mustermann");
         listgroups.add("Vereinstreffen");
         listgroups.add("OE-Liste");
 
+
         final HashMap<String, List<String>> childlists = new HashMap<>();
         List<String> parent0childs = new ArrayList<String>();
         List<String> parent1childs = new ArrayList<String>();
         List<String> parent2childs = new ArrayList<String>();
+
 
         parent0childs.add("Dieter\n" +
                 "Batman");
@@ -51,10 +61,19 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                 "Professor Eich\n" +
                 "Rocko\n" +
                 "Misty");
+        if(extras != null){
+            newList = extras.getString("newList");
+            newParticipants = extras.getString("participants");
+            listgroups.add(newList);
+            List<String> parent3childs = new ArrayList<>();
+            parent3childs.add(newParticipants);
+            childlists.put(listgroups.get(3), parent3childs);
+        }
 
         childlists.put(listgroups.get(0), parent0childs);
         childlists.put(listgroups.get(1), parent1childs);
         childlists.put(listgroups.get(2), parent2childs);
+
 
         ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists){
             @Override
@@ -70,6 +89,17 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         };
         // Create ArrayAdapter using the planet list.
         list.setAdapter(adapter);
+
+        btAdGroupList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getContext(),HomeActivity.class);
+                i.putExtra("source", "GroupListFragment");
+                i.putExtra("value", "addgrouplist");
+                i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                getContext().startActivity(i);
+            }
+        });
 
         return view;
     }

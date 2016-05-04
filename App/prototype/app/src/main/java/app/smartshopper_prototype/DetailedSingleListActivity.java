@@ -11,6 +11,7 @@ import app.smartshopper_prototype.listTabs.SingleListPagerAdapter;
 
 public class DetailedSingleListActivity extends AppCompatActivity {
 
+    // TODO: isnt it better to make this a fragment instead of an activity?
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
