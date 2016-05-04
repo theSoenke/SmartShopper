@@ -4,7 +4,8 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 let userSchema = new Schema({
-  username: String,
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
   admin: Boolean,
   created_at: Date,
   updated_at: Date

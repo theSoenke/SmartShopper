@@ -2,17 +2,34 @@
 
 const express = require('express')
 const mongoose = require('mongoose')
-const router = express.Router()
 const config = require('../config')
+const router = express.Router()
 
-mongoose.connect(config.mongodb.url)
+mongoose.connect(config.database.url)
 
-router.use(require('./lists'))
-router.use(require('./products'))
-router.use(require('./search'))
+let importer = require('./importer')
+let search = require('./search')
+let lists = require('./lists')
+
+importer.use(errorHandler)
+search.use(errorHandler)
+lists.use(errorHandler)
+
+router.use(errorHandler)
+router.use(lists)
+router.use(search)
+router.use(importer)
 
 router.get('/', function (req, res) {
   res.send('Server running')
 })
+
+function errorHandler (err, req, res, next) {
+  if (req.app.get('env') !== 'development') {
+    delete err.stack
+  }
+
+  res.status(err.statusCode || 400).json(err)
+}
 
 module.exports = router
