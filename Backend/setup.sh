@@ -36,18 +36,17 @@ then
   systemctl enable mongod
   systemctl start mongod
 
-
   # create new user to run app
   useradd -mrU web
   mkdir -p /var/www
   chown web /var/www
   chgrp web /var/www
+  chmod 770 /var/www
 
   mv ~/SmartShopper /var/www/
   cd /var/www/SmartShopper/Backend
-  npm install
-
   su web
+  npm install
   pm2 start app.js --name "api"
   pm2 startup systemd
 
