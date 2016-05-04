@@ -5,19 +5,24 @@ const express = require('express')
 const router = express.Router()
 const Product = require('../models/product')
 
-router.get('/search/:query', function (req, res) {
+router.get('/search/:query', function (req, res, next) {
   let query = req.params.query
-  // let limit = req.query.limit
+  let limit = parseInt(req.query.limit, 10)
+  console.log(limit)
   // let market = req.query.market
+  // TODO filter by market
 
-  // TODO limit results, filter by market
-
-  Product.find({'name': query}, function (err, docs) {
-    if (err) {
-      throw err
-    }
-    res.json(docs)
-  })
+  Product
+    .find({ $text: { $search: query } },
+      { score: { $meta: 'textScore' } })
+    .sort({ score: { $meta: 'textScore' } })
+    .limit(limit)
+    .exec(function (err, results) {
+      if (err) {
+        return next(err)
+      }
+      res.json(results)
+    })
 })
 
 module.exports = router

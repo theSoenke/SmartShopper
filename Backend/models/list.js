@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 let listSchema = new Schema({
-  name: { type: String, required: true },
+  name: { type: String, required: true, text: true },
   products: [String],
   created_at: Date,
   updated_at: Date

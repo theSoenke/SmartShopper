@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 let marketSchema = new Schema({
-  name: { type: String, required: true },
+  name: { type: String, required: true, text: true },
   created_at: Date,
   updated_at: Date
 })

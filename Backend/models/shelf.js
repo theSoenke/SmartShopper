@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 let shelfSchema = new Schema({
-  username: { type: String, required: true },
+  name: { type: String, required: true },
   created_at: Date,
   updated_at: Date
 })
