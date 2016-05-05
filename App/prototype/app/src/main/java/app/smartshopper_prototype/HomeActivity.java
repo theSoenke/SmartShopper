@@ -15,6 +15,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import app.smartshopper_prototype.Settings.SettingsActivity;
+import app.smartshopper_prototype.ShoppingLists.GroupList.AddGroupListFragment;
+import app.smartshopper_prototype.ShoppingLists.GroupList.GroupListFragment;
+import app.smartshopper_prototype.ShoppingLists.SingleList.AddSingleListFragment;
+import app.smartshopper_prototype.ShoppingLists.SingleList.SingleListFragment;
+
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 

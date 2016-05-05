@@ -1,4 +1,4 @@
-package app.smartshopper_prototype.listTabs;
+package app.smartshopper_prototype.ShoppingLists.ListTabs;
 
 import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
@@ -6,8 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import app.smartshopper_prototype.TouchImageView.TouchImageView;
 
 import app.smartshopper_prototype.R;
 

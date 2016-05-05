@@ -19,9 +19,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".DetailedSingleListActivity"></activity>
+        <activity android:name=".ShoppingLists.SingleList.DetailedSingleListActivity"></activity>
     </application>
 
 </manifest>

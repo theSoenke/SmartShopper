@@ -1,4 +1,4 @@
-package app.smartshopper_prototype;
+package app.smartshopper_prototype.Settings;
 
 
 import android.annotation.TargetApi;
@@ -21,6 +21,10 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 
 import java.util.List;
+
+import app.smartshopper_prototype.AppCompatPreferenceActivity;
+import app.smartshopper_prototype.HomeActivity;
+import app.smartshopper_prototype.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

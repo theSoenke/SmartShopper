@@ -1,4 +1,4 @@
-package app.smartshopper_prototype.listTabs;
+package app.smartshopper_prototype.ShoppingLists.SingleList;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +16,15 @@ import app.smartshopper_prototype.R;
 /**
  * Created by hauke on 28.04.16.
  */
+/* TODO Change this class into ItemListTabFragment
+Make this into a kind of general "ItemListTabFragment". This shows the list of item and the two tabs.
+
+The group-list version (a class that inherits from the ItemListTabFragment) has some controls to add
+items to the whole group (and an algorithm decides weather you or a participant has to buy the item).
+
+The single-list version (also a class that inherits from the ItemListTabFragment) shows the current
+kind of information.
+*/
 public class SingleListTabFragment extends Fragment implements AdapterView.OnItemClickListener{
 
 

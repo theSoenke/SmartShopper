@@ -1,4 +1,4 @@
-package app.smartshopper_prototype;
+package app.smartshopper_prototype.ShoppingLists.SingleList;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,7 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import app.smartshopper_prototype.listTabs.SingleListPagerAdapter;
+import app.smartshopper_prototype.HomeActivity;
+import app.smartshopper_prototype.R;
 
 public class DetailedSingleListActivity extends AppCompatActivity {
 

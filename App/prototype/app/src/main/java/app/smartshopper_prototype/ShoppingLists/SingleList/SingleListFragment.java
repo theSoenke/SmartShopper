@@ -1,4 +1,4 @@
-package app.smartshopper_prototype;
+package app.smartshopper_prototype.ShoppingLists.SingleList;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+
+import app.smartshopper_prototype.HomeActivity;
+import app.smartshopper_prototype.R;
 
 public class SingleListFragment extends Fragment implements  AdapterView.OnItemClickListener{
 

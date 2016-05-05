@@ -1,4 +1,4 @@
-package app.smartshopper_prototype;
+package app.smartshopper_prototype.ShoppingLists.GroupList;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
+
+import app.smartshopper_prototype.R;
 
 /**
  * Created by marvin on 30.04.16.
