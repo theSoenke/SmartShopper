@@ -24,7 +24,6 @@ public abstract class AbstractDetailedListActivity extends AppCompatActivity {
             listName = extras.getString("list");
         }
 
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

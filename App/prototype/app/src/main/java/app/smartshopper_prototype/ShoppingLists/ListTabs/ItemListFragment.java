@@ -1,4 +1,4 @@
-package app.smartshopper_prototype.ShoppingLists.SingleList;
+package app.smartshopper_prototype.ShoppingLists.ListTabs;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,26 +25,29 @@ items to the whole group (and an algorithm decides weather you or a participant 
 The single-list version (also a class that inherits from the ItemListTabFragment) shows the current
 kind of information.
 */
-public class ItemListFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class ItemListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sinlge_list, group, false);
 
         ListView list = (ListView) view.findViewById(R.id.singlelist_list);
 
-        String liste = group.getTag().toString();
+        String liste = "";
+        if (group != null) {
+            liste = group.getTag().toString();
+        }
 
         // Create ArrayAdapter using an empty list
         ArrayAdapter<String> listAdapter = new ArrayAdapter<>(getContext(), R.layout.simple_row, new ArrayList<String>());
 
         // connect to database to get list
-        if(liste.equalsIgnoreCase("Baumarkt")){
+        if (liste.equalsIgnoreCase("Baumarkt")) {
             listAdapter.add("Hammer");
             listAdapter.add("Bohrmaschine");
             listAdapter.add("Farbe");
-        }else if(liste.equalsIgnoreCase("Wocheneinkauf")){
+        } else if (liste.equalsIgnoreCase("Wocheneinkauf")) {
             listAdapter.add("Wurst");
             listAdapter.add("Käse");
             listAdapter.add("Tiefkühlpizza");
@@ -53,9 +56,20 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
             listAdapter.add("Curry-Ketchup");
             listAdapter.add("Tomate");
             listAdapter.add("Zwiebeln");
-        }else if(liste.equalsIgnoreCase("Getränkemarkt")){
+        } else if (liste.equalsIgnoreCase("Getränkemarkt")) {
             listAdapter.add("Bier");
 
+        }
+
+        if (liste.equalsIgnoreCase("Geburtstag von Max Mustermann")) {
+            listAdapter.add("Geschenke");
+        } else if (liste.equalsIgnoreCase("Vereinstreffen")) {
+            listAdapter.add("Kööm");
+            listAdapter.add("Neue Klootkugel");
+            listAdapter.add("Notizblock");
+        } else if (liste.equalsIgnoreCase("OE-Liste")) {
+            listAdapter.add("Bier");
+            listAdapter.add("Mate");
         }
 
         // add adapter with items to list (necessary to display items)
@@ -66,6 +80,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
         return view;
     }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 

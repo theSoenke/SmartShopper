@@ -20,6 +20,7 @@ import java.util.List;
 
 import app.smartshopper_prototype.HomeActivity;
 import app.smartshopper_prototype.R;
+import app.smartshopper_prototype.ShoppingLists.SingleList.DetailedSingleListActivity;
 
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
@@ -38,7 +39,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         String newList = "";
         String newParticipants = "";
 
-        View view = inflater.inflate(R.layout.fragment_group_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_group_list, container, false);
         FloatingActionButton btAdGroupList = (FloatingActionButton) view.findViewById(R.id.fabAddGroupList);
         final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
         final List<String> listgroups = new ArrayList<String>();
@@ -63,7 +64,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                 "Professor Eich\n" +
                 "Rocko\n" +
                 "Misty");
-        if(extras != null){
+        if (extras != null) {
             newList = extras.getString("newList");
             newParticipants = extras.getString("participants");
             listgroups.add(newList);
@@ -77,16 +78,23 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         childlists.put(listgroups.get(2), parent2childs);
 
 
-        ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists){
+        ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists) {
             @Override
             public void OnIndicatorClick(boolean isExpanded, int groupPosition) {
-                if(isExpanded){
+                if (isExpanded) {
                     list.collapseGroup(groupPosition);
-                }else{
+                } else {
                     list.collapseGroup(expandedParent);
                     list.expandGroup(groupPosition);
                     expandedParent = groupPosition;
                 }
+            }
+
+            @Override
+            public void OnItemClick(String entry){
+                Intent i = new Intent(GroupListFragment.this.getActivity(), DetailedGroupListActivity.class);
+                i.putExtra("list", entry);
+                getActivity().startActivity(i);
             }
         };
         // Create ArrayAdapter using the planet list.
@@ -95,7 +103,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         btAdGroupList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getContext(),HomeActivity.class);
+                Intent i = new Intent(getContext(), HomeActivity.class);
                 i.putExtra("source", "GroupListFragment");
                 i.putExtra("value", "addgrouplist");
                 i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -108,9 +116,9 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        ListView list = (ListView) adapterView.findViewById(R.id.grouplist_list);
-        String entry = list.getItemAtPosition(position).toString(); // get item at "position"
-        Context context = view.getContext();
-        Toast.makeText(context, "TODO: Expand " + entry + " to show its participants", Toast.LENGTH_SHORT).show();
+//        ListView list = (ListView) adapterView.findViewById(R.id.grouplist_list);
+//        String entry = list.getItemAtPosition(position).toString(); // get item at "position"
+//        Context context = view.getContext();
+//        Toast.makeText(context, "TODO: Expand " + entry + " to show its participants", Toast.LENGTH_SHORT).show();
     }
 }

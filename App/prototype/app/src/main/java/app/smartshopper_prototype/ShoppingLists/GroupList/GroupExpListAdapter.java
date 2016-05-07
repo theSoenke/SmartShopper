@@ -1,11 +1,13 @@
 package app.smartshopper_prototype.ShoppingLists.GroupList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,6 +91,9 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
     public void OnIndicatorClick(boolean isExpanded, int position) {
     }
 
+    public void OnItemClick(String entry) {
+    }
+
     @Override
     public View getGroupView(final int groupPosition, final boolean isExpanded,
                              View convertView, ViewGroup parent) {
@@ -111,7 +116,7 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
      * @param convertView The view this item is on.
      * @param headerTitle The title of the header.
      */
-    private void createGroupItem(View convertView, String headerTitle){
+    private void createGroupItem(View convertView, final String headerTitle) {
         TextView groupItem = (TextView) convertView
                 .findViewById(R.id.rowParentTextView);
         groupItem.setText(headerTitle);
@@ -119,8 +124,7 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
         groupItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Change view to item list (like the one for single lists)
-                Toast.makeText(view.getContext(), "TODO: Change view to item list (like the one for single lists).", Toast.LENGTH_LONG).show();
+                OnItemClick(headerTitle);
             }
         });
     }
@@ -128,11 +132,11 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
     /**
      * Creates the indicator for the group item and sets a click listener to the image of the indicator.
      *
-     * @param isExpanded The status of the group item if it's expanded (true) or not (false).
-     * @param convertView The view object this is in.
+     * @param isExpanded    The status of the group item if it's expanded (true) or not (false).
+     * @param convertView   The view object this is in.
      * @param groupPosition The position of the group list item.
      */
-    private void createIndicator(final boolean isExpanded, View convertView, final int groupPosition){
+    private void createIndicator(final boolean isExpanded, View convertView, final int groupPosition) {
         ImageView image = (ImageView) convertView.findViewById(R.id.rowGroupIndicator);
         int resource = isExpanded ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down;
         image.setImageResource(resource);
