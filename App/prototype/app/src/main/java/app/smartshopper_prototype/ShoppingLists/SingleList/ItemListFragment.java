@@ -25,7 +25,7 @@ items to the whole group (and an algorithm decides weather you or a participant 
 The single-list version (also a class that inherits from the ItemListTabFragment) shows the current
 kind of information.
 */
-public class SingleListTabFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class ItemListFragment extends Fragment implements AdapterView.OnItemClickListener{
 
 
     @Override

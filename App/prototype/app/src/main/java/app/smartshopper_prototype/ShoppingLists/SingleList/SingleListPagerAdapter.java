@@ -22,7 +22,7 @@ public class SingleListPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch(position){
             case 0:
-                return new SingleListTabFragment();
+                return new ItemListFragment();
             case 1:
                 return new NavigationViewFragment();
         }

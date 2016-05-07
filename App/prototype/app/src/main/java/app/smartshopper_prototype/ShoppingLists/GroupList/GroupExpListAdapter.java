@@ -119,6 +119,7 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
         groupItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //TODO: Change view to item list (like the one for single lists)
                 Toast.makeText(view.getContext(), "TODO: Change view to item list (like the one for single lists).", Toast.LENGTH_LONG).show();
             }
         });
