@@ -6,6 +6,9 @@ const config = require('../config')
 const router = express.Router()
 
 mongoose.connect(config.database.url)
+mongoose.connection.on('error', function () {
+  console.log('Error connecting to MongoDB')
+})
 
 let importer = require('./importer')
 let search = require('./search')
