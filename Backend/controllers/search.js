@@ -17,11 +17,11 @@ router.get('/search/:query', function (req, res, next) {
       { score: { $meta: 'textScore' } })
     .sort({ score: { $meta: 'textScore' } })
     .limit(limit)
-    .exec(function (err, results) {
+    .exec(function (err, docs) {
       if (err) {
         return next(err)
       }
-      res.json(results)
+      res.json(docs)
     })
 })
 
