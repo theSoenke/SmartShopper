@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 
 let listSchema = new Schema({
   name: { type: String, required: true, text: true },
-  products: [String],
+  products: [{ name: { type: String, required: true } }],
   created_at: Date,
   updated_at: Date
 })

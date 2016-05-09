@@ -1,24 +1,33 @@
 'use strict'
 
 const express = require('express')
-const bodyParser = require('body-parser')
 
 const router = express.Router()
-const jsonParser = bodyParser.json()
 const List = require('../models/list')
 
 router
-  .post('/list/:name', jsonParser, function (req, res) {
-    let products = req.body.products
-    let name = req.params.name
-    if (!products) {
-      return res.sendStatus(400)
-    }
+  .get('/lists', function (req, res, next) {
+    List.find(function (err, docs) {
+      if (err) {
+        return next(err)
+      }
 
-    createList(name, products)
-    res.json({'name': name, 'products': products})
+      res.json(docs)
+    })
   })
-  .put('/list/:name', jsonParser, function (req, res) {
+  .post('/list', function (req, res, next) {
+    let list = List()
+    list.name = req.body.name
+    list.products = req.body.products
+
+    list.save(function (err) {
+      if (err) {
+        return next(err)
+      }
+      res.json(list)
+    })
+  })
+  .put('/list/:name', function (req, res) {
     let name = req.params.name
     res.json('update: ' + name)
   })
@@ -26,25 +35,5 @@ router
     let name = req.params.name
     res.json('delete: ' + name)
   })
-
-function createList (listName, products) {
-  let productList = []
-
-  products.forEach(function (obj) {
-    // TODO check id validity
-    productList.push(obj.id)
-  })
-
-  let list = new List({
-    name: listName,
-    products: productList
-  })
-
-  list.save(function (err) {
-    if (err) {
-      throw err
-    }
-  })
-}
 
 module.exports = router
