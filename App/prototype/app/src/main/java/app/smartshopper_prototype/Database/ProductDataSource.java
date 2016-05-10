@@ -5,21 +5,28 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Felix on 02.05.2016.
+ * Created by Felix on 02.05.2016. Refactored by Hauke on 10.05.2016.
  */
-public class ProductDataSource {
-    private SQLiteDatabase database;
-    private MySQLiteHelper dbHelper;
-    private String[] allColumns = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_PRODUCT_NAME, MySQLiteHelper.COLUMN_POSITION_X, MySQLiteHelper.COLUMN_POSITION_Y};
-
+public class ProductDataSource extends DatabaseTable<Product> {
+    /**
+     * Creates a new data source for the table of products and initializes it with the columns from the helper.
+     *
+     * @param context The application context.
+     */
     public ProductDataSource(Context context) {
-        dbHelper = new MySQLiteHelper(context);
+        super(context,
+                MySQLiteHelper.PRODUCT_TABLE_NAME,
+                new String[]{
+                        MySQLiteHelper.PRODUCT_COLUMN_ID,
+                        MySQLiteHelper.PRODUCT_COLUMN_NAME,
+                        MySQLiteHelper.PRODUCT_COLUMN_POSITION_X,
+                        MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y
+                });
     }
 
     /**
@@ -28,20 +35,18 @@ public class ProductDataSource {
      * @throws SQLException
      */
     public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+        super.open();
 
-        //TODO change/remove these dummy items after testing
+        //TODO get items from server if available
         createProduct("Apfel", 0, 0);
         createProduct("Birne", 0, 50);
         createProduct("VW Golf", 0, 100);
         createProduct("Milch", 100, 150);
     }
 
-    /**
-     * Closes the database connection.
-     */
-    public void close() {
-        dbHelper.close();
+    @Override
+    public String getWhereClause(Product entry) {
+        return MySQLiteHelper.ITEMENTRY_PRODUCT_ID + " = '" + entry.getId();
     }
 
     /**
@@ -55,66 +60,22 @@ public class ProductDataSource {
      */
     public Product createProduct(String product_name, int posx, int posy) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_PRODUCT_NAME, product_name);
-        values.put(MySQLiteHelper.COLUMN_POSITION_X, posx);
-        values.put(MySQLiteHelper.COLUMN_POSITION_Y, posy);
+        values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product_name);
+        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_X, posx);
+        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y, posy);
 
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_PRODUCTS, allColumns,
-                MySQLiteHelper.COLUMN_PRODUCT_NAME + " = '" + product_name + "'" +
-                        " AND " + MySQLiteHelper.COLUMN_POSITION_X + " = " + posx +
-                        " AND " + MySQLiteHelper.COLUMN_POSITION_Y + " = " + posy,
-                null, null, null, null);
-
-        Product newProduct = cursorToProduct(cursor);
-
-        // check if product already exists
-        if (cursor.getCount() == 0) {
-
-            long insertId = database.insert(MySQLiteHelper.TABLE_PRODUCTS, null, values);
-            newProduct.setId(insertId);
-        }
-        return newProduct;
+        return super.createEntry(
+                MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product_name + "'" +
+                        " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_X + " = " + posx +
+                        " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y + " = " + posy,
+                values);
     }
 
-    /**
-     * Removes a given product from the database.
-     *
-     * @param product The product to remove.
-     */
-    public void deleteProduct(Product product) {
-        long id = product.getId();
-        database.delete(MySQLiteHelper.TABLE_PRODUCTS, MySQLiteHelper.COLUMN_ID + "=" + id, null);
-    }
-
-    /**
-     * Gets all products that are currently in the database.
-     *
-     * @return A list with all products.
-     */
-    public List<Product> getAllProdcuts() {
-        List<Product> products = new ArrayList<Product>();
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_PRODUCTS, allColumns, null, null, null, null, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Product product = cursorToProduct(cursor);
-            products.add(product);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return products;
-    }
-
-    /**
-     * Creates a product object based on the data of the given cursor.
-     *
-     * @param cursor The cursor with data for a product.
-     * @return A new product object.
-     */
-    private Product cursorToProduct(Cursor cursor) {
+    @Override
+    public Product cursorToEntry(Cursor cursor) {
         Product product = new Product();
         product.setId(cursor.getInt(0));
-        product.setProductName(cursor.getString(1));
+        product.setEntryName(cursor.getString(1));
         product.setPosX(cursor.getInt(2));
         product.setPosY(cursor.getInt(3));
         return product;
