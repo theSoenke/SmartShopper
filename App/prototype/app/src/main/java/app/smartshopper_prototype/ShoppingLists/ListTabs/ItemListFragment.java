@@ -40,7 +40,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         }
 
         // Create ArrayAdapter using an empty list
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<>(getContext(), R.layout.simple_row, new ArrayList<String>());
+        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
 
         // connect to database to get list
         if (liste.equalsIgnoreCase("Baumarkt")) {

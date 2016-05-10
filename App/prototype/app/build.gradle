@@ -6,10 +6,11 @@ android {
 
     defaultConfig {
         applicationId "app.smartshopper_prototype"
-        minSdkVersion 23
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {

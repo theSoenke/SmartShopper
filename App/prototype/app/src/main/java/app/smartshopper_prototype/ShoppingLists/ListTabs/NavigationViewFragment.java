@@ -1,12 +1,12 @@
 package app.smartshopper_prototype.ShoppingLists.ListTabs;
 
-import android.graphics.drawable.VectorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import app.smartshopper_prototype.R;
 
 /**
@@ -19,7 +19,7 @@ public class NavigationViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.tab_navigation, group, false);
 
         TouchImageView imageView = (TouchImageView) view.findViewById(R.id.navigation_view_image); //new ImageView(this);
-        VectorDrawable image = (VectorDrawable)getResources().getDrawable(R.drawable.room, getActivity().getTheme());
+        Drawable image = AppCompatDrawableManager.get().getDrawable(getContext(), R.drawable.room);
         imageView.setMaxZoom(3.0f);
         imageView.setImageDrawable(image);
 

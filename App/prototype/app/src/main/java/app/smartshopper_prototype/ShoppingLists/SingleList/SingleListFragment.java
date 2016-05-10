@@ -31,7 +31,7 @@ public class SingleListFragment extends Fragment implements  AdapterView.OnItemC
         ListView list = (ListView) view.findViewById(R.id.singlelist_list);
 
         // Create ArrayAdapter using an empty list
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<>(getContext(), R.layout.simple_row, new ArrayList<String>());
+        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
 
         if(newList!= ""){
             listAdapter.add(newList);

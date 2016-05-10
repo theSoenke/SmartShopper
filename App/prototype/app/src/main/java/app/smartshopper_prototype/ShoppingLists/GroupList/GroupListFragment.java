@@ -1,6 +1,5 @@
 package app.smartshopper_prototype.ShoppingLists.GroupList;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +17,6 @@ import java.util.List;
 
 import app.smartshopper_prototype.HomeActivity;
 import app.smartshopper_prototype.R;
-import app.smartshopper_prototype.ShoppingLists.SingleList.DetailedSingleListActivity;
 
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
@@ -48,7 +44,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         listgroups.add("OE-Liste");
 
 
-        final HashMap<String, List<String>> childlists = new HashMap<>();
+        final HashMap<String, List<String>> childlists = new HashMap<String, List<String>>();
         List<String> parent0childs = new ArrayList<String>();
         List<String> parent1childs = new ArrayList<String>();
         List<String> parent2childs = new ArrayList<String>();
@@ -68,7 +64,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             newList = extras.getString("newList");
             newParticipants = extras.getString("participants");
             listgroups.add(newList);
-            List<String> parent3childs = new ArrayList<>();
+            List<String> parent3childs = new ArrayList<String>();
             parent3childs.add(newParticipants);
             childlists.put(listgroups.get(3), parent3childs);
         }
