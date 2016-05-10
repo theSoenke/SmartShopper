@@ -159,8 +159,8 @@ public class MainActivity extends Activity implements BeaconConsumer {
                             distanz4 = ""+ b.getDistance();
                         }
                     }
-                    trilaterationTool.updateDistances(beacons);
-                    localisationString= trilaterationTool.trilaterateFourBeacons(beacons).toString();
+                    trilaterationTool.updateBeacons(beacons);
+                    localisationString= trilaterationTool.trilaterateHeuristic().toString();
 
                     runOnUiThread(new Runnable() {
                         @Override
