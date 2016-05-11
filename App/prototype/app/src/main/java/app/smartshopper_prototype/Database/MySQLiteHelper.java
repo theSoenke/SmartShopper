@@ -17,6 +17,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String SHOPPINGLIST_TABLE_NAME = "shopping_list_table";
     public static final String SHOPPINGLIST_COLUMN_ID = "id";
     public static final String SHOPPINGLIST_COLUMN_NAME = "name";
+    public static final String SHOPPINGLIST_COLUMN_SINGLE = "single_list";
 
     public static final String ITEMENTRY_TABLE_NAME = "item_entry_table";
     public static final String ITEMENTRY_PRODUCT_ID = "product_id";
@@ -28,21 +29,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
 
     //Database creation statement
-    private static final String PRODUCT_DATABASE_CREATE = "create table " + PRODUCT_TABLE_NAME + "(" +
-            PRODUCT_COLUMN_ID + " integer primary key autoincrement," +
-            PRODUCT_COLUMN_NAME + " text not null," +
-            PRODUCT_COLUMN_POSITION_X + " integer," +
-            PRODUCT_COLUMN_POSITION_Y + " integer);";
+    private static final String PRODUCT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PRODUCT_TABLE_NAME + "(" +
+            PRODUCT_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+            PRODUCT_COLUMN_NAME + " TEXT NOT NULL," +
+            PRODUCT_COLUMN_POSITION_X + " INTEGER," +
+            PRODUCT_COLUMN_POSITION_Y + " INTEGER);";
 
-    private static final String SHOPPINGLIST_DATABASE_CREATE = "create table " + SHOPPINGLIST_TABLE_NAME + "(" +
-            SHOPPINGLIST_COLUMN_ID + " integer primary key autoincrement," +
-            SHOPPINGLIST_COLUMN_NAME + " text not null);";
+    private static final String SHOPPINGLIST_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + SHOPPINGLIST_TABLE_NAME + "(" +
+            SHOPPINGLIST_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+            SHOPPINGLIST_COLUMN_NAME + " TEXT NOT NULL," +
+            SHOPPINGLIST_COLUMN_SINGLE + " BOOLEAN NOT NULL);";
 
-    private static final String ITEMENTRY_DATABASE_CREATE = "create table " + ITEMENTRY_TABLE_NAME + "(" +
-            ITEMENTRY_PRODUCT_ID + " integer," +
-            ITEMENTRY_LIST_ID + " integer," +
-            ITEMENTRY_AMOUNT + " integer not null," +
-            "primary key(" + ITEMENTRY_PRODUCT_ID + ", " + ITEMENTRY_LIST_ID + "));";
+    private static final String ITEMENTRY_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + ITEMENTRY_TABLE_NAME + "(" +
+            ITEMENTRY_PRODUCT_ID + " INTEGER," +
+            ITEMENTRY_LIST_ID + " INTEGER," +
+            ITEMENTRY_AMOUNT + " INTEGER NOT NULL," +
+            "PRIMARY KEY(" + ITEMENTRY_PRODUCT_ID + ", " + ITEMENTRY_LIST_ID + "));";
 
 
     public MySQLiteHelper(Context context, String database_name, int database_version) {

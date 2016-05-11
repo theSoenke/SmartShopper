@@ -10,8 +10,14 @@ import android.database.SQLException;
  */
 public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
 
-    public ItemEntryDataSource(Context context, String name, String[] columns) {
-        super(context, name, columns);
+    public ItemEntryDataSource(Context context) {
+        super(context,
+                MySQLiteHelper.ITEMENTRY_TABLE_NAME,
+                new String[]{
+                        MySQLiteHelper.ITEMENTRY_PRODUCT_ID,
+                        MySQLiteHelper.ITEMENTRY_LIST_ID,
+                        MySQLiteHelper.ITEMENTRY_AMOUNT
+                });
     }
 
     @Override
@@ -41,7 +47,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      * @param amount    The amount of this particular product in this list.
      * @return A new item entry with unique ID.
      */
-    public ItemEntry createItem(int productID, int listID, int amount) {
+    public ItemEntry add(long productID, long listID, int amount) {
         ItemEntry entry = new ItemEntry();
         entry.setProductID(productID);
         entry.setListID(listID);

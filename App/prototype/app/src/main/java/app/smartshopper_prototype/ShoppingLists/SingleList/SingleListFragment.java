@@ -19,13 +19,13 @@ import app.smartshopper_prototype.Database.ShoppingListDataSource;
 import app.smartshopper_prototype.HomeActivity;
 import app.smartshopper_prototype.R;
 
-public class SingleListFragment extends Fragment implements  AdapterView.OnItemClickListener{
+public class SingleListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
         Bundle extras = getArguments();
         String newList = "";
-        if(extras != null){
+        if (extras != null) {
             newList = extras.getString("newList");
         }
         View view = inflater.inflate(R.layout.fragment_sinlge_list, group, false);
@@ -35,19 +35,18 @@ public class SingleListFragment extends Fragment implements  AdapterView.OnItemC
         // Create ArrayAdapter using an empty list
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
 
+        // Get all entries and add all single-list entries to the list adapter.
         ShoppingListDataSource source = new ShoppingListDataSource(getContext());
 
-        if(newList!= ""){
-//            listAdapter.add(newList);
-            source.add(newList);
+        if (newList != "") {
+            source.add(newList, true);
         }
         List<ShoppingList> listOfEntries = source.getAllEntries();
-        for(ShoppingList entry:listOfEntries){
-            listAdapter.add(entry.getEntryName());
+        for (ShoppingList entry : listOfEntries) {
+            if (entry.isSingleList()) {
+                listAdapter.add(entry.getEntryName());
+            }
         }
-//        listAdapter.add("Baumarkt");
-//        listAdapter.add("Wocheneinkauf");
-//        listAdapter.add("Getränkemarkt");
 
         // add adapter with items to list (necessary to display items)
         list.setAdapter(listAdapter);
@@ -58,7 +57,7 @@ public class SingleListFragment extends Fragment implements  AdapterView.OnItemC
         FloatingActionButton addList = (FloatingActionButton) view.findViewById(R.id.fabAddSingleList);
         addList.setOnClickListener(new View.OnClickListener() {
             public void onClick(View vw) {
-                Intent i = new Intent(getContext(),HomeActivity.class);
+                Intent i = new Intent(getContext(), HomeActivity.class);
                 i.putExtra("source", "SingleListFragment");
                 i.putExtra("value", "addsinglelist");
                 i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);

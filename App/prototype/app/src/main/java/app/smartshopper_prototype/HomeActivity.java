@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import app.smartshopper_prototype.Database.Synchronizer;
 import app.smartshopper_prototype.Settings.SettingsActivity;
 import app.smartshopper_prototype.ShoppingLists.GroupList.AddGroupListFragment;
 import app.smartshopper_prototype.ShoppingLists.GroupList.GroupListFragment;
@@ -29,6 +30,10 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Synchronizer synchronizer = new Synchronizer();
+        synchronizer.sync(getApplicationContext());
+
         setContentView(R.layout.home_layout);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);

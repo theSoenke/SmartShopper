@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Felix on 02.05.2016. Refactored by Hauke on 10.05.2016.
  */
@@ -23,21 +26,6 @@ public class ProductDataSource extends DatabaseTable<Product> {
                         MySQLiteHelper.PRODUCT_COLUMN_POSITION_X,
                         MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y
                 });
-    }
-
-    /**
-     * Opens up a database connection and gets a writable database.
-     *
-     * @throws SQLException
-     */
-    public void open() throws SQLException {
-        super.open();
-
-        //TODO get items from server if available
-        add("Apfel", 0, 0);
-        add("Birne", 0, 50);
-        add("VW Golf", 0, 100);
-        add("Milch", 100, 150);
     }
 
     @Override

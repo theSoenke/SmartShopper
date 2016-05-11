@@ -38,8 +38,8 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            T product = cursorToEntry(cursor);
-            entries.add(product);
+            T entry = cursorToEntry(cursor);
+            entries.add(entry);
             cursor.moveToNext();
         }
         cursor.close();
@@ -82,6 +82,27 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
         } else {
             newEntry.setId(cursor.getCount());
         }
+    }
+
+    /**
+     * Gets all entries that matches the given query (=WHERE clause).
+     *
+     * @param query A where clause to find all wanted entries.
+     * @return A list with all antries that have been found.
+     */
+    public List<T> getEntry(String query) {
+        List<T> entryList = new ArrayList<T>();
+        Cursor cursor = database.query(tableName, allColumns, query, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            T entry = cursorToEntry(cursor);
+            entryList.add(entry);
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        return entryList;
     }
 
     /**

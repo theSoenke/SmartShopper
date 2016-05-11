@@ -20,30 +20,19 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                 MySQLiteHelper.SHOPPINGLIST_TABLE_NAME,
                 new String[]{
                         MySQLiteHelper.SHOPPINGLIST_COLUMN_ID,
-                        MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME
+                        MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME,
+                        MySQLiteHelper.SHOPPINGLIST_COLUMN_SINGLE
                 });
-    }
-
-    /**
-     * Opens up a database connection and gets a writable database.
-     *
-     * @throws SQLException
-     */
-    public void open() throws SQLException {
-        super.open();
-
-        //TODO create lists and fill them with items
-        add("Baumarkt");
-        add("Wocheneinkauf");
-        add("Getränkemarkt");
     }
 
     @Override
     public void add(ShoppingList list) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
+        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_SINGLE, list.isSingleList());
 
-        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
+        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'" +
+                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_SINGLE + " = " + (list.isSingleList() ? 1 : 0);
 
         super.addEntryToDatabase(
                 list,
@@ -58,9 +47,10 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      * @param listName The name of the new list.
      * @return The new shopping list with unique ID.
      */
-    public ShoppingList add(String listName) {
+    public ShoppingList add(String listName, boolean singleList) {
         ShoppingList list = new ShoppingList();
         list.setEntryName(listName);
+        list.setSingleList(singleList);
 
         add(list);
 
@@ -77,6 +67,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         ShoppingList list = new ShoppingList();
         list.setId(cursor.getInt(0));
         list.setEntryName(cursor.getString(1));
+        list.setSingleList(cursor.getString(2).equals("0") ? false : true);
         return list;
     }
 }

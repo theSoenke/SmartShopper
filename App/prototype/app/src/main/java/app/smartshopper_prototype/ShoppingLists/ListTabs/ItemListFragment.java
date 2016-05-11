@@ -8,9 +8,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import app.smartshopper_prototype.Database.DatabaseEntry;
+import app.smartshopper_prototype.Database.ItemEntry;
+import app.smartshopper_prototype.Database.ItemEntryDataSource;
+import app.smartshopper_prototype.Database.MySQLiteHelper;
+import app.smartshopper_prototype.Database.Product;
+import app.smartshopper_prototype.Database.ProductDataSource;
+import app.smartshopper_prototype.Database.ShoppingList;
+import app.smartshopper_prototype.Database.ShoppingListDataSource;
 import app.smartshopper_prototype.R;
 
 /**
@@ -34,49 +44,79 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
         ListView list = (ListView) view.findViewById(R.id.singlelist_list);
 
-        String liste = "";
+        String listName = "";
         if (group != null) {
-            liste = group.getTag().toString();
+            listName = group.getTag().toString();
         }
 
         // Create ArrayAdapter using an empty list
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
 
-        // connect to database to get list
-        if (liste.equalsIgnoreCase("Baumarkt")) {
-            listAdapter.add("Hammer");
-            listAdapter.add("Bohrmaschine");
-            listAdapter.add("Farbe");
-        } else if (liste.equalsIgnoreCase("Wocheneinkauf")) {
-            listAdapter.add("Wurst");
-            listAdapter.add("Käse");
-            listAdapter.add("Tiefkühlpizza");
-            listAdapter.add("Toast");
-            listAdapter.add("Bratwurst");
-            listAdapter.add("Curry-Ketchup");
-            listAdapter.add("Tomate");
-            listAdapter.add("Zwiebeln");
-        } else if (liste.equalsIgnoreCase("Getränkemarkt")) {
-            listAdapter.add("Bier");
+        // get all lists with this name
+        ShoppingListDataSource shoppingListSource = new ShoppingListDataSource(getContext());
+        List<ShoppingList> listOfEntries = shoppingListSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + "='" + listName+"'");
 
+        if(listOfEntries.size() > 0) {
+            if(listOfEntries.size() > 1){
+                Toast.makeText(getContext(), "There's more than one list with the name "+listName+"! Taking the first occurrence.", Toast.LENGTH_SHORT).show();
+            }
+            long shoppingListID = listOfEntries.get(0).getId();
+
+            ItemEntryDataSource itemSource = new ItemEntryDataSource(getContext());
+            List<ItemEntry> items = itemSource.getEntry(MySQLiteHelper.ITEMENTRY_LIST_ID+"="+shoppingListID);
+
+            ProductDataSource productSource = new ProductDataSource(getContext());
+
+            for(ItemEntry item : items){
+                List<Product> product = productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + "=" + item.getProductID());
+
+                if(product.size() > 0){
+                    String entryString = product.get(0).getEntryName();
+                    if(item.getAmount() > 1){
+                        entryString += " ("+item.getAmount()+"x)";
+                    }
+                    listAdapter.add(entryString);
+                }
+            }
+
+            // connect to database to get list
+//        if (liste.equalsIgnoreCase("Baumarkt")) {
+//            listAdapter.add("Hammer");
+//            listAdapter.add("Bohrmaschine");
+//            listAdapter.add("Farbe");
+//        } else if (liste.equalsIgnoreCase("Wocheneinkauf")) {
+//            listAdapter.add("Wurst");
+//            listAdapter.add("Käse");
+//            listAdapter.add("Tiefkühlpizza");
+//            listAdapter.add("Toast");
+//            listAdapter.add("Bratwurst");
+//            listAdapter.add("Curry-Ketchup");
+//            listAdapter.add("Tomate");
+//            listAdapter.add("Zwiebeln");
+//        } else if (liste.equalsIgnoreCase("Getränkemarkt")) {
+//            listAdapter.add("Bier");
+//
+//        }
+//
+//        if (liste.equalsIgnoreCase("Geburtstag von Max Mustermann")) {
+//            listAdapter.add("Geschenke");
+//        } else if (liste.equalsIgnoreCase("Vereinstreffen")) {
+//            listAdapter.add("Kööm");
+//            listAdapter.add("Neue Klootkugel");
+//            listAdapter.add("Notizblock");
+//        } else if (liste.equalsIgnoreCase("OE-Liste")) {
+//            listAdapter.add("Bier");
+//            listAdapter.add("Mate");
+//        }
+
+            // add adapter with items to list (necessary to display items)
+            list.setAdapter(listAdapter);
+
+            // to get notified about clicks on items
+            list.setOnItemClickListener(this);
+        }else{
+            Toast.makeText(getContext(), "There's no list calles '"+list+"'!", Toast.LENGTH_SHORT).show();
         }
-
-        if (liste.equalsIgnoreCase("Geburtstag von Max Mustermann")) {
-            listAdapter.add("Geschenke");
-        } else if (liste.equalsIgnoreCase("Vereinstreffen")) {
-            listAdapter.add("Kööm");
-            listAdapter.add("Neue Klootkugel");
-            listAdapter.add("Notizblock");
-        } else if (liste.equalsIgnoreCase("OE-Liste")) {
-            listAdapter.add("Bier");
-            listAdapter.add("Mate");
-        }
-
-        // add adapter with items to list (necessary to display items)
-        list.setAdapter(listAdapter);
-
-        // to get notified about clicks on items
-        list.setOnItemClickListener(this);
 
         return view;
     }

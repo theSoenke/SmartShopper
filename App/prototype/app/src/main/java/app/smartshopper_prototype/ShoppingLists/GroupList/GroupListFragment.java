@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import app.smartshopper_prototype.Database.ShoppingList;
+import app.smartshopper_prototype.Database.ShoppingListDataSource;
 import app.smartshopper_prototype.HomeActivity;
 import app.smartshopper_prototype.R;
 
@@ -39,9 +41,19 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         FloatingActionButton btAdGroupList = (FloatingActionButton) view.findViewById(R.id.fabAddGroupList);
         final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
         final List<String> listgroups = new ArrayList<String>();
-        listgroups.add("Geburtstag von Max Mustermann");
-        listgroups.add("Vereinstreffen");
-        listgroups.add("OE-Liste");
+
+        // Get all lists from the database and add all the non-single list entries to the list.
+        ShoppingListDataSource source = new ShoppingListDataSource(getContext());
+
+        if (newList != "") {
+            source.add(newList, true);
+        }
+        List<ShoppingList> listOfEntries = source.getAllEntries();
+        for (ShoppingList entry : listOfEntries) {
+            if (!entry.isSingleList()) {
+                listgroups.add(entry.getEntryName());
+            }
+        }
 
 
         final HashMap<String, List<String>> childlists = new HashMap<String, List<String>>();

@@ -5,23 +5,23 @@ package app.smartshopper_prototype.Database;
  */
 public class ItemEntry extends DatabaseEntry {
 
-    private int productID;
-    private int listID;
+    private long productID;
+    private long listID;
     private int amount;
 
-    public int getProductID() {
+    public long getProductID() {
         return productID;
     }
 
-    public void setProductID(int productID) {
+    public void setProductID(long productID) {
         this.productID = productID;
     }
 
-    public int getListID() {
+    public long getListID() {
         return listID;
     }
 
-    public void setListID(int listID) {
+    public void setListID(long listID) {
         this.listID = listID;
     }
 
