@@ -4,10 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Felix on 02.05.2016. Refactored by Hauke on 10.05.2016.
@@ -38,10 +34,10 @@ public class ProductDataSource extends DatabaseTable<Product> {
         super.open();
 
         //TODO get items from server if available
-        createProduct("Apfel", 0, 0);
-        createProduct("Birne", 0, 50);
-        createProduct("VW Golf", 0, 100);
-        createProduct("Milch", 100, 150);
+        add("Apfel", 0, 0);
+        add("Birne", 0, 50);
+        add("VW Golf", 0, 100);
+        add("Milch", 100, 150);
     }
 
     @Override
@@ -49,26 +45,41 @@ public class ProductDataSource extends DatabaseTable<Product> {
         return MySQLiteHelper.ITEMENTRY_PRODUCT_ID + " = '" + entry.getId();
     }
 
+    @Override
+    public void add(Product product) {
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product.getEntryName());
+        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_X, product.getPosX());
+        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y, product.getPosY());
+
+        String insertQuery = MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product.getEntryName() + "'" +
+                " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_X + " = " + product.getPosX() +
+                " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y + " = " + product.getPosY();
+
+        super.addEntryToDatabase(
+                product,
+                insertQuery,
+                values);
+    }
+
     /**
-     * Creates a new produzct, adds it to the database and returns the new product.
-     * If the product is already in the database, nothing happens and the product will be returned returned.
+     * Creates a new product, adds it to the database and returns the new product.
+     * If the product is already in the database, nothing happens and the product will be returned.
      *
      * @param product_name The name of the product
      * @param posx         The x coordinate in the supermarket.
      * @param posy         The y coordinate in the supermarket.
-     * @return The product with the properties given by the parameters.
+     * @return The new product list with unique ID.
      */
-    public Product createProduct(String product_name, int posx, int posy) {
-        ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product_name);
-        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_X, posx);
-        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y, posy);
+    public Product add(String product_name, int posx, int posy) {
+        Product product = new Product();
+        product.setEntryName(product_name);
+        product.setPosX(posx);
+        product.setPosY(posy);
 
-        return super.createEntry(
-                MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product_name + "'" +
-                        " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_X + " = " + posx +
-                        " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y + " = " + posy,
-                values);
+        add(product);
+
+        return product;
     }
 
     @Override

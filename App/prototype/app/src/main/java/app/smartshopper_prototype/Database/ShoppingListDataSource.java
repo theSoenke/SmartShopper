@@ -33,26 +33,43 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         super.open();
 
         //TODO create lists and fill them with items
+        add("Baumarkt");
+        add("Wocheneinkauf");
+        add("Getränkemarkt");
+    }
+
+    @Override
+    public void add(ShoppingList list) {
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
+
+        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
+
+        super.addEntryToDatabase(
+                list,
+                insertQuery,
+                values);
+    }
+
+    /**
+     * Creates a new shopping list and adds it to the database.
+     * The database then will ad a unique ID to the list.
+     *
+     * @param listName The name of the new list.
+     * @return The new shopping list with unique ID.
+     */
+    public ShoppingList add(String listName) {
+        ShoppingList list = new ShoppingList();
+        list.setEntryName(listName);
+
+        add(list);
+
+        return list;
     }
 
     @Override
     public String getWhereClause(ShoppingList entry) {
         return MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = " + entry.getId();
-    }
-
-    /**
-     * Creates a new shopping list based on the given name.
-     *
-     * @param listName The name of the list.
-     * @return A new shopping list.
-     */
-    public ShoppingList createShoppingList(String listName) {
-        ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, listName);
-
-        return super.createEntry(
-                MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'",
-                values);
     }
 
     @Override

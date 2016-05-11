@@ -14,17 +14,42 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         super(context, name, columns);
     }
 
-    public ItemEntry createItem(int productID, int listID, int amount) {
+    @Override
+    public void add(ItemEntry entry) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.ITEMENTRY_PRODUCT_ID, productID);
-        values.put(MySQLiteHelper.ITEMENTRY_LIST_ID, listID);
-        values.put(MySQLiteHelper.ITEMENTRY_AMOUNT, amount);
+        values.put(MySQLiteHelper.ITEMENTRY_PRODUCT_ID, entry.getProductID());
+        values.put(MySQLiteHelper.ITEMENTRY_LIST_ID, entry.getListID());
+        values.put(MySQLiteHelper.ITEMENTRY_AMOUNT, entry.getAmount());
 
-        return super.createEntry(
-                MySQLiteHelper.ITEMENTRY_PRODUCT_ID + " = " + productID +
-                        " AND " + MySQLiteHelper.ITEMENTRY_LIST_ID + " = " + listID +
-                        " AND " + MySQLiteHelper.ITEMENTRY_AMOUNT + " = " + amount,
+        String insertQuery = MySQLiteHelper.ITEMENTRY_PRODUCT_ID + " = " + entry.getProductID() +
+                " AND " + MySQLiteHelper.ITEMENTRY_LIST_ID + " = " + entry.getListID() +
+                " AND " + MySQLiteHelper.ITEMENTRY_AMOUNT + " = " + entry.getAmount();
+
+        super.addEntryToDatabase(
+                entry,
+                insertQuery,
                 values);
+    }
+
+    /**
+     * Creates a new item entry objects, adds it into the database and returns the new entry
+     * including a unique ID.
+     * There'll be no duplicate entries in the database.
+     *
+     * @param productID The ID of the product.
+     * @param listID    The ID of the list.
+     * @param amount    The amount of this particular product in this list.
+     * @return A new item entry with unique ID.
+     */
+    public ItemEntry createItem(int productID, int listID, int amount) {
+        ItemEntry entry = new ItemEntry();
+        entry.setProductID(productID);
+        entry.setListID(listID);
+        entry.setAmount(amount);
+
+        add(entry);
+
+        return entry;
     }
 
     /**

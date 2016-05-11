@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import app.smartshopper_prototype.Database.ShoppingList;
+import app.smartshopper_prototype.Database.ShoppingListDataSource;
 import app.smartshopper_prototype.HomeActivity;
 import app.smartshopper_prototype.R;
 
@@ -33,12 +35,19 @@ public class SingleListFragment extends Fragment implements  AdapterView.OnItemC
         // Create ArrayAdapter using an empty list
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
 
+        ShoppingListDataSource source = new ShoppingListDataSource(getContext());
+
         if(newList!= ""){
-            listAdapter.add(newList);
+//            listAdapter.add(newList);
+            source.add(newList);
         }
-        listAdapter.add("Baumarkt");
-        listAdapter.add("Wocheneinkauf");
-        listAdapter.add("Getränkemarkt");
+        List<ShoppingList> listOfEntries = source.getAllEntries();
+        for(ShoppingList entry:listOfEntries){
+            listAdapter.add(entry.getEntryName());
+        }
+//        listAdapter.add("Baumarkt");
+//        listAdapter.add("Wocheneinkauf");
+//        listAdapter.add("Getränkemarkt");
 
         // add adapter with items to list (necessary to display items)
         list.setAdapter(listAdapter);

@@ -29,19 +29,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     //Database creation statement
     private static final String PRODUCT_DATABASE_CREATE = "create table " + PRODUCT_TABLE_NAME + "(" +
-            PRODUCT_COLUMN_ID + " integer primary key autoincrement,"+
+            PRODUCT_COLUMN_ID + " integer primary key autoincrement," +
             PRODUCT_COLUMN_NAME + " text not null," +
             PRODUCT_COLUMN_POSITION_X + " integer," +
             PRODUCT_COLUMN_POSITION_Y + " integer);";
 
-    private static final String SHOPPINGLIST_DATABASE_CREATE = "create table " +SHOPPINGLIST_TABLE_NAME + "(" +
+    private static final String SHOPPINGLIST_DATABASE_CREATE = "create table " + SHOPPINGLIST_TABLE_NAME + "(" +
             SHOPPINGLIST_COLUMN_ID + " integer primary key autoincrement," +
             SHOPPINGLIST_COLUMN_NAME + " text not null);";
 
     private static final String ITEMENTRY_DATABASE_CREATE = "create table " + ITEMENTRY_TABLE_NAME + "(" +
-            ITEMENTRY_PRODUCT_ID + " integer primary key," +
-            ITEMENTRY_LIST_ID + " integer primary key," +
-            ITEMENTRY_AMOUNT + " integer not null);";
+            ITEMENTRY_PRODUCT_ID + " integer," +
+            ITEMENTRY_LIST_ID + " integer," +
+            ITEMENTRY_AMOUNT + " integer not null," +
+            "primary key(" + ITEMENTRY_PRODUCT_ID + ", " + ITEMENTRY_LIST_ID + "));";
 
 
     public MySQLiteHelper(Context context, String database_name, int database_version) {

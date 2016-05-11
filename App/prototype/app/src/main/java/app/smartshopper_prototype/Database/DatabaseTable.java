@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
         this.tableName = tableName;
         this.allColumns = columns;
         this.dbHelper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
+        open();
     }
 
     /**
@@ -61,28 +63,42 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     }
 
     /**
-     * Creates a new entry from the dynamic type T.
+     * Creates a new entry from the dynamic type T and adds it into the database.
      *
      * @param query  A SQL query to identify an existing entry.
      * @param values
      * @return
      */
-    public T createEntry(String query, ContentValues values) {
+    public void addEntryToDatabase(T newEntry, String query, ContentValues values) {
         Cursor cursor = database.query(tableName,
                 allColumns,
                 query,
                 null, null, null, null);
 
-        T newEntry = cursorToEntry(cursor);
-
-        // check if product already exists
-        if (cursor.getCount() == 0) {
-
+        // check if product already exists and set the ID
+        if (cursor.getCount() <= 0) {
             long insertId = database.insert(tableName, null, values);
             newEntry.setId(insertId);
+        } else {
+            newEntry.setId(cursor.getCount());
         }
-        return newEntry;
     }
+
+    /**
+     * Removes the entry from the database.
+     *
+     * @param entry The entry that should be deleted.
+     */
+    public void removeEntryFromDatabase(T entry) {
+        database.delete(tableName, getWhereClause(entry), null);
+    }
+
+    /**
+     * Adds the given entry to the database. There'll be no duplicates in the database.
+     *
+     * @param entry The new entry to add.
+     */
+    public abstract void add(T entry);
 
     /**
      * Gives a where clause for the given item that will return one entry with this item in it.
@@ -91,15 +107,6 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      * @return A where clause to find the given entry.
      */
     public abstract String getWhereClause(T entry);
-
-    /**
-     * Removes the entry from the database.
-     *
-     * @param entry The entry that should be deleted.
-     */
-    public void deleteEntry(T entry) {
-        database.delete(tableName, getWhereClause(entry), null);
-    }
 
     /**
      * Converts a cursor into an entry.
