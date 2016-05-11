@@ -27,13 +27,23 @@ router
       res.json(list)
     })
   })
-  .put('/list/:name', function (req, res) {
-    let name = req.params.name
-    res.json('update: ' + name)
+  .put('/list/:id', function (req, res, next) {
+    let query = {'_id': req.params.id}
+    let properties = {upsert: true, runValidators: true, new: true}
+    List.findOneAndUpdate(query, req.body, properties, function (err, doc) {
+      if (err) {
+        return next(err)
+      }
+      return res.json(doc)
+    })
   })
-  .delete('/list/:name', function (req, res) {
-    let name = req.params.name
-    res.json('delete: ' + name)
+  .delete('/list/:id', function (req, res, next) {
+    List.findByIdAndRemove(req.params.id, function (err) {
+      if (err) {
+        return next(err)
+      }
+      res.json({message: 'deleted list', _id: req.params.id})
+    })
   })
 
 module.exports = router
