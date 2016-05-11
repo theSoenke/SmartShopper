@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   version: 1.0.0
-  title: Test
+  title: SmartShopper API
   description: API for the SmartShopper Backend
 host: api.tecfuture.de:3000
 basePath: /
@@ -50,7 +50,7 @@ paths:
               $ref: '#/definitions/NewList'
       responses:
         200:
-          description: pet response
+          description: list response
           schema:
             $ref: '#/definitions/List'
         default:
@@ -130,14 +130,16 @@ paths:
           required: true
 
           schema:
-            $ref: '#/definitions/ProductSearch'
+            type: array
+            items:
+              $ref: '#/definitions/NewProduct'
       responses:
         200:
           description: imported products
           schema:
             type: array
             items:
-              $ref: '#/definitions/Product'
+              $ref: '#/definitions/NewProduct'
         default:
           description: unexpected error
           schema:
@@ -189,19 +191,6 @@ definitions:
     properties:
       name:
         type: string
-
-  ProductSearch:
-    allOf:
-      - required:
-        - query
-        - products
-        properties:
-          query:
-            type: string
-          products:
-            type: array
-            items:
-              $ref: '#/definitions/Product'
 
   Error:
     required:

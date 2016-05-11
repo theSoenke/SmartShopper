@@ -37,7 +37,7 @@ router
       return res.json(doc)
     })
   })
-  .delete('/list/:id', function (req, res, next) {
+  .delete('/lists/:id', function (req, res, next) {
     List.findByIdAndRemove(req.params.id, function (err) {
       if (err) {
         return next(err)
