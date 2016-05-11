@@ -1,9 +1,11 @@
 'use strict'
 
-var fs = require('fs')
+const fs = require('fs')
 const express = require('express')
 const bodyParser = require('body-parser')
-var morgan = require('morgan')
+const morgan = require('morgan')
+const path = require('path')
+const helmet = require('helmet')
 
 const config = require('./config')
 const app = express()
@@ -11,7 +13,13 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
-var accessLogStream = fs.createWriteStream(__dirname + '/access.log', {flags: 'a'})
+app.use(helmet.hidePoweredBy())
+app.use(helmet.noSniff())
+app.use(helmet.xssFilter())
+app.use(helmet.noCache())
+app.use(helmet.frameguard())
+
+let accessLogStream = fs.createWriteStream(path.join(__dirname, '/access.log'), {flags: 'a'})
 app.use(morgan('combined', {stream: accessLogStream}))
 
 app.use(require('./controllers'))
