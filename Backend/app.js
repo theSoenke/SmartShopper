@@ -10,14 +10,14 @@ const helmet = require('helmet')
 const config = require('./config')
 const app = express()
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: false}))
-
 app.use(helmet.hidePoweredBy())
 app.use(helmet.noSniff())
 app.use(helmet.xssFilter())
 app.use(helmet.noCache())
 app.use(helmet.frameguard())
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: false}))
 
 let accessLogStream = fs.createWriteStream(path.join(__dirname, '/access.log'), {flags: 'a'})
 app.use(morgan('combined', {stream: accessLogStream}))
