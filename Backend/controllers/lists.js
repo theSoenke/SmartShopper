@@ -15,7 +15,7 @@ router
       res.json(docs)
     })
   })
-  .post('/list', function (req, res, next) {
+  .post('/lists', function (req, res, next) {
     let list = List()
     list.name = req.body.name
     list.products = req.body.products
@@ -27,7 +27,7 @@ router
       res.json(list)
     })
   })
-  .put('/list/:id', function (req, res, next) {
+  .put('/lists/:id', function (req, res, next) {
     let query = {'_id': req.params.id}
     let properties = {upsert: true, runValidators: true, new: true}
     List.findOneAndUpdate(query, req.body, properties, function (err, doc) {
