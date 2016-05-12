@@ -7,8 +7,8 @@ exports.registerUser = function (req, res, next) {
   let credentials = basicAuth(req)
 
   let user = User({
-    username: credentials.username,
-    password: credentials.password
+    username: credentials.name,
+    password: credentials.pass
   })
 
   user.save(function (err) {
@@ -16,7 +16,8 @@ exports.registerUser = function (req, res, next) {
       return next(err)
     }
 
-    res.json({status: 'User registered'})
+    res.json(user)
+  // res.json({status: 'User registered'})
   })
 }
 
@@ -24,7 +25,7 @@ exports.requireAuthentication = function (req, res, next) {
   let credentials = basicAuth(req)
 
   if (!credentials || !credentials.name || !credentials.pass) {
-    let err = new Error('Authentication failed')
+    let err = new Error('Invalid credentials')
     err.statusCode = 401
     return next(err)
   }
