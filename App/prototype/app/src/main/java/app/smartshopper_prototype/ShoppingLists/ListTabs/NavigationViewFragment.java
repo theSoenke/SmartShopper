@@ -25,7 +25,6 @@ import app.smartshopper_prototype.R;
 
 public class NavigationViewFragment extends Fragment {
 
-
     private MapView mapView;
     private BitmapLayer bitmapLayer;
     private List<PointF> marks;
@@ -79,7 +78,6 @@ public class NavigationViewFragment extends Fragment {
             e.printStackTrace();
             Log.e("ERROR: ", e.getMessage());
         }
-        mapView.loadMap(bitmap);
         mapView.setMapViewListener(new MapViewListener() {
             @Override
             public void onMapLoadSuccess() {
@@ -103,6 +101,8 @@ public class NavigationViewFragment extends Fragment {
                 Log.i("Map", "onMapLoadFail");
             }
         });
+
+        mapView.loadMap(bitmap);
 
         return view;
     }
