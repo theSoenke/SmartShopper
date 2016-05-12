@@ -7,6 +7,7 @@ import org.altbeacon.beacon.Beacon;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class TrilaterationTool {
     public Map<Integer, Vector> beaconMap;
 
     List<BeaconEntity> beacons;
+    List<BeaconEntity> sortedBeacons;
 
 
     Vector lastTrilateration;
@@ -64,8 +66,10 @@ public class TrilaterationTool {
         distances = new ArrayList<Double>(4);
         for (int i = 0; i < 4; i++)
         {
-            distances.add(i, 0.0);
+            distances.add(i, 2.0);
         }
+
+        sortedBeacons = beacons;
 
     }
 
@@ -81,7 +85,7 @@ public class TrilaterationTool {
                 if(b.getId3().toInt() == be.getMinor())
                 {
                     be.updateDistance(b.getDistance());
-                    be.updateWeight(b.getTxPower());
+                    be.updateWeight(b.getRssi());
                 }
 
             }
@@ -90,6 +94,13 @@ public class TrilaterationTool {
 
 
     }
+
+    public void sortBeacons()
+    {
+        Collections.sort(sortedBeacons);
+    }
+
+
 
 
     /*public Vector trilaterateFourBeacons()
@@ -186,6 +197,7 @@ public class TrilaterationTool {
         return lastTrilateration;
 
     }
+
 
     /*public Vector getPosition(Beacon beacon)
     {
