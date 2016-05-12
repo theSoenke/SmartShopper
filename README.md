@@ -1,3 +1,3 @@
 # SmartShopper
 
-API http://docs.smartshopper1.apiary.io/#
+API http://docs.smartshopperdocs.apiary.io
