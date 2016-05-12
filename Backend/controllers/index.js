@@ -1,14 +1,14 @@
 'use strict'
 
-const express = require('express')
-const mongoose = require('mongoose')
+var express = require('express')
+var mongoose = require('mongoose')
+var config = require('../config')
+var importer = require('./importer')
+var search = require('./search')
+var lists = require('./lists')
+var auth = require('./auth')
 
-const config = require('../config')
-const router = express.Router()
-
-const importer = require('./importer')
-const search = require('./search')
-const lists = require('./lists')
+var router = express.Router()
 
 mongoose.connect(config.database.url)
 mongoose.connection.on('error', function () {
@@ -19,6 +19,9 @@ router.get('/', function (req, res) {
   res.send('Server running')
 })
 
+// API Routes
+router.use(auth.requireAuthentication)
+
 router.get('/lists', lists.findLists)
 router.post('/lists', lists.uploadList)
 router.put('/lists/:id', lists.updateList)
@@ -28,12 +31,12 @@ router.get('/search/:query', search.findProducts)
 
 router.post('/products/import', importer.uploadProducts)
 
-router.use(function errorHandler (err, req, res, next) {
+router.use(function (err, req, res, next) {
   if (req.app.get('env') !== 'development') {
     delete err.stack
   }
 
-  res.status(err.statusCode || 400).json(err)
+  res.status(err.statusCode || 400).json({error: err.message})
 })
 
 module.exports = router

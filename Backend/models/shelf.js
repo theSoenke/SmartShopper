@@ -1,7 +1,7 @@
 'use strict'
 
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+var mongoose = require('mongoose')
+var Schema = mongoose.Schema
 
 let shelfSchema = new Schema({
   name: { type: String, required: true },

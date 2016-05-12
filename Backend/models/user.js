@@ -1,7 +1,10 @@
 'use strict'
 
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+var mongoose = require('mongoose')
+var bcrypt = require('bcrypt')
+
+var Schema = mongoose.Schema
+const SALT_WORK_FACTOR = 10
 
 let userSchema = new Schema({
   username: { type: String, required: true, unique: true, text: true },
@@ -19,7 +22,19 @@ userSchema.pre('save', function (next) {
     this.created_at = currentDate
   }
 
-  next()
+  if (!this.isModified('password')) {
+    return next()
+  }
+
+  // override the cleartext password with the hashed one
+  bcrypt.hash(this.password, SALT_WORK_FACTOR, function (err, hash) {
+    if (err) {
+      return next(err)
+    }
+
+    this.password = hash
+    next()
+  })
 })
 
 let User = mongoose.model('User', userSchema)
