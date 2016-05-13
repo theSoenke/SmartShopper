@@ -1,15 +1,16 @@
 'use strict'
 
-const fs = require('fs')
-const express = require('express')
-const bodyParser = require('body-parser')
-const morgan = require('morgan')
-const path = require('path')
-const helmet = require('helmet')
+var fs = require('fs')
+var express = require('express')
+var bodyParser = require('body-parser')
+var morgan = require('morgan')
+var path = require('path')
+var helmet = require('helmet')
 
-const config = require('./config')
-const app = express()
+var config = require('./config')
+var app = express()
 
+// prevents possible security leaks
 app.use(helmet.hidePoweredBy())
 app.use(helmet.noSniff())
 app.use(helmet.xssFilter())

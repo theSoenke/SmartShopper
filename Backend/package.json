@@ -5,6 +5,8 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "basic-auth": "^1.0.4",
+    "bcrypt": "^0.8.6",
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
     "helmet": "^2.0.0",

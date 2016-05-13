@@ -1,6 +1,6 @@
 'use strict'
 
-const Product = require('../models/product')
+var Product = require('../models/product')
 
 exports.uploadProducts = function (req, res, next) {
   Product.insertMany(req.body.products, function (err, docs) {

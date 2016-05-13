@@ -1,6 +1,6 @@
 'use strict'
 
-const List = require('../models/list')
+var List = require('../models/list')
 
 exports.findLists = function (req, res, next) {
   List.find(function (err, docs) {
@@ -13,9 +13,10 @@ exports.findLists = function (req, res, next) {
 }
 
 exports.uploadList = function (req, res, next) {
-  let list = List()
-  list.name = req.body.name
-  list.products = req.body.products
+  let list = List({
+    name: req.body.name,
+    products: req.body.products
+  })
 
   list.save(function (err) {
     if (err) {
