@@ -23,7 +23,6 @@ public class TrilaterationTool {
     public Map<Integer, Vector> beaconMap;
 
     List<BeaconEntity> beacons;
-    List<BeaconEntity> sortedBeacons;
 
 
     Vector lastTrilateration;
@@ -43,10 +42,10 @@ public class TrilaterationTool {
         beaconID4 = 31883; //esti002
 
         beacons = new ArrayList<>();
-        beacons.add(new BeaconEntity(p1, beaconID1,1));
-        beacons.add(new BeaconEntity(p2, beaconID2,2));
-        beacons.add(new BeaconEntity(p3, beaconID3,3));
-        beacons.add(new BeaconEntity(p4, beaconID4,4));
+        beacons.add(new BeaconEntity(p1, beaconID1, 1));
+        beacons.add(new BeaconEntity(p2, beaconID2, 2));
+        beacons.add(new BeaconEntity(p3, beaconID3, 3));
+        beacons.add(new BeaconEntity(p4, beaconID4, 4));
 
 
         beaconMap = new HashMap<>();
@@ -69,7 +68,6 @@ public class TrilaterationTool {
             distances.add(i, 2.0);
         }
 
-        sortedBeacons = beacons;
 
     }
 
@@ -82,7 +80,7 @@ public class TrilaterationTool {
             for (Beacon b :
                     beacons)
             {
-                if(b.getId3().toInt() == be.getMinor())
+                if (b.getId3().toInt() == be.getMinor())
                 {
                     be.updateDistance(b.getDistance());
                     be.updateWeight(b.getRssi());
@@ -95,10 +93,135 @@ public class TrilaterationTool {
 
     }
 
-    public void sortBeacons()
+    public int computeSector()
     {
+        List<BeaconEntity> sortedBeacons = beacons;
         Collections.sort(sortedBeacons);
+        if (sortedBeacons.get(0).getIdentifier() == 1)
+        {
+            if (sortedBeacons.get(1).getIdentifier() == 2)
+            {
+                return 11;
+            } else if (sortedBeacons.get(1).getIdentifier() == 4)
+            {
+                return 1;
+            } else
+            {
+                return 0;
+            }
+
+        } else if (sortedBeacons.get(0).getIdentifier() == 2)
+        {
+            if (sortedBeacons.get(1).getIdentifier() == 1)
+            {
+                if (sortedBeacons.get(2).getIdentifier() == 3 && sortedBeacons.get(1).almostEqual(sortedBeacons.get(2)))
+                {
+                    return 9;
+                } else
+                {
+                    return 10;
+                }
+            } else if (sortedBeacons.get(1).getIdentifier() == 3)
+            {
+                if (sortedBeacons.get(2).getIdentifier() == 1 && sortedBeacons.get(1).almostEqual(sortedBeacons.get(2)))
+                {
+                    return 9;
+                } else
+                {
+                    return 8;
+                }
+
+
+            } else if (sortedBeacons.get(1).getIdentifier() == 4)
+            {
+                if (sortedBeacons.get(2).almostEqual(sortedBeacons.get(3)))
+                {
+                    return 9;
+                } else if (sortedBeacons.get(2).getIdentifier() == 1)
+                {
+                    return 10;
+                } else if (sortedBeacons.get(2).getIdentifier() == 3)
+                {
+                    return 8;
+                } else
+                {
+                    return 0;
+                }
+
+            } else
+            {
+                return 0;
+            }
+
+        } else if (sortedBeacons.get(0).getIdentifier() == 3)
+        {
+            if(sortedBeacons.get(1).almostEqual(sortedBeacons.get(2)))
+            {
+                return 6;
+            }
+            else if (sortedBeacons.get(1).getIdentifier() == 4)
+            {
+                return 5;
+            }
+            else if (sortedBeacons.get(1).getIdentifier() == 2)
+            {
+                return 7;
+            }
+            else {
+                return 0;
+            }
+
+
+        } else if (sortedBeacons.get(0).getIdentifier() == 4)
+        {
+            if (sortedBeacons.get(1).getIdentifier() == 1)
+            {
+                if (sortedBeacons.get(2).getIdentifier() == 3 && sortedBeacons.get(1).almostEqual(sortedBeacons.get(2)))
+                {
+                    return 3;
+                } else
+                {
+                    return 2;
+                }
+            } else if (sortedBeacons.get(1).getIdentifier() == 3)
+            {
+                if (sortedBeacons.get(2).getIdentifier() == 1 && sortedBeacons.get(1).almostEqual(sortedBeacons.get(2)))
+                {
+                    return 3;
+                } else
+                {
+                    return 4;
+                }
+
+
+            } else if (sortedBeacons.get(1).getIdentifier() == 2)
+            {
+                if (sortedBeacons.get(2).almostEqual(sortedBeacons.get(3)))
+                {
+                    return 3;
+                } else if (sortedBeacons.get(2).getIdentifier() == 1)
+                {
+                    return 2;
+                } else if (sortedBeacons.get(2).getIdentifier() == 3)
+                {
+                    return 4;
+                } else
+                {
+                    return 0;
+                }
+
+            } else
+            {
+                return 0;
+            }
+
+        } else
+        {
+            return 0; //fail sector
+        }
     }
+
+
 
 
 
@@ -170,20 +293,19 @@ public class TrilaterationTool {
     }*/
 
 
-
     public Vector trilaterateHeuristic()
     {
         double x, y;
         double xMax = (beacons.get(1).getPosition().x - beacons.get(0).getPosition().x + beacons.get(2).getPosition().x - beacons.get(3).getPosition().x) / 2;
         double yMax = (beacons.get(3).getPosition().y - beacons.get(0).getPosition().y + beacons.get(2).getPosition().y - beacons.get(1).getPosition().y) / 2;
         double a = beacons.get(0).getDistance(), b = beacons.get(1).getDistance(), c = beacons.get(2).getDistance(), d = beacons.get(3).getDistance();
-        int weightA= beacons.get(0).getWeight(),weightB= beacons.get(1).getWeight(),weightC= beacons.get(2).getWeight(),weightD= beacons.get(3).getWeight();
+        int weightA = beacons.get(0).getWeight(), weightB = beacons.get(1).getWeight(), weightC = beacons.get(2).getWeight(), weightD = beacons.get(3).getWeight();
 
 
-        double xVerhältnis = (weightD*(d / (c + d)) + weightA*(a / (b + a)) + weightA*(a / (c + a)) + weightD*(d / (d + b))) / (weightA *2 + weightD *2);
+        double xVerhältnis = (weightD * (d / (c + d)) + weightA * (a / (b + a)) + weightA * (a / (c + a)) + weightD * (d / (d + b))) / (weightA * 2 + weightD * 2);
         x = xVerhältnis * xMax;
 
-        double yVerhältnis = (weightA*(a / (d + a)) + weightB*(b / (b + c)) + weightB*(b / (d + b)) + weightA*(a / (a + c))) / (weightA * 2 + weightB *2);
+        double yVerhältnis = (weightA * (a / (d + a)) + weightB * (b / (b + c)) + weightB * (b / (d + b)) + weightA * (a / (a + c))) / (weightA * 2 + weightB * 2);
         y = yVerhältnis * yMax;
 
 
