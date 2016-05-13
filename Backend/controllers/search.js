@@ -1,6 +1,6 @@
 'use strict'
 
-const Product = require('../models/product')
+var Product = require('../models/product')
 
 exports.findProducts = function (req, res, next) {
   let query = req.params.query
