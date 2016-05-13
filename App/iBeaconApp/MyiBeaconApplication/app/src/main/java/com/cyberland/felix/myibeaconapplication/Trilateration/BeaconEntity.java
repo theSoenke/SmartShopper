@@ -65,4 +65,14 @@ public class BeaconEntity implements Comparable<BeaconEntity>{
             return 1;
         }
     }
+
+    public int getIdentifier()
+    {
+        return identifier;
+    }
+
+    public boolean almostEqual(BeaconEntity beacon)
+    {
+        return (0.9 < this.distance / beacon.getDistance() && this.distance / beacon.getDistance() < 1.1);
+    }
 }

@@ -160,7 +160,7 @@ public class MainActivity extends Activity implements BeaconConsumer {
                         }
                     }
                     trilaterationTool.updateBeacons(beacons);
-                    localisationString= trilaterationTool.trilaterateHeuristic().toString();
+                    localisationString = ""+ trilaterationTool.computeSector();
 
                     runOnUiThread(new Runnable() {
                         @Override
