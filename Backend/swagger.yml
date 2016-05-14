@@ -2,7 +2,8 @@ swagger: "2.0"
 info:
   version: 1.0.0
   title: SmartShopper API
-  description: API for the SmartShopper Backend
+  description: API for the SmartShopper Backend. Authorization through a HTTP Basic Auth header
+
 host: api.tecfuture.de:3000
 basePath: /
 schemes:
@@ -144,6 +145,30 @@ paths:
           description: unexpected error
           schema:
             $ref: '#/definitions/Error'
+
+
+  /user/register:
+    post:
+      description: Register new user
+      operationId: registerUser
+      parameters:
+        - name: Authorization
+          in: header
+          description: basic auth
+          required: true
+          type: string
+          format: string
+
+      responses:
+        200:
+          description: imported products
+          schema:
+            type: string
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
 definitions:
   List:
     allOf:
