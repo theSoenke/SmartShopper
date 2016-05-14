@@ -6,6 +6,7 @@ var Schema = mongoose.Schema
 let listSchema = new Schema({
   name: { type: String, required: true, text: true },
   products: [{ name: { type: String, required: true } }],
+  owner: { type: String, required: true },
   created_at: Date,
   updated_at: Date
 })
