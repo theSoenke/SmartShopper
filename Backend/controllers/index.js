@@ -20,15 +20,17 @@ router.get('/', function (req, res) {
 })
 
 // API Routes
-router.use(auth.requireAuthentication)
 
+router.use(auth.checkCredentials)
+router.get('/user/register', auth.registerUser)
+
+router.use(auth.requireAuthentication)
 router.get('/lists', lists.findLists)
 router.post('/lists', lists.uploadList)
 router.put('/lists/:id', lists.updateList)
 router.delete('/lists/:id', lists.deleteList)
 router.get('/search/:query', search.findProducts)
 router.post('/products/import', importer.uploadProducts)
-router.get('/user/register', auth.registerUser)
 
 router.use(function (err, req, res, next) {
   if (req.app.get('env') !== 'development') {

@@ -27,8 +27,8 @@ userSchema.pre('save', function (next) {
   }
 
   // override the cleartext password with the hashed one
-  var hash = bcrypt.hashSync(this.password, SALT_WORK_FACTOR)
-  this.password = hash
+  // var hash = bcrypt.hashSync(this.password, SALT_WORK_FACTOR)
+  // this.password = hash
   next()
 })
 
