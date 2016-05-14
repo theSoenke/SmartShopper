@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity
                 {
 
                     //hier bleibt er irgendwie haengen
-                    serverResponse = ProductSync.getLists();
-
+                    // serverResponse = ProductSync.getLists();
+                    new ProductSync().execute("http://api.tecfuture.de:3000/lists");
 
                     Toast.makeText(MainActivity.this,"Hier komme ich nicht hin",Toast.LENGTH_LONG).show();
 
