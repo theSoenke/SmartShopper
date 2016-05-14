@@ -3,6 +3,20 @@
 var basicAuth = require('basic-auth')
 var User = require('../models/user')
 
+/* checks whether basic auth exists
+needs to be called before registering or checking user*/
+exports.checkCredentials = function (req, res, next) {
+  let credentials = basicAuth(req)
+
+  if (!credentials || !credentials.name || !credentials.pass) {
+    let err = new Error('Invalid credentials')
+    err.statusCode = 401
+    return next(err)
+  }
+
+  next()
+}
+
 exports.registerUser = function (req, res, next) {
   let credentials = basicAuth(req)
 
@@ -16,19 +30,30 @@ exports.registerUser = function (req, res, next) {
       return next(err)
     }
 
-    res.json(user)
-  // res.json({status: 'User registered'})
+    res.json({
+      username: user.username,
+      status: 'User registered'
+    })
   })
 }
 
 exports.requireAuthentication = function (req, res, next) {
   let credentials = basicAuth(req)
 
-  if (!credentials || !credentials.name || !credentials.pass) {
-    let err = new Error('Invalid credentials')
-    err.statusCode = 401
-    return next(err)
-  }
+  User.findOne({username: credentials.name}, function (err, doc) {
+    if (err) {
+      return next(err)
+    }
 
-  next()
+    if (!doc) {
+      let error = new Error('User does not exist')
+      return next(error)
+    }
+
+    if (doc.password !== credentials.pass) {
+      let error = new Error('Passwords do not match')
+      return next(error)
+    }
+    next()
+  })
 }
