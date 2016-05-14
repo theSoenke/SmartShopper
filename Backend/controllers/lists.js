@@ -1,21 +1,30 @@
 'use strict'
 
+var basicAuth = require('basic-auth')
 var List = require('../models/list')
 
 exports.findLists = function (req, res, next) {
-  List.find(function (err, docs) {
-    if (err) {
-      return next(err)
-    }
+  let username = basicAuth(req).name
+  let query = {owner: username}
 
-    res.json(docs)
-  })
+  List
+    .find(query)
+    .exec(function (err, docs) {
+      if (err) {
+        return next(err)
+      }
+
+      res.json(docs)
+    })
 }
 
 exports.uploadList = function (req, res, next) {
+  let username = basicAuth(req).name
+
   let list = List({
     name: req.body.name,
-    products: req.body.products
+    products: req.body.products,
+    owner: username
   })
 
   list.save(function (err) {
