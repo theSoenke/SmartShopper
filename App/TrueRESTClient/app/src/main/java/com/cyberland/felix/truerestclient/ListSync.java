@@ -16,11 +16,10 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 /**
- * Created by Felix on 17.05.2016.
+ * Created by Felix on 12.05.2016.
  */
-public class ProductSync extends AsyncTask<String, String, String>
+public class ListSync extends AsyncTask<String, String, String>
 {
-
     @Override
     protected String doInBackground(String... params) {
         HttpURLConnection urlConnection = null;

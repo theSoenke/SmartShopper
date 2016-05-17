@@ -13,13 +13,24 @@ public class ProductController
 {
     public ProductController(final ProductService productService)
     {
+
+        Spark.before("/*", (request,response) ->
+        {
+            String authHeader = request.headers("Authorization");
+
+            if (!AuthHandler.allowAuthentication(authHeader))
+            {
+                Spark.halt(401, "Unauthorized");
+            }
+
+        });
         //leitet die /products Anfrage an den Service weiter und liefert
         //eine Liste der Produktobjekte zurück
         Spark.get("/products", new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception
             {
-                return productService.getAllProducts();
+                    return productService.getAllProducts();
             }
         },new JsonTransformer());
 
