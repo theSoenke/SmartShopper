@@ -18,19 +18,19 @@ import java.net.URL;
 /**
  * Created by Felix on 17.05.2016.
  */
-public class ProductSync extends AsyncTask<String, String, String>
+public class GenericSync extends AsyncTask<String, String, String>
 {
-
     @Override
-    protected String doInBackground(String... params) {
+    protected String doInBackground(String... params)
+    {
         HttpURLConnection urlConnection = null;
         BufferedReader bufferedReader = null;
         String hash;
         String jsonString = "";
-        int responseCode;
-
         try
         {
+
+
             URL url = new URL(params[0]);
             hash = params[1];
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -47,13 +47,12 @@ public class ProductSync extends AsyncTask<String, String, String>
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
             String line;
-            while ((line = bufferedReader.readLine())!=null)
+            while ((line = bufferedReader.readLine()) != null)
             {
                 builder.append(line).append("\n");
             }
             jsonString = builder.toString();
 
-            responseCode = urlConnection.getResponseCode();
             JSONObject json = new JSONObject(jsonString);
 
             if (!json.getBoolean("success"))
@@ -61,13 +60,19 @@ public class ProductSync extends AsyncTask<String, String, String>
                 throw new ConnectException();
             }
 
-        } catch (ProtocolException e) {
+        }
+        catch (ProtocolException e)
+        {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
-        } catch (JSONException e) {
+        }
+        catch (JSONException e) {
             e.printStackTrace();
-        } finally
+        }
+        finally
         {
             if (urlConnection != null)
             {
@@ -97,4 +102,5 @@ public class ProductSync extends AsyncTask<String, String, String>
 
         Log.v("json", result);
     }
+
 }
