@@ -3,7 +3,7 @@
 var express = require('express')
 var mongoose = require('mongoose')
 var config = require('../config')
-var importer = require('./importer')
+var products = require('./products')
 var search = require('./search')
 var lists = require('./lists')
 var auth = require('./auth')
@@ -21,16 +21,17 @@ router.get('/', function (req, res) {
 
 // API Routes
 
-router.use(auth.checkCredentials)
+router.use(auth.checkAuthHeader)
 router.get('/user/register', auth.registerUser)
 
 router.use(auth.requireAuthentication)
-router.get('/lists', lists.findLists)
+router.get('/lists', lists.getLists)
 router.post('/lists', lists.uploadList)
 router.put('/lists/:id', lists.updateList)
 router.delete('/lists/:id', lists.deleteList)
 router.get('/search/:query', search.findProducts)
-router.post('/products/import', importer.uploadProducts)
+router.get('/products', products.getProducts)
+router.post('/products/import', products.uploadProducts)
 
 router.use(function (err, req, res, next) {
   if (req.app.get('env') !== 'development') {
