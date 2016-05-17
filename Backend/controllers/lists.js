@@ -3,7 +3,7 @@
 var basicAuth = require('basic-auth')
 var List = require('../models/list')
 
-exports.findLists = function (req, res, next) {
+exports.getLists = function (req, res, next) {
   let username = basicAuth(req).name
   let query = {owner: username}
 

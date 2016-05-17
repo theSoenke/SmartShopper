@@ -5,7 +5,7 @@ var User = require('../models/user')
 
 /* checks whether basic auth exists
 needs to be called before registering or checking user*/
-exports.checkCredentials = function (req, res, next) {
+exports.checkAuthHeader = function (req, res, next) {
   let credentials = basicAuth(req)
 
   if (!credentials || !credentials.name || !credentials.pass) {
