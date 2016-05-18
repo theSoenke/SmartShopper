@@ -1,7 +1,9 @@
 package app.smartshopper.ShoppingLists;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -55,4 +57,6 @@ public abstract class AbstractDetailedListActivity extends AppCompatActivity {
 
     @Override
     public abstract boolean onOptionsItemSelected(MenuItem item);
+
+
 }

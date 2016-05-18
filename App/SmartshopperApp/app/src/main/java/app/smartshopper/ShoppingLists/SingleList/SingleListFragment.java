@@ -1,5 +1,6 @@
 package app.smartshopper.ShoppingLists.SingleList;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,7 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,11 +61,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         FloatingActionButton addList = (FloatingActionButton) view.findViewById(R.id.fabAddSingleList);
         addList.setOnClickListener(new View.OnClickListener() {
             public void onClick(View vw) {
-                Intent i = new Intent(getContext(), HomeActivity.class);
-                i.putExtra("source", "SingleListFragment");
-                i.putExtra("value", "addsinglelist");
-                i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                getContext().startActivity(i);
+                openAddListDialog();
             }
         });
 
@@ -77,4 +77,27 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         getActivity().startActivity(i);
     }
 
+    private void openAddListDialog() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_add_single_list);
+        dialog.setTitle("Create your new list ");
+        final EditText listName = (EditText) dialog.findViewById(R.id.dialog_txtSingleListName);
+        Button btcrt = (Button) dialog.findViewById(R.id.dialog_btCreateSingleList);
+        btcrt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShoppingListDataSource s = new ShoppingListDataSource(getContext());
+                s.add(listName.getText().toString(), true);
+                dialog.dismiss();
+            }
+        });
+        Button btabort = (Button) dialog.findViewById(R.id.btAbortAddSingleList);
+        btabort.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
 }
