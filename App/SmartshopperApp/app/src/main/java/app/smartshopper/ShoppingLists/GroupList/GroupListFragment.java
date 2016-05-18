@@ -1,5 +1,6 @@
 package app.smartshopper.ShoppingLists.GroupList;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
@@ -111,11 +114,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         btAdGroupList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getContext(), HomeActivity.class);
-                i.putExtra("source", "GroupListFragment");
-                i.putExtra("value", "addgrouplist");
-                i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                getContext().startActivity(i);
+                openAddListDialog();
             }
         });
 
@@ -128,5 +127,28 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
 //        String entry = list.getItemAtPosition(position).toString(); // get item at "position"
 //        Context context = view.getContext();
 //        Toast.makeText(context, "TODO: Expand " + entry + " to show its participants", Toast.LENGTH_SHORT).show();
+    }
+    private void openAddListDialog() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_add_group_list);
+        dialog.setTitle("Create your new list ");
+        final EditText listName = (EditText) dialog.findViewById(R.id.dialog_txtGroupListName);
+        Button btcrt = (Button) dialog.findViewById(R.id.dialog_btCreateGroupList);
+        btcrt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShoppingListDataSource s = new ShoppingListDataSource(getContext());
+                s.add(listName.getText().toString(), false);
+                dialog.dismiss();
+            }
+        });
+        Button btabort = (Button) dialog.findViewById(R.id.btAbortAddGroupList);
+        btabort.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }
