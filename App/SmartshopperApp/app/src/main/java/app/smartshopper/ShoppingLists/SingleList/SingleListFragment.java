@@ -13,15 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import app.smartshopper.Database.ShoppingList;
 import app.smartshopper.Database.ShoppingListDataSource;
-import app.smartshopper.DetailedListActivity;
-import app.smartshopper.HomeActivity;
+import app.smartshopper.ShoppingLists.DetailedListActivity;
 import app.smartshopper.R;
 
 public class SingleListFragment extends Fragment implements AdapterView.OnItemClickListener {

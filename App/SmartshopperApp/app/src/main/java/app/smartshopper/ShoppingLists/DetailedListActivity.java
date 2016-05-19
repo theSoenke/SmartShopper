@@ -1,11 +1,10 @@
-package app.smartshopper;
+package app.smartshopper.ShoppingLists;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
 
 import app.smartshopper.R;
-import app.smartshopper.ShoppingLists.AbstractDetailedListActivity;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
 
 public class DetailedListActivity extends AbstractDetailedListActivity {
