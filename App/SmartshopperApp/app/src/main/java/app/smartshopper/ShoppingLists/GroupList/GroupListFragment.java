@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +21,8 @@ import java.util.List;
 
 import app.smartshopper.Database.ShoppingList;
 import app.smartshopper.Database.ShoppingListDataSource;
-import app.smartshopper.HomeActivity;
 import app.smartshopper.R;
+import app.smartshopper.DetailedListActivity;
 
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
@@ -102,8 +103,8 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             }
 
             @Override
-            public void OnItemClick(String entry){
-                Intent i = new Intent(GroupListFragment.this.getActivity(), DetailedGroupListActivity.class);
+            public void OnItemClick(String entry) {
+                Intent i = new Intent(GroupListFragment.this.getActivity(), DetailedListActivity.class);
                 i.putExtra("list", entry);
                 getActivity().startActivity(i);
             }
@@ -123,11 +124,8 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//        ListView list = (ListView) adapterView.findViewById(R.id.grouplist_list);
-//        String entry = list.getItemAtPosition(position).toString(); // get item at "position"
-//        Context context = view.getContext();
-//        Toast.makeText(context, "TODO: Expand " + entry + " to show its participants", Toast.LENGTH_SHORT).show();
     }
+
     private void openAddListDialog() {
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_group_list);
@@ -143,7 +141,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             }
         });
         Button btabort = (Button) dialog.findViewById(R.id.btAbortAddGroupList);
-        btabort.setOnClickListener(new View.OnClickListener(){
+        btabort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
