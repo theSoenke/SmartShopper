@@ -1,9 +1,7 @@
 package app.smartshopper.ShoppingLists;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -12,8 +10,6 @@ import app.smartshopper.R;
 
 public abstract class AbstractDetailedListActivity extends AppCompatActivity {
 
-    // TODO: isnt it better to make this a fragment instead of an activity?
-    // --> I guess not because you don't have this fancy "back"-button there
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

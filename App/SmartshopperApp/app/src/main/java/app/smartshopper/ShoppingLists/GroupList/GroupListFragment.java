@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import java.util.List;
 import app.smartshopper.Database.ShoppingList;
 import app.smartshopper.Database.ShoppingListDataSource;
 import app.smartshopper.R;
-import app.smartshopper.DetailedListActivity;
+import app.smartshopper.ShoppingLists.DetailedListActivity;
 
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
@@ -89,7 +89,6 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         childlists.put(listgroups.get(1), parent1childs);
         childlists.put(listgroups.get(2), parent2childs);
 
-
         ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists) {
             @Override
             public void OnIndicatorClick(boolean isExpanded, int groupPosition) {
@@ -109,8 +108,20 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                 getActivity().startActivity(i);
             }
         };
+
         // Create ArrayAdapter using the planet list.
         list.setAdapter(adapter);
+
+        list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long id) {
+                Intent intent = new Intent(GroupListFragment.this.getActivity(), MemberListActivity.class);
+                String groupListName = expandableListView.getItemAtPosition(groupPosition).toString();
+                intent.putExtra("list", groupListName);
+                getActivity().startActivity(intent);
+                return true;
+            }
+        });
 
         btAdGroupList.setOnClickListener(new View.OnClickListener() {
             @Override
