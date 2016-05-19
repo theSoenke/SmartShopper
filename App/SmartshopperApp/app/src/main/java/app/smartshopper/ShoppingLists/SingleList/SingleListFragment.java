@@ -20,6 +20,7 @@ import java.util.List;
 
 import app.smartshopper.Database.ShoppingList;
 import app.smartshopper.Database.ShoppingListDataSource;
+import app.smartshopper.DetailedListActivity;
 import app.smartshopper.HomeActivity;
 import app.smartshopper.R;
 
@@ -72,7 +73,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         ListView list = (ListView) adapterView.findViewById(R.id.singlelist_list);
         String entry = list.getItemAtPosition(position).toString(); // get item at "position"
-        Intent i = new Intent(SingleListFragment.this.getActivity(), DetailedSingleListActivity.class);
+        Intent i = new Intent(SingleListFragment.this.getActivity(), DetailedListActivity.class);
         i.putExtra("list", entry);
         getActivity().startActivity(i);
     }

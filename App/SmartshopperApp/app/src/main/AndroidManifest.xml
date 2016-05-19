@@ -21,8 +21,7 @@
         <activity
             android:name="app.smartshopper.Settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name="app.smartshopper.ShoppingLists.SingleList.DetailedSingleListActivity"></activity>
-        <activity android:name="app.smartshopper.ShoppingLists.GroupList.DetailedGroupListActivity"></activity>
+        <activity android:name=".DetailedListActivity"></activity>
     </application>
 
 </manifest>

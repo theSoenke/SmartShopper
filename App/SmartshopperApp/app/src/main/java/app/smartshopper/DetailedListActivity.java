@@ -1,4 +1,4 @@
-package app.smartshopper.ShoppingLists.SingleList;
+package app.smartshopper;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -8,8 +8,8 @@ import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.AbstractDetailedListActivity;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
 
-public class DetailedSingleListActivity extends AbstractDetailedListActivity {
-    
+public class DetailedListActivity extends AbstractDetailedListActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
