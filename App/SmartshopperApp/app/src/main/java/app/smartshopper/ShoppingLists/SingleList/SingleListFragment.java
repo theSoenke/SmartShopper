@@ -31,9 +31,9 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         if (extras != null) {
             newList = extras.getString("newList");
         }
-        View view = inflater.inflate(R.layout.fragment_sinlge_list, group, false);
+        View view = inflater.inflate(R.layout.fragment_sinlge_list, null);
 
-        ListView list = (ListView) view.findViewById(R.id.singlelist_list);
+        ListView list = (ListView) view.findViewById(R.id.singleList_list);
 
         // Create ArrayAdapter using an empty list
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
@@ -69,7 +69,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        ListView list = (ListView) adapterView.findViewById(R.id.singlelist_list);
+        ListView list = (ListView) adapterView.findViewById(R.id.singleList_list);
         String entry = list.getItemAtPosition(position).toString(); // get item at "position"
         Intent i = new Intent(SingleListFragment.this.getActivity(), DetailedListActivity.class);
         i.putExtra("list", entry);

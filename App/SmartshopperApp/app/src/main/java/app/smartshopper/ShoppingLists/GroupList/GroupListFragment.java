@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         String newList = "";
         String newParticipants = "";
 
-        final View view = inflater.inflate(R.layout.fragment_group_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_group_list, null);
         FloatingActionButton btAdGroupList = (FloatingActionButton) view.findViewById(R.id.fabAddGroupList);
         final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
         final List<String> listgroups = new ArrayList<String>();
@@ -115,7 +114,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long id) {
-                Intent intent = new Intent(GroupListFragment.this.getActivity(), MemberListActivity.class);
+                Intent intent = new Intent(GroupListFragment.this.getActivity(), ParticipantListActivity.class);
                 String groupListName = expandableListView.getItemAtPosition(groupPosition).toString();
                 intent.putExtra("list", groupListName);
                 getActivity().startActivity(intent);
