@@ -1,10 +1,11 @@
 package app.smartshopper.ShoppingLists.GroupList;
 
 import android.app.Dialog;
-import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -14,7 +15,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import app.smartshopper.Database.MySQLiteHelper;
@@ -22,12 +22,15 @@ import app.smartshopper.Database.Participant;
 import app.smartshopper.Database.ParticipantDataSource;
 import app.smartshopper.Database.ShoppingList;
 import app.smartshopper.Database.ShoppingListDataSource;
+import app.smartshopper.Database.User;
+import app.smartshopper.Database.UserDataSource;
 import app.smartshopper.R;
 
 /**
  * Created by hauke on 19.05.16.
  */
 public class ParticipantListActivity extends AppCompatActivity {
+    private String listName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +38,10 @@ public class ParticipantListActivity extends AppCompatActivity {
         setContentView(getLayoutInflater().inflate(R.layout.participant_list, null));
 
         // Set tag for the item fragment so that it knows that items to show
-        String groupListName = "";
+        listName = "";
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            groupListName = extras.getString("list");
+            listName = extras.getString("list");
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -51,7 +54,7 @@ public class ParticipantListActivity extends AppCompatActivity {
 
 //        listAdapter.add(groupListName); // TODO remove when there's the actual data available
         ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getApplicationContext());
-        List<ShoppingList> shoppingList = shoppingListDataSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + groupListName + "'");
+        List<ShoppingList> shoppingList = shoppingListDataSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
         if (shoppingList.size() > 0) {
             long listID = shoppingList.get(0).getId();
 
@@ -71,7 +74,7 @@ public class ParticipantListActivity extends AppCompatActivity {
                 }
             });
         } else {
-            Toast.makeText(getApplicationContext(), "The list " + groupListName + " was not found in the database", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "The list " + listName + " was not found in the database", Toast.LENGTH_LONG).show();
             finish();
         }
     }
@@ -80,20 +83,33 @@ public class ParticipantListActivity extends AppCompatActivity {
         // TODO replace this dialog by sharing a generated token
 
         final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_add_single_list);
-        dialog.setTitle("Create your new list ");
-        final EditText listName = (EditText) dialog.findViewById(R.id.dialog_txtSingleListName);
-        Button btcrt = (Button) dialog.findViewById(R.id.dialog_btCreateSingleList);
-        btcrt.setOnClickListener(new View.OnClickListener() {
+        dialog.setContentView(R.layout.dialog_add_participant);
+        dialog.setTitle("Add new participant ");
+        final EditText participantName = (EditText) dialog.findViewById(R.id.dialog_txtParticipant_input_field);
+        Button addButton = (Button) dialog.findViewById(R.id.dialog_btAddParticipant);
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShoppingListDataSource s = new ShoppingListDataSource(getApplicationContext());
-                s.add(listName.getText().toString());
+                Context context = getApplicationContext();
+
+                UserDataSource userDataSource = new UserDataSource(context);
+                User user = userDataSource.add(participantName.getText().toString());
+
+                ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(context);
+                ShoppingList list = shoppingListDataSource.add(listName);
+
+                ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
+
+                participantDataSource.add(list.getId(), user.getId());
+                Log.i("ADDED", list.getId() + " - " + user.getId());
+
+
+
                 dialog.dismiss();
             }
         });
-        Button btabort = (Button) dialog.findViewById(R.id.btAbortAddSingleList);
-        btabort.setOnClickListener(new View.OnClickListener() {
+        Button abortButton = (Button) dialog.findViewById(R.id.btAbortAddParticipant);
+        abortButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();

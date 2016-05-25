@@ -78,8 +78,8 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_single_list);
         dialog.setTitle("Create your new list ");
-        final EditText listName = (EditText) dialog.findViewById(R.id.dialog_txtSingleListName);
-        Button btcrt = (Button) dialog.findViewById(R.id.dialog_btCreateSingleList);
+        final EditText listName = (EditText) dialog.findViewById(R.id.dialog_txtList_input_field);
+        Button btcrt = (Button) dialog.findViewById(R.id.dialog_btAddSingleList);
         btcrt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
