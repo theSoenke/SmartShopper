@@ -15,9 +15,9 @@ import java.util.List;
 public abstract class DatabaseTable<T extends DatabaseEntry> {
 
     private final String tableName;
-    private final String[] allColumns;
+    protected final String[] allColumns;
     private final MySQLiteHelper dbHelper;
-    private SQLiteDatabase database;
+    protected SQLiteDatabase database;
 
     public DatabaseTable(Context context, String tableName, String[] columns) {
         this.tableName = tableName;
@@ -93,6 +93,17 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
         List<T> entryList = new ArrayList<T>();
         Cursor cursor = database.query(tableName, allColumns, query, null, null, null, null);
 
+        return cursorToRealEntries(cursor);
+    }
+
+    public List<T> executeSQL(String query){
+        Cursor cursor = database.rawQuery(query, null);
+
+        return cursorToRealEntries(cursor);
+    }
+
+    private List<T> cursorToRealEntries(Cursor cursor){
+        List<T> entryList = new ArrayList<T>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             T entry = cursorToEntry(cursor);

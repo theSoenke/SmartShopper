@@ -17,16 +17,23 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String SHOPPINGLIST_TABLE_NAME = "shopping_list_table";
     public static final String SHOPPINGLIST_COLUMN_ID = "id";
     public static final String SHOPPINGLIST_COLUMN_NAME = "name";
-    public static final String SHOPPINGLIST_COLUMN_SINGLE = "single_list";
 
     public static final String ITEMENTRY_TABLE_NAME = "item_entry_table";
-    public static final String ITEMENTRY_PRODUCT_ID = "product_id";
-    public static final String ITEMENTRY_LIST_ID = "list_id";
-    public static final String ITEMENTRY_AMOUNT = "amount";
+    public static final String ITEMENTRY_COLUMN_PRODUCT_ID = "product_id";
+    public static final String ITEMENTRY_COLUMN_LIST_ID = "list_id";
+    public static final String ITEMENTRY_COLUMN_AMOUNT = "amount";
+
+    public static final String USER_TABLE_NAME = "user_table";
+    public static final String USER_COLUMN_ID = "id";
+    public static final String USER_COLUMN_NAME = "name";
+
+    public static final String PARTICIPANT_TABLE_NAME = "participant_table";
+    public static final String PARTICIPANT_COLUMN_USER_ID = "user_id";
+    public static final String PARTICIPANT_COLUMN_SHOPPING_LIST_ID = "shopping_list_id";
 
     public static final String DATABASE_NAME = "list.db";
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
 
     //Database creation statement
     private static final String PRODUCT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PRODUCT_TABLE_NAME + "(" +
@@ -37,14 +44,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String SHOPPINGLIST_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + SHOPPINGLIST_TABLE_NAME + "(" +
             SHOPPINGLIST_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-            SHOPPINGLIST_COLUMN_NAME + " TEXT NOT NULL," +
-            SHOPPINGLIST_COLUMN_SINGLE + " BOOLEAN NOT NULL);";
+            SHOPPINGLIST_COLUMN_NAME + " TEXT NOT NULL);";
 
     private static final String ITEMENTRY_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + ITEMENTRY_TABLE_NAME + "(" +
-            ITEMENTRY_PRODUCT_ID + " INTEGER," +
-            ITEMENTRY_LIST_ID + " INTEGER," +
-            ITEMENTRY_AMOUNT + " INTEGER NOT NULL," +
-            "PRIMARY KEY(" + ITEMENTRY_PRODUCT_ID + ", " + ITEMENTRY_LIST_ID + "));";
+            ITEMENTRY_COLUMN_PRODUCT_ID + " INTEGER," +
+            ITEMENTRY_COLUMN_LIST_ID + " INTEGER," +
+            ITEMENTRY_COLUMN_AMOUNT + " INTEGER NOT NULL," +
+            "PRIMARY KEY(" + ITEMENTRY_COLUMN_PRODUCT_ID + ", " + ITEMENTRY_COLUMN_LIST_ID + "));";
+
+    private static final String USER_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + USER_TABLE_NAME + "(" +
+            USER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+            USER_COLUMN_NAME + " TEXT NOT NULL);";
+
+    private static final String PARTICIPANT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PARTICIPANT_TABLE_NAME + "(" +
+            PARTICIPANT_COLUMN_USER_ID + " INTEGER," +
+            PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " INTEGER);";
 
 
     public MySQLiteHelper(Context context, String database_name, int database_version) {
@@ -56,6 +70,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(PRODUCT_DATABASE_CREATE);
         database.execSQL(SHOPPINGLIST_DATABASE_CREATE);
         database.execSQL(ITEMENTRY_DATABASE_CREATE);
+        database.execSQL(USER_DATABASE_CREATE);
+        database.execSQL(PARTICIPANT_DATABASE_CREATE);
     }
 
     @Override
@@ -63,5 +79,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + PRODUCT_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SHOPPINGLIST_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ITEMENTRY_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PARTICIPANT_TABLE_NAME);
     }
 }
