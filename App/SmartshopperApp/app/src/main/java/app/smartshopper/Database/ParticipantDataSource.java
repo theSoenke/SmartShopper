@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.Telephony;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -94,5 +95,24 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         participant.setShoppingListID(cursor.getInt(0));
         participant.setUserID(cursor.getInt(1));
         return participant;
+    }
+
+    /**
+     * Gets the users name of the given participant.
+     *
+     * @param participant The participant which name you want to know.
+     * @return The name of the participant.
+     */
+    public String getNameOf(Participant participant) {
+        long userId = participant.getUserID();
+        List<User> userList = _userDataSource.getEntry(MySQLiteHelper.USER_COLUMN_ID + " = " + userId);
+
+        String participantName = "";
+
+        if (userList.size() > 0) {
+            participantName = userList.get(0).getEntryName();
+        }
+
+        return participantName;
     }
 }
