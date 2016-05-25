@@ -61,7 +61,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
             _shoppingList = listOfEntries.get(0).getId();
 
             _itemSource = new ItemEntryDataSource(getContext());
-            List<ItemEntry> items = _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_LIST_ID + "=" + _shoppingList);
+            List<ItemEntry> items = _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + _shoppingList);
 
             _productSource = new ProductDataSource(getContext());
 

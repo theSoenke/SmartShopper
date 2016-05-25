@@ -67,7 +67,7 @@ public class ParticipantListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getApplicationContext());
-                s.add(listName.getText().toString(), true);
+                s.add(listName.getText().toString());
                 dialog.dismiss();
             }
         });

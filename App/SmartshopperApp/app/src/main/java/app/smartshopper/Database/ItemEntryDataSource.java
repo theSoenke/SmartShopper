@@ -14,22 +14,22 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         super(context,
                 MySQLiteHelper.ITEMENTRY_TABLE_NAME,
                 new String[]{
-                        MySQLiteHelper.ITEMENTRY_PRODUCT_ID,
-                        MySQLiteHelper.ITEMENTRY_LIST_ID,
-                        MySQLiteHelper.ITEMENTRY_AMOUNT
+                        MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID,
+                        MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID,
+                        MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT
                 });
     }
 
     @Override
     public void add(ItemEntry entry) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.ITEMENTRY_PRODUCT_ID, entry.getProductID());
-        values.put(MySQLiteHelper.ITEMENTRY_LIST_ID, entry.getListID());
-        values.put(MySQLiteHelper.ITEMENTRY_AMOUNT, entry.getAmount());
+        values.put(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID, entry.getProductID());
+        values.put(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID, entry.getListID());
+        values.put(MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT, entry.getAmount());
 
-        String insertQuery = MySQLiteHelper.ITEMENTRY_PRODUCT_ID + " = " + entry.getProductID() +
-                " AND " + MySQLiteHelper.ITEMENTRY_LIST_ID + " = " + entry.getListID() +
-                " AND " + MySQLiteHelper.ITEMENTRY_AMOUNT + " = " + entry.getAmount();
+        String insertQuery = MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + entry.getProductID() +
+                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + entry.getListID() +
+                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + entry.getAmount();
 
         super.addEntryToDatabase(
                 entry,
@@ -45,7 +45,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      * @param productID The ID of the product.
      * @param listID    The ID of the list.
      * @param amount    The amount of this particular product in this list.
-     * @return A new item entry with unique ID.
+     * @return A new item entry with a unique ID combination.
      */
     public ItemEntry add(long productID, long listID, int amount) {
         ItemEntry entry = new ItemEntry();
@@ -71,8 +71,8 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
 
     @Override
     public String getWhereClause(ItemEntry entry) {
-        return MySQLiteHelper.ITEMENTRY_PRODUCT_ID + " = " + entry.getProductID() +
-                " AND " + MySQLiteHelper.ITEMENTRY_LIST_ID + " = " + entry.getListID();
+        return MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + entry.getProductID() +
+                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + entry.getListID();
     }
 
     @Override

@@ -16,6 +16,9 @@ public class Synchronizer {
         ProductDataSource p = syncProducts(context);
         ShoppingListDataSource s = syncShoppingLists(context);
         syncItemEntries(context, p, s);
+
+        UserDataSource u = syncUsers(context);
+        syncParticipants(context, s, u);
     }
 
     private ProductDataSource syncProducts(Context context) {
@@ -51,14 +54,14 @@ public class Synchronizer {
         ShoppingListDataSource s = new ShoppingListDataSource(context);
 
         // single lists
-        s.add("Baumarkt", true);
-        s.add("Wocheneinkauf", true);
-        s.add("Getränkemarkt", true);
+        s.add("Baumarkt");
+        s.add("Wocheneinkauf");
+        s.add("Getränkemarkt");
 
         // group lists
-        s.add("Geburtstag von Max Mustermann", false);
-        s.add("Vereinstreffen", false);
-        s.add("OE-Liste", false);
+        s.add("Geburtstag von Max Mustermann");
+        s.add("Vereinstreffen");
+        s.add("OE-Liste");
 
         return s;
     }
@@ -66,23 +69,17 @@ public class Synchronizer {
     private void syncItemEntries(Context context, ProductDataSource p, ShoppingListDataSource s) {
         ItemEntryDataSource i = new ItemEntryDataSource(context);
 
-        long Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'" +
-                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_SINGLE + " = " + 1).get(0).getId();
+        long Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0).getId();
 
-        long Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'" +
-                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_SINGLE + " = " + 1).get(0).getId();
+        long Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0).getId();
 
-        long Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'" +
-                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_SINGLE + " = " + 1).get(0).getId();
+        long Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0).getId();
 
-        long Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'" +
-                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_SINGLE + " = " + 0).get(0).getId();
+        long Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0).getId();
 
-        long Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'" +
-                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_SINGLE + " = " + 0).get(0).getId();
+        long Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0).getId();
 
-        long OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'" +
-                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_SINGLE + " = " + 0).get(0).getId();
+        long OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0).getId();
 
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Hammer'").get(0).getId(), Baumarkt, 1);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bohrmaschine'").get(0).getId(), Baumarkt, 1);
@@ -107,5 +104,48 @@ public class Synchronizer {
 
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bier'").get(0).getId(), OE, 1);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Mate'").get(0).getId(), OE, 1);
+    }
+
+    private UserDataSource syncUsers(Context context) {
+        UserDataSource u = new UserDataSource(context);
+
+        u.add("Dieter");
+        u.add("Batman");
+        u.add("SpiderMan");
+        u.add("Ronny Schäfer");
+        u.add("Ash Ketchup");
+        u.add("Professor Eich");
+        u.add("Rocko");
+        u.add("Misty");
+
+        return u;
+    }
+
+    private void syncParticipants(Context context, ShoppingListDataSource s, UserDataSource u) {
+        ParticipantDataSource p = new ParticipantDataSource(context);
+
+        long Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0).getId();
+        long Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0).getId();
+        long OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0).getId();
+
+        long Dieter = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Dieter'").get(0).getId();
+        long Batman = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Batman'").get(0).getId();
+        long SpiderMan = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'SpiderMan'").get(0).getId();
+        long Ronny = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Ronny Schäfer'").get(0).getId();
+        long AshKetchup = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Ash Ketchup'").get(0).getId();
+        long ProfEich = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Professor Eich'").get(0).getId();
+        long Rocko = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Rocko'").get(0).getId();
+        long Misty = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Misty'").get(0).getId();
+
+        p.add(Geburtstag, Dieter);
+        p.add(Geburtstag, Batman);
+
+        p.add(Vereinstreffen, SpiderMan);
+        p.add(Vereinstreffen, Ronny);
+
+        p.add(OE, AshKetchup);
+        p.add(OE, ProfEich);
+        p.add(OE, Rocko);
+        p.add(OE, Misty);
     }
 }

@@ -18,8 +18,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import app.smartshopper.Database.ParticipantDataSource;
 import app.smartshopper.Database.ShoppingList;
 import app.smartshopper.Database.ShoppingListDataSource;
+import app.smartshopper.Database.User;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 
@@ -45,48 +47,45 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
         final List<String> listgroups = new ArrayList<String>();
 
-        // Get all lists from the database and add all the non-single list entries to the list.
         ShoppingListDataSource source = new ShoppingListDataSource(getContext());
+        ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
 
         if (newList != "") {
-            source.add(newList, true);
+            source.add(newList);
         }
-        List<ShoppingList> listOfEntries = source.getAllEntries();
-        for (ShoppingList entry : listOfEntries) {
-            if (!entry.isSingleList()) {
-                listgroups.add(entry.getEntryName());
-            }
-        }
-
-
+        // Get all lists from the database and add all the non-single list entries to the list.
+        List<ShoppingList> listOfEntries = source.getAllGroupLists();
         final HashMap<String, List<String>> childlists = new HashMap<String, List<String>>();
-        List<String> parent0childs = new ArrayList<String>();
-        List<String> parent1childs = new ArrayList<String>();
-        List<String> parent2childs = new ArrayList<String>();
 
+        int i = 0;
+        for (ShoppingList entry : listOfEntries) {
+            listgroups.add(entry.getEntryName());
 
-        parent0childs.add("Dieter\n" +
-                "Batman");
+            List<String> child = new ArrayList<String>();
+            List<User> userList = participantDataSource.getUserOfList(entry.getId());
 
-        parent1childs.add("SpiderMan\n" +
-                "Ronny Schäfer");
+            StringBuilder builder = new StringBuilder();
+            String newLineChar = "";
+            for (User user : userList) {
+                builder.append(newLineChar);
+                builder.append(user.getEntryName());
+                newLineChar = "\n";
+            }
+            child.add(builder.toString());
 
-        parent2childs.add("Ash Ketchum\n" +
-                "Professor Eich\n" +
-                "Rocko\n" +
-                "Misty");
-        if (extras != null) {
-            newList = extras.getString("newList");
-            newParticipants = extras.getString("participants");
-            listgroups.add(newList);
-            List<String> parent3childs = new ArrayList<String>();
-            parent3childs.add(newParticipants);
-            childlists.put(listgroups.get(3), parent3childs);
+            childlists.put(listgroups.get(i), child);
+            ++i;
         }
 
-        childlists.put(listgroups.get(0), parent0childs);
-        childlists.put(listgroups.get(1), parent1childs);
-        childlists.put(listgroups.get(2), parent2childs);
+        //TODO re-write the adding routine so it uses the database
+//        if (extras != null) {
+//            newList = extras.getString("newList");
+//            newParticipants = extras.getString("participants");
+//            listgroups.add(newList);
+//            List<String> parent3childs = new ArrayList<String>();
+//            parent3childs.add(newParticipants);
+//            childlists.put(listgroups.get(3), parent3childs);
+//        }
 
         ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists) {
             @Override
@@ -146,7 +145,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
-                s.add(listName.getText().toString(), false);
+                s.add(listName.getText().toString());
                 dialog.dismiss();
             }
         });

@@ -42,13 +42,11 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         ShoppingListDataSource source = new ShoppingListDataSource(getContext());
 
         if (newList != "") {
-            source.add(newList, true);
+            source.add(newList);
         }
-        List<ShoppingList> listOfEntries = source.getAllEntries();
+        List<ShoppingList> listOfEntries = source.getAllSingleLists();
         for (ShoppingList entry : listOfEntries) {
-            if (entry.isSingleList()) {
-                listAdapter.add(entry.getEntryName());
-            }
+            listAdapter.add(entry.getEntryName());
         }
 
         // add adapter with items to list (necessary to display items)
@@ -86,12 +84,12 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
             @Override
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
-                s.add(listName.getText().toString(), true);
+                s.add(listName.getText().toString());
                 dialog.dismiss();
             }
         });
         Button btabort = (Button) dialog.findViewById(R.id.btAbortAddSingleList);
-        btabort.setOnClickListener(new View.OnClickListener(){
+        btabort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();

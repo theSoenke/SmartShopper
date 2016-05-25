@@ -26,7 +26,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
 
     @Override
     public String getWhereClause(Product entry) {
-        return MySQLiteHelper.ITEMENTRY_PRODUCT_ID + " = '" + entry.getId();
+        return MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getId();
     }
 
     @Override
