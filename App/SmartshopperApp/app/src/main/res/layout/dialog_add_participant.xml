@@ -7,11 +7,11 @@
     >
 
     <Button
-        android:id="@+id/dialog_btAddSingleList"
+        android:id="@+id/dialog_btAddParticipant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create List"
-        android:layout_below="@+id/dialog_txtList_input_field"
+        android:text="Add participant"
+        android:layout_below="@+id/dialog_txtParticipant_input_field"
         android:background="@color/colorPrimary"
         android:textColor="@android:color/white"/>
 
@@ -19,9 +19,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Abort"
-        android:id="@+id/btAbortAddSingleList"
-        android:layout_below="@+id/dialog_txtList_input_field"
-        android:layout_alignEnd="@+id/dialog_txtList_input_field"
+        android:id="@+id/btAbortAddParticipant"
+        android:layout_below="@+id/dialog_txtParticipant_input_field"
+        android:layout_alignEnd="@+id/dialog_txtParticipant_input_field"
         android:background="@color/colorPrimary"
         android:textColor="@android:color/white" />
 
@@ -30,7 +30,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
-        android:id="@+id/dialog_txtList_input_field"
+        android:id="@+id/dialog_txtParticipant_input_field"
         android:layout_below="@+id/participant_info_label" />
 
     <TextView
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
-        android:text="Name of the list to add:"
+        android:text="Name of the person to add:"
         android:id="@+id/participant_info_label"/>
 
 

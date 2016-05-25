@@ -76,6 +76,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        dropAll(db);
+    }
+
+    private void dropAll(SQLiteDatabase db){
         db.execSQL("DROP TABLE IF EXISTS " + PRODUCT_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SHOPPINGLIST_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ITEMENTRY_TABLE_NAME);
