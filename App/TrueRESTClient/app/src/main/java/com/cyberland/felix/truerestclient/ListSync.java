@@ -20,13 +20,15 @@ import java.net.URL;
  */
 public class ListSync extends AsyncTask<String, String, String>
 {
+    public AsyncResponse delegate = null;
+    int responseCode;
     @Override
     protected String doInBackground(String... params) {
         HttpURLConnection urlConnection = null;
         BufferedReader bufferedReader = null;
         String hash;
         String jsonString = "";
-        int responseCode;
+        responseCode = 0;
 
         try
         {
@@ -51,6 +53,9 @@ public class ListSync extends AsyncTask<String, String, String>
                 builder.append(line).append("\n");
             }
             jsonString = builder.toString();
+
+
+            responseCode = urlConnection.getResponseCode();
 
             responseCode = urlConnection.getResponseCode();
             JSONObject json = new JSONObject(jsonString);
@@ -95,5 +100,8 @@ public class ListSync extends AsyncTask<String, String, String>
     protected void onPostExecute(String result) {
 
         Log.v("json", result);
+        delegate.processFinish(result);
     }
+
+
 }
