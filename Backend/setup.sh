@@ -43,6 +43,7 @@ then
   chown web /var/www
   chgrp web /var/www
   chmod 770 /var/www
+  chmod -R g+s /var/www  
 
   mv ~/SmartShopper /var/www/
   cd /var/www/SmartShopper/Backend

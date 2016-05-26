@@ -50,10 +50,18 @@ exports.requireAuthentication = function (req, res, next) {
       return next(error)
     }
 
-    if (doc.password !== credentials.pass) {
-      let error = new Error('Passwords do not match')
-      return next(error)
-    }
-    next()
+    doc.comparePasswords(credentials.pass, function(err, isMatch){
+      if(err){
+        return next(err)
+      }
+
+      if(isMatch){
+        next()
+      }
+      else {
+        let error = new Error('Passwords do not match')
+        next(error)
+      }
+    })
   })
 }

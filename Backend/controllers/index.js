@@ -22,7 +22,7 @@ router.get('/', function (req, res) {
 // API Routes
 
 router.use(auth.checkAuthHeader)
-router.get('/user/register', auth.registerUser)
+router.post('/user/register', auth.registerUser)
 
 router.use(auth.requireAuthentication)
 router.get('/lists', lists.getLists)
