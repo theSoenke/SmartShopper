@@ -27,10 +27,19 @@ userSchema.pre('save', function (next) {
   }
 
   // override the cleartext password with the hashed one
-  // var hash = bcrypt.hashSync(this.password, SALT_WORK_FACTOR)
-  // this.password = hash
+  let hash = bcrypt.hashSync(this.password, SALT_WORK_FACTOR)
+  this.password = hash
   next()
 })
+
+userSchema.methods.comparePasswords = function (candidatePassword, cb) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch){
+    if(err) {
+      return cb(err)
+    }
+    cb(null, isMatch)
+  })
+}
 
 let User = mongoose.model('User', userSchema)
 
