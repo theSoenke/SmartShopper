@@ -1,21 +1,17 @@
 'use strict'
 
-var fs = require('fs')
-var express = require('express')
-var bodyParser = require('body-parser')
-var morgan = require('morgan')
-var path = require('path')
-var helmet = require('helmet')
+const fs = require('fs')
+const express = require('express')
+const bodyParser = require('body-parser')
+const morgan = require('morgan')
+const path = require('path')
+const helmet = require('helmet')
+const config = require('./config')
 
-var config = require('./config')
-var app = express()
+const app = express()
 
 // prevents possible security leaks
-app.use(helmet.hidePoweredBy())
-app.use(helmet.noSniff())
-app.use(helmet.xssFilter())
-app.use(helmet.noCache())
-app.use(helmet.frameguard())
+app.use(helmet())
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
@@ -25,7 +21,7 @@ app.use(morgan('combined', {stream: accessLogStream}))
 
 app.use(require('./controllers'))
 
-let port = config.web.port
+let port = config.PORT
 let server = app.listen(port, onListening)
 
 function onListening () {

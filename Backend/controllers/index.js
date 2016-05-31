@@ -1,16 +1,16 @@
 'use strict'
 
-var express = require('express')
-var mongoose = require('mongoose')
-var config = require('../config')
-var products = require('./products')
-var search = require('./search')
-var lists = require('./lists')
-var auth = require('./auth')
+const express = require('express')
+const mongoose = require('mongoose')
+const config = require('../config')
+const products = require('./products')
+const search = require('./search')
+const lists = require('./lists')
+const auth = require('./auth')
 
-var router = express.Router()
+const router = express.Router()
 
-mongoose.connect(config.database.url)
+mongoose.connect(config.DB.URL)
 mongoose.connection.on('error', function () {
   console.log('Error connecting to MongoDB')
 })
