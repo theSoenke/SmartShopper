@@ -97,13 +97,13 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
         return cursorToRealEntries(cursor);
     }
 
-    public List<T> executeSQL(String query){
+    public List<T> executeSQL(String query) {
         Cursor cursor = database.rawQuery(query, null);
 
         return cursorToRealEntries(cursor);
     }
 
-    private List<T> cursorToRealEntries(Cursor cursor){
+    private List<T> cursorToRealEntries(Cursor cursor) {
         List<T> entryList = new ArrayList<T>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -147,4 +147,17 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      * @return An entry from type T.
      */
     public abstract T cursorToEntry(Cursor cursor);
+
+    /**
+     * @return A JSON String that describes the given entry.
+     */
+    public abstract String getJSONFromEntry(T entry);
+
+    /**
+     * Creates a new object of the given type T based on the data in the json string.
+     *
+     * @param jsonString A string that contains all data to create an object of T.
+     * @return A new database entry object.
+     */
+    public abstract T buildEntryFromJSON(String jsonString);
 }

@@ -122,4 +122,16 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         list.setEntryName(cursor.getString(1));
         return list;
     }
+
+    @Override
+    public String getJSONFromEntry(ShoppingList entry) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
+        return "";
+    }
+
+    @Override
+    public ShoppingList buildEntryFromJSON(String jsonString) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
+        return new ShoppingList();
+    }
 }

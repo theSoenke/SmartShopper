@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.util.Log;
 
 /**
  * Created by hauke on 10.05.16.
@@ -82,5 +83,17 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         entry.setListID(cursor.getInt(1));
         entry.setAmount(cursor.getInt(2));
         return entry;
+    }
+
+    @Override
+    public String getJSONFromEntry(ItemEntry entry) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
+        return "";
+    }
+
+    @Override
+    public ItemEntry buildEntryFromJSON(String jsonString) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
+        return new ItemEntry();
     }
 }
