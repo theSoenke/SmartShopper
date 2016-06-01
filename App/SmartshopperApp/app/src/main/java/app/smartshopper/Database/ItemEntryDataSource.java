@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 /**
  * Created by hauke on 10.05.16.
  */
