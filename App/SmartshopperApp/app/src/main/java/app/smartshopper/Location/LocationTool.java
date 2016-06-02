@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.PointF;
+import android.util.Log;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -13,6 +14,7 @@ import org.altbeacon.beacon.BeaconParser;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -24,6 +26,9 @@ public class LocationTool{
     public int beaconID1, beaconID2, beaconID3, beaconID4;
     private PointF p1, p2, p3, p4;
     List<BeaconEntity> beacons;
+
+    HashMap<Integer,Einkaufsladen> idLadenMap;
+    Einkaufsladen laden = Einkaufsladen.Default;
 
     public LocationTool()
     {
@@ -42,6 +47,14 @@ public class LocationTool{
         beacons.add(new BeaconEntity(p2, beaconID2, 2));
         beacons.add(new BeaconEntity(p3, beaconID3, 3));
         beacons.add(new BeaconEntity(p4, beaconID4, 4));
+
+        idLadenMap = new HashMap<Integer, Einkaufsladen>();
+        idLadenMap.put(beaconID1,Einkaufsladen.Raum);
+        idLadenMap.put(beaconID2,Einkaufsladen.Penny);
+        idLadenMap.put(beaconID3,Einkaufsladen.Penny);
+        idLadenMap.put(beaconID4,Einkaufsladen.Penny);
+
+
 
     }
 
@@ -64,10 +77,18 @@ public class LocationTool{
 
     }
 
+    public void updateLaden(int minor)
+    {
+        laden = idLadenMap.get(minor);
+        Log.i("Navigation","Registered minor"+ minor);
+    }
+
+
     public int computeSector()
     {
         List<BeaconEntity> sortedBeacons = beacons;
         Collections.sort(sortedBeacons);
+        updateLaden(sortedBeacons.get(0).getMinor());
         if (sortedBeacons.get(0).getIdentifier() == 1)
         {
             if (sortedBeacons.get(1).getIdentifier() == 2)
@@ -192,4 +213,8 @@ public class LocationTool{
         }
     }
 
+    public Einkaufsladen getLaden()
+    {
+        return laden;
+    }
 }
