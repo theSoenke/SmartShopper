@@ -34,12 +34,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import app.smartshopper.Location.Einkaufsladen;
 import app.smartshopper.Database.Product;
 import app.smartshopper.Location.LocationTool;
 import app.smartshopper.R;
 
-public class NavigationViewFragment extends Fragment implements BeaconConsumer, ProductPresenter {
+public class NavigationViewFragment extends Fragment implements BeaconConsumer {
 
     private MapView mapView;
     private BitmapLayer bitmapLayer;
@@ -55,6 +57,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private int width = 480;
     private int height = 700;
 
+    Einkaufsladen laden = Einkaufsladen.Default;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -64,12 +68,14 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         beaconManager = BeaconManager.getInstanceForApplication(this.getActivity());
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         beaconManager.bind(this);
+        Log.i("Navigation","OnCreate");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState)
     {
+        Log.i("Navigation","OnCreateView");
         locationTool = new LocationTool();
 
         View view = inflater.inflate(R.layout.tab_navigation, group, false);
@@ -78,11 +84,23 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         marks = new ArrayList<>();
         marksName = new ArrayList<>();
 
+
         mapView = (MapView) view.findViewById(R.id.mapview2);
         Bitmap bitmap = null;
         try
         {
-            bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+            if (laden == Einkaufsladen.Raum)
+            {
+                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+            }
+            else if (laden == Einkaufsladen.Penny)
+            {
+                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("penny.png"));
+            }
+            else
+            {
+                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+            }
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -217,8 +235,18 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             @Override
             public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region)
             {
+                Log.i("Navigation","Beacon noted");
                 locationTool.updateBeacons(beacons);
                 sector = locationTool.computeSector();
+                Log.i("Navigation","Laden: " +laden.toString());
+                Log.i("Navigation","Laden Tool: " +locationTool.getLaden().toString());
+
+                if (laden != locationTool.getLaden())
+                {
+                    laden = locationTool.getLaden();
+                    refreshMap();
+                    Log.i("Navigation","Map changed");
+                }
                 updatePosition();
             }
         });
@@ -231,6 +259,32 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         }
     }
 
+    private void refreshMap()
+    {
+        Bitmap bitmap = null;
+        try
+        {
+            if (laden == Einkaufsladen.Raum)
+            {
+                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+            }
+            else if (laden == Einkaufsladen.Penny)
+            {
+                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("penny.png"));
+            }
+            else
+            {
+                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+            }
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+            Log.e("ERROR: ", e.getMessage());
+        }
+        mapView.loadMap(bitmap);
+    }
+
+
     @Override
     public Context getApplicationContext()
     {
@@ -239,14 +293,12 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
 
     @Override
-    public void unbindService(ServiceConnection serviceConnection)
-    {
-
+    public void unbindService(ServiceConnection serviceConnection) {
+        getActivity().unbindService(serviceConnection);
     }
 
     @Override
-    public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i)
-    {
-        return false;
+    public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
+        return getActivity().bindService(intent, serviceConnection, i);
     }
 }
