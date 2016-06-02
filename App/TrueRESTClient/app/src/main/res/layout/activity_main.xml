@@ -37,5 +37,19 @@
         android:theme="@style/AppTheme.Button"
         android:text="Get prodducts!" />
 
+    <Button
+        android:id="@+id/buttonPostList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.Button"
+        android:text="Post list!" />
+
+    <Button
+        android:id="@+id/buttonUpdateList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.Button"
+        android:text="Update List!" />
+
 
 </LinearLayout>
