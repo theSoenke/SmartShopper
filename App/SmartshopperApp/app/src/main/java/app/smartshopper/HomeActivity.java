@@ -26,185 +26,198 @@ import app.smartshopper.Settings.SettingsActivity;
 import app.smartshopper.ShoppingLists.GroupList.GroupListFragment;
 import app.smartshopper.ShoppingLists.SingleList.SingleListFragment;
 
-public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+{
 
-    private MenuItem _oldSelectedMenuItem;
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+	private MenuItem _oldSelectedMenuItem;
+	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+	private static boolean mIsAuthenticated;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		if (!mIsAuthenticated)
+		{
+			mIsAuthenticated = true;
+			Intent showLogin = new Intent(this, LoginActivity.class);
+			startActivity(showLogin);
+			finish();
+		}
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("This app needs location access");
-                builder.setMessage("Please grant location access so this app can detect beacons");
-                builder.setPositiveButton(android.R.string.ok, null);
-                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @TargetApi(Build.VERSION_CODES.M)
-                    @Override
-                    public void onDismiss(DialogInterface dialog)
-                    {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-                    }
-                });
-                builder.show();
-            }
-        }
 
-        Synchronizer synchronizer = new Synchronizer();
-        synchronizer.sync(getApplicationContext());
+		super.onCreate(savedInstanceState);
 
-        setContentView(app.smartshopper.R.layout.home_layout);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+		{
+			if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+			{
+				final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("This app needs location access");
+				builder.setMessage("Please grant location access so this app can detect beacons");
+				builder.setPositiveButton(android.R.string.ok, null);
+				builder.setOnDismissListener(new DialogInterface.OnDismissListener()
+				{
+					@TargetApi(Build.VERSION_CODES.M)
+					@Override
+					public void onDismiss(DialogInterface dialog)
+					{
+						requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+					}
+				});
+				builder.show();
+			}
+		}
 
-        Toolbar toolbar = (Toolbar) findViewById(app.smartshopper.R.id.home_toolbar);
-        setSupportActionBar(toolbar);
+		Synchronizer synchronizer = new Synchronizer();
+		synchronizer.sync(getApplicationContext());
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(app.smartshopper.R.id.home_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, app.smartshopper.R.string.navigation_drawer_open, app.smartshopper.R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+		setContentView(app.smartshopper.R.layout.home_layout);
 
-        NavigationView navigationView = (NavigationView) findViewById(app.smartshopper.R.id.home_nav);
-        navigationView.setNavigationItemSelectedListener(this);
+		Toolbar toolbar = (Toolbar) findViewById(app.smartshopper.R.id.home_toolbar);
+		setSupportActionBar(toolbar);
 
-        _oldSelectedMenuItem = navigationView.getMenu().getItem(0).getSubMenu().getItem(0);
-        _oldSelectedMenuItem.setChecked(true);
+		DrawerLayout drawer = (DrawerLayout) findViewById(app.smartshopper.R.id.home_layout);
+		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, app.smartshopper.R.string.navigation_drawer_open, app.smartshopper.R.string.navigation_drawer_close);
+		drawer.setDrawerListener(toggle);
+		toggle.syncState();
 
-        switchToFragment(SingleListFragment.class, null);
-    }
+		NavigationView navigationView = (NavigationView) findViewById(app.smartshopper.R.id.home_nav);
+		navigationView.setNavigationItemSelectedListener(this);
 
-    @Override
-    public void onBackPressed()
-    {
-        DrawerLayout drawer = (DrawerLayout) findViewById(app.smartshopper.R.id.home_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START))
-        {
-            drawer.closeDrawer(GravityCompat.START);
-        } else
-        {
-            super.onBackPressed();
-        }
-    }
+		_oldSelectedMenuItem = navigationView.getMenu().getItem(0).getSubMenu().getItem(0);
+		_oldSelectedMenuItem.setChecked(true);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        // TODO: Do we really need this menu? The settings are accessible via the navigation view as well.
-        getMenuInflater().inflate(app.smartshopper.R.menu.home_menu, menu);
-        return true;
-    }
+		switchToFragment(SingleListFragment.class, null);
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+	@Override
+	public void onBackPressed()
+	{
+		DrawerLayout drawer = (DrawerLayout) findViewById(app.smartshopper.R.id.home_layout);
+		if (drawer.isDrawerOpen(GravityCompat.START))
+		{
+			drawer.closeDrawer(GravityCompat.START);
+		}
+		else
+		{
+			super.onBackPressed();
+		}
+	}
 
-        //noinspection SimplifiableIfStatement
-        if (id == app.smartshopper.R.id.action_settings)
-        {
-            openSettings();
-            return true;
-        }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		// Inflate the menu; this adds items to the action bar if it is present.
+		// TODO: Do we really need this menu? The settings are accessible via the navigation view as well.
+		getMenuInflater().inflate(app.smartshopper.R.menu.home_menu, menu);
+		return true;
+	}
 
-        return super.onOptionsItemSelected(item);
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item)
-    {
-        // Reset the menu item that has been clicked before, so that it's not selected anymore.
-        if (_oldSelectedMenuItem != null)
-        {
-            _oldSelectedMenuItem.setChecked(false);
-        }
+		//noinspection SimplifiableIfStatement
+		if (id == app.smartshopper.R.id.action_settings)
+		{
+			openSettings();
+			return true;
+		}
 
-        Class fragmentClass = SingleListFragment.class;
+		return super.onOptionsItemSelected(item);
+	}
 
-        switch (item.getItemId())
-        {
-            case app.smartshopper.R.id.nav_person:
-                fragmentClass = SingleListFragment.class;
-                break;
-            case app.smartshopper.R.id.nav_group:
-                fragmentClass = GroupListFragment.class;
-                break;
-            case app.smartshopper.R.id.nav_contacs:
-                Toast.makeText(HomeActivity.this, "The contact view is not implemented yet :(", Toast.LENGTH_SHORT).show();
-                return true;
-            case app.smartshopper.R.id.nav_settings:
-                openSettings();
-                return true;
-        }
+	@SuppressWarnings("StatementWithEmptyBody")
+	@Override
+	public boolean onNavigationItemSelected(MenuItem item)
+	{
+		// Reset the menu item that has been clicked before, so that it's not selected anymore.
+		if (_oldSelectedMenuItem != null)
+		{
+			_oldSelectedMenuItem.setChecked(false);
+		}
 
-        switchToFragment(fragmentClass, item);
+		Class fragmentClass = SingleListFragment.class;
 
-        // Close the navigation drawer
-        DrawerLayout drawer = (DrawerLayout) findViewById(app.smartshopper.R.id.home_layout);
-        drawer.closeDrawers();
+		switch (item.getItemId())
+		{
+			case app.smartshopper.R.id.nav_person:
+				fragmentClass = SingleListFragment.class;
+				break;
+			case app.smartshopper.R.id.nav_group:
+				fragmentClass = GroupListFragment.class;
+				break;
+			case app.smartshopper.R.id.nav_contacs:
+				Toast.makeText(HomeActivity.this, "The contact view is not implemented yet :(", Toast.LENGTH_SHORT).show();
+				return true;
+			case app.smartshopper.R.id.nav_settings:
+				openSettings();
+				return true;
+		}
 
-        return true;
-    }
+		switchToFragment(fragmentClass, item);
 
-    /**
-     * Switches to the settings activity.
-     */
-    private void openSettings()
-    {
-        this.startActivity(new Intent(this, SettingsActivity.class));
-    }
+		// Close the navigation drawer
+		DrawerLayout drawer = (DrawerLayout) findViewById(app.smartshopper.R.id.home_layout);
+		drawer.closeDrawers();
 
-    /**
-     * Switches to the given Fragment and selects the given item in the navigation view.
-     *
-     * @param fragmentClass The fragment that should be displayed.
-     * @param selectedItem  The item in the navigation view to select.
-     */
-    private void switchToFragment(Class fragmentClass, MenuItem selectedItem)
-    {
-        Fragment fragment;
+		return true;
+	}
 
-        try
-        {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (InstantiationException e)
-        {
-            e.printStackTrace();
-            return;
-        } catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-            return;
-        }
+	/**
+	 * Switches to the settings activity.
+	 */
+	private void openSettings()
+	{
+		this.startActivity(new Intent(this, SettingsActivity.class));
+	}
 
-        // Insert the fragment by replacing the current fragment/layout
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(app.smartshopper.R.id.home_content, fragment);
-        fragmentTransaction.addToBackStack(null); // puts the transaction onto the stack
-        fragmentTransaction.commit(); //
+	/**
+	 * Switches to the given Fragment and selects the given item in the navigation view.
+	 *
+	 * @param fragmentClass The fragment that should be displayed.
+	 * @param selectedItem  The item in the navigation view to select.
+	 */
+	private void switchToFragment(Class fragmentClass, MenuItem selectedItem)
+	{
+		Fragment fragment;
 
-        if (selectedItem != null)
-        {
-            // Highlight the selected item has been done by NavigationView
-            selectedItem.setChecked(true);
-            // Save the current item to uncheck it when another item has been clicked
-            _oldSelectedMenuItem = selectedItem;
-            // Set action bar title
-            setTitle(selectedItem.getTitle());
-        }
-    }
+		try
+		{
+			fragment = (Fragment) fragmentClass.newInstance();
+		}
+		catch (InstantiationException e)
+		{
+			e.printStackTrace();
+			return;
+		}
+		catch (IllegalAccessException e)
+		{
+			e.printStackTrace();
+			return;
+		}
+
+		// Insert the fragment by replacing the current fragment/layout
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.replace(app.smartshopper.R.id.home_content, fragment);
+		fragmentTransaction.addToBackStack(null); // puts the transaction onto the stack
+		fragmentTransaction.commit(); //
+
+		if (selectedItem != null)
+		{
+			// Highlight the selected item has been done by NavigationView
+			selectedItem.setChecked(true);
+			// Save the current item to uncheck it when another item has been clicked
+			_oldSelectedMenuItem = selectedItem;
+			// Set action bar title
+			setTitle(selectedItem.getTitle());
+		}
+	}
 
 
 }

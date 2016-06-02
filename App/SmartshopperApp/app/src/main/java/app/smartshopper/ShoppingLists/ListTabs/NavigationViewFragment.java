@@ -159,7 +159,6 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer {
         }
     }
 
-    @Override
     public void productsChanged()
     {
         for(int i=0;0<marks.size();++i)
