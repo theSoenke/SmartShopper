@@ -28,24 +28,20 @@ import app.smartshopper.ShoppingLists.SingleList.SingleListFragment;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
-
-	private MenuItem _oldSelectedMenuItem;
+	private MenuItem mOldSelectedMenuItem;
 	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-	private static boolean mIsAuthenticated;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		if (!mIsAuthenticated)
+		super.onCreate(savedInstanceState);
+
+		if(!LoginActivity.isAuthenticated(this))
 		{
-			mIsAuthenticated = true;
 			Intent showLogin = new Intent(this, LoginActivity.class);
 			startActivity(showLogin);
 			finish();
 		}
-
-
-		super.onCreate(savedInstanceState);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
 		{
@@ -78,14 +74,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(app.smartshopper.R.id.home_layout);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, app.smartshopper.R.string.navigation_drawer_open, app.smartshopper.R.string.navigation_drawer_close);
-		drawer.setDrawerListener(toggle);
+		drawer.addDrawerListener(toggle);
 		toggle.syncState();
 
 		NavigationView navigationView = (NavigationView) findViewById(app.smartshopper.R.id.home_nav);
 		navigationView.setNavigationItemSelectedListener(this);
 
-		_oldSelectedMenuItem = navigationView.getMenu().getItem(0).getSubMenu().getItem(0);
-		_oldSelectedMenuItem.setChecked(true);
+		mOldSelectedMenuItem = navigationView.getMenu().getItem(0).getSubMenu().getItem(0);
+		mOldSelectedMenuItem.setChecked(true);
 
 		switchToFragment(SingleListFragment.class, null);
 	}
@@ -136,9 +132,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	public boolean onNavigationItemSelected(MenuItem item)
 	{
 		// Reset the menu item that has been clicked before, so that it's not selected anymore.
-		if (_oldSelectedMenuItem != null)
+		if (mOldSelectedMenuItem != null)
 		{
-			_oldSelectedMenuItem.setChecked(false);
+			mOldSelectedMenuItem.setChecked(false);
 		}
 
 		Class fragmentClass = SingleListFragment.class;
@@ -213,11 +209,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			// Highlight the selected item has been done by NavigationView
 			selectedItem.setChecked(true);
 			// Save the current item to uncheck it when another item has been clicked
-			_oldSelectedMenuItem = selectedItem;
+			mOldSelectedMenuItem = selectedItem;
 			// Set action bar title
 			setTitle(selectedItem.getTitle());
 		}
 	}
-
-
 }
