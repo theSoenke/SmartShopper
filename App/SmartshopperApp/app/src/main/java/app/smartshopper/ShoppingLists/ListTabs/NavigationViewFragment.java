@@ -75,8 +75,6 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer {
         MapUtils.init(0, 0);
         marks = new ArrayList<>();
         marksName = new ArrayList<>();
-        marks.add(new PointF((float) 0, (float) 0));
-        marksName.add("Hier Bist Du");
         marks.add(new PointF((float) 700, (float) 480));
         marksName.add("Max Punkt");
         marks.add(new PointF((float) 120, (float) 568));
@@ -141,9 +139,10 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer {
                 });
                 mapView.addLayer(markLayer);
                 locationLayer = new LocationLayer(mapView, new PointF(50, 50));
-                locationLayer.setOpenCompass(true);
-                locationLayer.setCompassIndicatorCircleRotateDegree(60);
-                locationLayer.setCompassIndicatorArrowRotateDegree(-30);
+                locationLayer.setOpenCompass(false);
+                mapView.addLayer(locationLayer);
+                /*locationLayer.setCompassIndicatorCircleRotateDegree(60);
+                locationLayer.setCompassIndicatorArrowRotateDegree(-30);*/
 
                 mapView.refresh();
             }
@@ -167,37 +166,48 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer {
         switch (sector)
         {
             case 1:
-                marks.get(0).set(3 * widthPart, 9 * heightPart);
+                locationLayer.getCurrentPosition().set(3 * widthPart, 9 * heightPart);
+                mapView.refresh();
                 break;
             case 2:
-                marks.get(0).set(3 * widthPart, 7 * heightPart);
+                locationLayer.getCurrentPosition().set(3 * widthPart, 7 * heightPart);
+                mapView.refresh();
                 break;
             case 3:
-                marks.get(0).set(3 * widthPart, 5 * heightPart);
+                locationLayer.getCurrentPosition().set(3 * widthPart, 5 * heightPart);
+                mapView.refresh();
                 break;
             case 4:
-                marks.get(0).set(3 * widthPart, 3 * heightPart);
+                locationLayer.getCurrentPosition().set(3 * widthPart, 3 * heightPart);
+                mapView.refresh();
                 break;
             case 5:
-                marks.get(0).set(3 * widthPart, 1 * heightPart);
+                locationLayer.getCurrentPosition().set(3 * widthPart, 1 * heightPart);
+                mapView.refresh();
                 break;
             case 6:
-                marks.get(0).set(2 * widthPart, 1 * heightPart);
+                locationLayer.getCurrentPosition().set(2 * widthPart, 1 * heightPart);
+                mapView.refresh();
                 break;
             case 7:
-                marks.get(0).set(1 * widthPart, 1 * heightPart);
+                locationLayer.getCurrentPosition().set(1 * widthPart, 1 * heightPart);
+                mapView.refresh();
                 break;
             case 8:
-                marks.get(0).set(1 * widthPart, 3 * heightPart);
+                locationLayer.getCurrentPosition().set(1 * widthPart, 3 * heightPart);
+                mapView.refresh();
                 break;
             case 9:
-                marks.get(0).set(1 * widthPart, 5 * heightPart);
+                locationLayer.getCurrentPosition().set(1 * widthPart, 5 * heightPart);
+                mapView.refresh();
                 break;
             case 10:
-                marks.get(0).set(1 * widthPart, 7 * heightPart);
+                locationLayer.getCurrentPosition().set(1 * widthPart, 7 * heightPart);
+                mapView.refresh();
                 break;
             case 11:
-                marks.get(0).set(1 * widthPart, 9 * heightPart);
+                locationLayer.getCurrentPosition().set(1 * widthPart, 9 * heightPart);
+                mapView.refresh();
                 break;
         }
     }
