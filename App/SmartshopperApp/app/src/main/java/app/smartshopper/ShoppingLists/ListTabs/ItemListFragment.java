@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import app.smartshopper.Database.ItemEntry;
@@ -109,32 +112,64 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         }
     }
 
-
     private void openAddItemDialog() {
+        //TODO show all items in the list "dialog_AddItemListView"
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_item);
         dialog.setTitle("Add an item to your list");
-        final EditText itemName = (EditText) dialog.findViewById(R.id.dialog_txtItemName);
-        Button btadd = (Button) dialog.findViewById(R.id.dialog_btAddItem);
-        btadd.setOnClickListener(new View.OnClickListener() {
+        final EditText itemNameExitField = (EditText) dialog.findViewById(R.id.dialog_txtItemName);
+        final ListView productList = (ListView)dialog.findViewById(R.id.dialog_AddItemListView);
+        final ArrayAdapter<Product> productListAdapter = new ArrayAdapter<Product>(getContext(), R.layout.simple_row, new ArrayList<Product>());
+
+        // get all products and add them to the list
+        final List<Product> listOfProducts = _productSource.getAllEntries();
+        productListAdapter.addAll(listOfProducts);
+
+        productList.setAdapter(productListAdapter);
+
+        productList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
-            public void onClick(View v) {
-                if (addItemtoList("'" + itemName.getText().toString() + "'")) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (addItemtoList("'" + productListAdapter.getItem(position).toString() + "'")) {
                     Toast.makeText(getContext(), "item added", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 } else {
                     Toast.makeText(getContext(), "could not find your item", Toast.LENGTH_SHORT).show();
                 }
-                ;
             }
         });
-        Button btabort = (Button) dialog.findViewById(R.id.btAbortAddItem);
-        btabort.setOnClickListener(new View.OnClickListener() {
+
+        //TODO add listener to the input field to filter the list of items
+        itemNameExitField.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String prefix = s.toString();
+                List<Product> newListOfProducts = (List<Product>)((ArrayList<Product>)listOfProducts).clone();
+                int lengthOfList = newListOfProducts.size();
+
+                for(int i = 0; i < lengthOfList;i++){
+                    String entry = newListOfProducts.get(i).toString();
+                    if(!entry.startsWith(prefix)){
+                        newListOfProducts.remove(i);
+                        lengthOfList--;
+                        i--;
+                    }
+                }
+
+                productListAdapter.clear();
+                productListAdapter.addAll(newListOfProducts);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
+
         dialog.show();
     }
 

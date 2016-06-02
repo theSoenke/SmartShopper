@@ -52,7 +52,6 @@ public class ParticipantListActivity extends AppCompatActivity {
         // Create ArrayAdapter using an empty list
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.simple_row, new ArrayList<String>());
 
-//        listAdapter.add(groupListName); // TODO remove when there's the actual data available
         ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getApplicationContext());
         List<ShoppingList> shoppingList = shoppingListDataSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
         if (shoppingList.size() > 0) {

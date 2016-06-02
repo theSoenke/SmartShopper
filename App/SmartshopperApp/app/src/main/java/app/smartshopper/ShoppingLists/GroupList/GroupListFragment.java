@@ -77,7 +77,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             ++i;
         }
 
-        //TODO re-write the adding routine so it uses the database
+        //TODO re-write the adding routine so it uses the database. This routine also should consider that group lists consist of at least one participant
 //        if (extras != null) {
 //            newList = extras.getString("newList");
 //            newParticipants = extras.getString("participants");

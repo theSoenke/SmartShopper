@@ -68,8 +68,6 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      */
     public void open() throws SQLException {
         super.open();
-
-        //TODO create entries for the actual databases
     }
 
     @Override

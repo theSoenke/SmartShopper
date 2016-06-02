@@ -6,31 +6,12 @@
     android:padding="10dp"
     >
 
-    <Button
-        android:id="@+id/dialog_btAddItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=" Add Item"
-        android:layout_below="@+id/dialog_txtItemName"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Abort"
-        android:id="@+id/btAbortAddItem"
-        android:layout_below="@+id/dialog_txtItemName"
-        android:layout_alignEnd="@+id/dialog_txtItemName"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white" />
-
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
         android:id="@+id/dialog_txtItemName"
-        android:layout_below="@+id/textView4" />
+        android:layout_below="@+id/dialog_AddItemTextView" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -38,6 +19,13 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
         android:text="Name of the item to add:"
-        android:id="@+id/textView4"/>
+        android:id="@+id/dialog_AddItemTextView"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/dialog_AddItemListView"
+        android:layout_below="@+id/dialog_txtItemName"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

@@ -33,4 +33,9 @@ public class Product extends DatabaseEntry {
         }
         return false;
     }
+
+    @Override
+    public String toString(){
+        return getEntryName();
+    }
 }
