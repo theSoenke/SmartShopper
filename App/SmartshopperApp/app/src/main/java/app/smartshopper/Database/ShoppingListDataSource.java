@@ -31,7 +31,8 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      *
      * @param context The application context.
      */
-    public ShoppingListDataSource(Context context) {
+    public ShoppingListDataSource(Context context)
+    {
         super(context,
                 MySQLiteHelper.SHOPPINGLIST_TABLE_NAME,
                 new String[]{
@@ -43,7 +44,8 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     }
 
     @Override
-    public void add(ShoppingList list) {
+    public void add(ShoppingList list)
+    {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
 
@@ -62,7 +64,8 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      * @param listName The name of the new list.
      * @return The new shopping list with unique ID.
      */
-    public ShoppingList add(String listName) {
+    public ShoppingList add(String listName)
+    {
         ShoppingList list = new ShoppingList();
         list.setEntryName(listName);
 
@@ -74,13 +77,15 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     /**
      * @return All single lists.
      */
-    public List<ShoppingList> getAllSingleLists() {
+    public List<ShoppingList> getAllSingleLists()
+    {
         List<Participant> participantList = _participantSource.getAllEntries();
         List<ShoppingList> shoppingListList = getAllEntries();
 
         // remove all lists with at least one participant.
         // The remaining entries are all single lists, because they have no participants.
-        for(Participant p:participantList){
+        for (Participant p : participantList)
+        {
             ShoppingList list = new ShoppingList();
             list.setId(p.getShoppingListID());
             shoppingListList.remove(list); // this works because of the equals-definition in ShoppingList
@@ -92,20 +97,23 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     /**
      * @return All group lists.
      */
-    public List<ShoppingList> getAllGroupLists() {
+    public List<ShoppingList> getAllGroupLists()
+    {
         List<Participant> participantList = _participantSource.getAllEntries();
         List<ShoppingList> shoppingLists = getAllEntries();
         Map<Long, ShoppingList> shoppingListMap = new HashMap<Long, ShoppingList>(); // <ID, List>
 
         // to not ask the database for every list cache it in a map
-        for(ShoppingList list : shoppingLists){
+        for (ShoppingList list : shoppingLists)
+        {
             shoppingListMap.put(new Long(list.getId()), list);
         }
 
         // now go through all participants and get their shopping list.
         // It's a set, so there won't be duplicates.
         Set<ShoppingList> shoppingListSet = new LinkedHashSet<ShoppingList>();
-        for(Participant participant:participantList){
+        for (Participant participant : participantList)
+        {
             Long listID = new Long(participant.getShoppingListID());
             ShoppingList list = shoppingListMap.get(listID);
             shoppingListSet.add(list);
@@ -118,12 +126,14 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     }
 
     @Override
-    public String getWhereClause(ShoppingList entry) {
+    public String getWhereClause(ShoppingList entry)
+    {
         return MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = " + entry.getId();
     }
 
     @Override
-    public ShoppingList cursorToEntry(Cursor cursor) {
+    public ShoppingList cursorToEntry(Cursor cursor)
+    {
         ShoppingList list = new ShoppingList();
         list.setId(cursor.getInt(0));
         list.setEntryName(cursor.getString(1));

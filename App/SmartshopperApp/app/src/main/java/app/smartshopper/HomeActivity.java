@@ -1,6 +1,11 @@
 package app.smartshopper;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -24,10 +30,32 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private MenuItem _oldSelectedMenuItem;
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("This app needs location access");
+                builder.setMessage("Please grant location access so this app can detect beacons");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @TargetApi(Build.VERSION_CODES.M)
+                    @Override
+                    public void onDismiss(DialogInterface dialog)
+                    {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+                    }
+                });
+                builder.show();
+            }
+        }
 
         Synchronizer synchronizer = new Synchronizer();
         synchronizer.sync(getApplicationContext());
@@ -53,17 +81,21 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         DrawerLayout drawer = (DrawerLayout) findViewById(app.smartshopper.R.id.home_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer.isDrawerOpen(GravityCompat.START))
+        {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        } else
+        {
             super.onBackPressed();
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         // TODO: Do we really need this menu? The settings are accessible via the navigation view as well.
         getMenuInflater().inflate(app.smartshopper.R.menu.home_menu, menu);
@@ -71,14 +103,16 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == app.smartshopper.R.id.action_settings) {
+        if (id == app.smartshopper.R.id.action_settings)
+        {
             openSettings();
             return true;
         }
@@ -88,15 +122,18 @@ public class HomeActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem item)
+    {
         // Reset the menu item that has been clicked before, so that it's not selected anymore.
-        if (_oldSelectedMenuItem != null) {
+        if (_oldSelectedMenuItem != null)
+        {
             _oldSelectedMenuItem.setChecked(false);
         }
 
         Class fragmentClass = SingleListFragment.class;
 
-        switch (item.getItemId()) {
+        switch (item.getItemId())
+        {
             case app.smartshopper.R.id.nav_person:
                 fragmentClass = SingleListFragment.class;
                 break;
@@ -123,7 +160,8 @@ public class HomeActivity extends AppCompatActivity
     /**
      * Switches to the settings activity.
      */
-    private void openSettings() {
+    private void openSettings()
+    {
         this.startActivity(new Intent(this, SettingsActivity.class));
     }
 
@@ -133,15 +171,19 @@ public class HomeActivity extends AppCompatActivity
      * @param fragmentClass The fragment that should be displayed.
      * @param selectedItem  The item in the navigation view to select.
      */
-    private void switchToFragment(Class fragmentClass, MenuItem selectedItem) {
+    private void switchToFragment(Class fragmentClass, MenuItem selectedItem)
+    {
         Fragment fragment;
 
-        try {
+        try
+        {
             fragment = (Fragment) fragmentClass.newInstance();
-        } catch (InstantiationException e){
+        } catch (InstantiationException e)
+        {
             e.printStackTrace();
             return;
-        } catch(IllegalAccessException e) {
+        } catch (IllegalAccessException e)
+        {
             e.printStackTrace();
             return;
         }
@@ -153,7 +195,8 @@ public class HomeActivity extends AppCompatActivity
         fragmentTransaction.addToBackStack(null); // puts the transaction onto the stack
         fragmentTransaction.commit(); //
 
-        if (selectedItem != null) {
+        if (selectedItem != null)
+        {
             // Highlight the selected item has been done by NavigationView
             selectedItem.setChecked(true);
             // Save the current item to uncheck it when another item has been clicked

@@ -23,4 +23,5 @@ public class DetailedListActivity extends AbstractDetailedListActivity {
         finish();
         return true;
     }
+
 }
