@@ -1,6 +1,7 @@
 package app.smartshopper.ShoppingLists.ListTabs;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -29,12 +30,10 @@ import app.smartshopper.R;
 /**
  * Created by hauke on 28.04.16.
  */
-public class ItemListFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class ItemListFragment extends Fragment implements AdapterView.OnItemClickListener, ProductPresenter {
 
     ArrayAdapter<String> _listAdapter;
-    long _shoppingList;
-    ItemEntryDataSource _itemSource;
-    ProductDataSource _productSource;
+    ProductHolder _productHolder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
@@ -42,50 +41,20 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
         ListView list = (ListView) view.findViewById(R.id.itemlist_list);
 
-        String listName = "";
-        if (group != null) {
-            listName = group.getTag().toString();
-        }
-
         // Create ArrayAdapter using an empty list
         _listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
 
         // get all lists with this name
         ShoppingListDataSource shoppingListSource = new ShoppingListDataSource(getContext());
-        List<ShoppingList> listOfEntries = shoppingListSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + "='" + listName + "'");
 
-        if (listOfEntries.size() > 0) {
-            if (listOfEntries.size() > 1) {
-                Toast.makeText(getContext(), "There's more than one list with the name " + listName + "! Taking the first occurrence.", Toast.LENGTH_SHORT).show();
-            }
-            _shoppingList = listOfEntries.get(0).getId();
+        productsChanged();
 
-            _itemSource = new ItemEntryDataSource(getContext());
-            List<ItemEntry> items = _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + _shoppingList);
+        // add adapter with items to list (necessary to display items)
+        list.setAdapter(_listAdapter);
 
-            _productSource = new ProductDataSource(getContext());
+        // to get notified about clicks on items
+        list.setOnItemClickListener(this);
 
-
-            for (ItemEntry item : items) {
-                List<Product> product = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + "=" + item.getProductID());
-
-                if (product.size() > 0) {
-                    String entryString = product.get(0).getEntryName();
-                    if (item.getAmount() > 1) {
-                        entryString += " (" + item.getAmount() + "x)";
-                    }
-                    _listAdapter.add(entryString);
-                }
-            }
-
-            // add adapter with items to list (necessary to display items)
-            list.setAdapter(_listAdapter);
-
-            // to get notified about clicks on items
-            list.setOnItemClickListener(this);
-        } else {
-            Toast.makeText(getContext(), "There's no list calles '" + list + "'!", Toast.LENGTH_SHORT).show();
-        }
         FloatingActionButton addItem = (FloatingActionButton) view.findViewById(R.id.fabAddItem);
         addItem.setOnClickListener(new View.OnClickListener() {
             public void onClick(View vw) {
@@ -96,20 +65,6 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         return view;
     }
 
-    private boolean addItemtoList(String item) {
-        List<Product> productList = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + item);
-        if (productList.isEmpty()) {
-            return false;
-        } else {
-            Product prod = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + item).get(0);
-            String entryString = prod.getEntryName();
-            _itemSource.add(prod.getId(), _shoppingList, 1);
-            _listAdapter.add(entryString);
-            return true;
-        }
-    }
-
-
     private void openAddItemDialog() {
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_item);
@@ -119,7 +74,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         btadd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (addItemtoList("'" + itemName.getText().toString() + "'")) {
+                if (_productHolder.addProduct("'" + itemName.getText().toString() + "'")) {
                     Toast.makeText(getContext(), "item added", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 } else {
@@ -141,5 +96,34 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+    }
+
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof ProductHolder)
+        {
+            _productHolder = (ProductHolder) context;
+        }
+        else
+        {
+            throw new ClassCastException(context.toString()+" has to implement ProductHolder!");
+        }
+    }
+
+    @Override
+    public void productsChanged()
+    {
+        for(int i = 0; 0<_listAdapter.getCount();++i)
+        {
+            _listAdapter.remove(_listAdapter.getItem(0));
+        }
+        List<Product> products = _productHolder.getProducts();
+        for(Product product : products)
+        {
+            String representation = product.getEntryName();
+            _listAdapter.add(representation);
+        }
     }
 }
