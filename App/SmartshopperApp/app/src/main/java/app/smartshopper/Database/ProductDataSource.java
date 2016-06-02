@@ -3,6 +3,7 @@ package app.smartshopper.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 /**
  * Created by Felix on 02.05.2016. Refactored by Hauke on 10.05.2016.
@@ -74,5 +75,17 @@ public class ProductDataSource extends DatabaseTable<Product> {
         product.setPosX(cursor.getInt(2));
         product.setPosY(cursor.getInt(3));
         return product;
+    }
+
+    @Override
+    public String getJSONFromEntry(Product entry) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
+        return "";
+    }
+
+    @Override
+    public Product buildEntryFromJSON(String jsonString) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
+        return new Product();
     }
 }

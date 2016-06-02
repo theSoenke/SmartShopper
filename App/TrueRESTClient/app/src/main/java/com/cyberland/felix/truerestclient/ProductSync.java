@@ -20,7 +20,7 @@ import java.net.URL;
  */
 public class ProductSync extends AsyncTask<String, String, String>
 {
-
+    public AsyncResponse delegate = null;
     @Override
     protected String doInBackground(String... params) {
         HttpURLConnection urlConnection = null;
@@ -96,5 +96,6 @@ public class ProductSync extends AsyncTask<String, String, String>
     protected void onPostExecute(String result) {
 
         Log.v("json", result);
+        delegate.processFinish(result);
     }
 }

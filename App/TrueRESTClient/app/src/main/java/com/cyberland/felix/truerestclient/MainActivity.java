@@ -8,9 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements AsyncResponse
 {
-    Button button;
+    Button buttonGetLists;
+    Button buttonGetProducts;
+
     String serverResponse;
     EditText editTextServerResponse;
     String hash;
@@ -20,11 +22,12 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = (Button) findViewById(R.id.button);
+        buttonGetLists = (Button) findViewById(R.id.buttonGetLists);
+        buttonGetProducts = (Button) findViewById(R.id.buttonGetProducts);
         editTextServerResponse = (EditText) findViewById(R.id.edittext_serverresponse);
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        buttonGetLists.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -35,14 +38,10 @@ public class MainActivity extends AppCompatActivity
                     //hier bleibt er irgendwie haengen
                     // serverResponse = ProductSync.getLists();
 
-                    hash = Base64.encodeToString("vsis:password".getBytes(), Base64.NO_WRAP);
-                    new ListSync().execute("http://api.tecfuture.de:3000/lists",hash);
-
-                    Toast.makeText(MainActivity.this,"Hier komme ich nicht hin",Toast.LENGTH_LONG).show();
-
-                    Toast.makeText(MainActivity.this,serverResponse,Toast.LENGTH_LONG).show();
-                        editTextServerResponse.setText(serverResponse);
-
+                    hash = Base64.encodeToString("felix:test".getBytes(), Base64.NO_WRAP);
+                    ListSync listsync = new ListSync();
+                    listsync.delegate = MainActivity.this;
+                    listsync.execute("http://api.tecfuture.de:3000/lists",hash);
 
                 }
                 catch (Exception e)
@@ -53,5 +52,29 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
+        buttonGetProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try
+                {
+                    hash = Base64.encodeToString("felix:test".getBytes(), Base64.NO_WRAP);
+                    ProductSync productSync = new ProductSync();
+                    productSync.delegate = MainActivity.this;
+                    productSync.execute("http://api.tecfuture.de:3000/products",hash);
+
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        });
+    }
+
+    public void processFinish(String output)
+    {
+        Toast.makeText(MainActivity.this,output,Toast.LENGTH_LONG).show();
+        editTextServerResponse.setText(serverResponse);
     }
 }

@@ -97,6 +97,18 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         return participant;
     }
 
+    @Override
+    public String getJSONFromEntry(Participant entry) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
+        return "";
+    }
+
+    @Override
+    public Participant buildEntryFromJSON(String jsonString) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
+        return new Participant();
+    }
+
     /**
      * Gets the users name of the given participant.
      *

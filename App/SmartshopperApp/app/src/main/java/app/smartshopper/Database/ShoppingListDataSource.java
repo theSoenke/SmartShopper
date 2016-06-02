@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -14,11 +17,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
+import app.smartshopper.Properties;
+
 /**
  * Created by Felix on 02.05.2016. Refactored by Hauke on 10.05.2016.
  */
 public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     private ParticipantDataSource _participantSource;
+    private ItemEntryDataSource _itemEntrySource;
 
     /**
      * Creates a new data source for the shopping list table and initializes it with the columns from the helper.
@@ -33,6 +39,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                         MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME
                 });
         _participantSource = new ParticipantDataSource(context);
+        _itemEntrySource = new ItemEntryDataSource(context);
     }
 
     @Override
@@ -121,5 +128,27 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         list.setId(cursor.getInt(0));
         list.setEntryName(cursor.getString(1));
         return list;
+    }
+
+    @Override
+    public String getJSONFromEntry(ShoppingList entry) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("name", entry.getEntryName());
+            jsonObject.put("owner", Properties.getInstance().getUserName());
+            //TODO create method to get all item of a list. Also use this in the ItemListFragment to simplify stuff and abstract/hide the SQL queries a bit more
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    @Override
+    public ShoppingList buildEntryFromJSON(String jsonString) {
+        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
+        return new ShoppingList();
     }
 }

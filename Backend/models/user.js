@@ -1,7 +1,7 @@
 'use strict'
 
 var mongoose = require('mongoose')
-var bcrypt = require('bcrypt')
+var bcrypt = require('bcryptjs')
 
 var Schema = mongoose.Schema
 const SALT_WORK_FACTOR = 10
@@ -27,14 +27,25 @@ userSchema.pre('save', function (next) {
   }
 
   // override the cleartext password with the hashed one
-  let hash = bcrypt.hashSync(this.password, SALT_WORK_FACTOR)
-  this.password = hash
-  next()
+  let user = this
+  bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
+    if (err) {
+      return next(err)
+    }
+
+    bcrypt.hash(user.password, salt, function (err, hash) {
+      if (err) {
+        return next(err)
+      }
+      user.password = hash
+      next()
+    })
+  })
 })
 
 userSchema.methods.comparePasswords = function (candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, function(err, isMatch){
-    if(err) {
+  bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
+    if (err) {
       return cb(err)
     }
     cb(null, isMatch)
