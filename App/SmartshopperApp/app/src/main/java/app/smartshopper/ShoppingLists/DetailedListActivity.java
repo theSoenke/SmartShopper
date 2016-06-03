@@ -103,6 +103,11 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         return _products;
     }
 
+    @Override
+    public List<Product> getAllAvailableProducts() {
+        return _productSource.getAllEntries();
+    }
+
     private void updateFragments()
     {
         for(Fragment fragment : listPagerAdapter.getPages())

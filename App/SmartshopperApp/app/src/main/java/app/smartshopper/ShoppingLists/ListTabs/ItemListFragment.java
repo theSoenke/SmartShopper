@@ -79,7 +79,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
         // get all products and add them to the list
         //FIXME get all products an not only the ones that already exist in the list
-        final List<Product> listOfProducts = _productHolder.getProducts();
+        final List<Product> listOfProducts = _productHolder.getAllAvailableProducts();
         productListAdapter.addAll(listOfProducts);
 
         productList.setAdapter(productListAdapter);

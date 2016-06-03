@@ -15,4 +15,5 @@ public interface ProductHolder
     boolean addProduct(String product);
     void removeProduct(Product product);
     List<Product> getProducts();
+    List<Product> getAllAvailableProducts();
 }
