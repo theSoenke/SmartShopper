@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -132,7 +133,37 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        final Dialog dialog = new Dialog(getContext());
 
+        final String itemName = _listAdapter.getItem(position);
+        dialog.setContentView(R.layout.dialog_configure_item);
+        dialog.setTitle("Configure " + "'" +itemName+ "'");
+        TextView tw = (TextView) dialog.findViewById(R.id.dialog_ConfigItemTextView);
+        tw.setText("choose action for " +  "'" + itemName + "'");
+        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
+        Button btDelete = (Button) dialog.findViewById(R.id.dialog_btDeleteItem);
+        Button btBought = (Button) dialog.findViewById(R.id.dialog_btMarkItem);
+        btAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteItem(_productHolder.getProductFromString(itemName));
+                dialog.dismiss();
+            }
+        });
+        btBought.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MarkItemAsBought();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     @Override
@@ -154,6 +185,14 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         for (Product product : products) {
             String representation = product.getEntryName();
             _listAdapter.add(representation);
+
         }
+    }
+
+    public void deleteItem(Product p){
+        _productHolder.removeProduct(p);
+    }
+    public void MarkItemAsBought(){
+
     }
 }

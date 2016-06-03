@@ -85,17 +85,26 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             return false;
         } else {
             Product prod = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + product).get(0);
-            String entryString = prod.getEntryName();
             _itemSource.add(prod.getId(), _shoppingList, 1);
             _products.add(prod);
-            updateFragments();
+            ((ProductPresenter) listPagerAdapter.getItem(0)).productsChanged();
+            //updateFragments();
             return true;
         }
     }
 
     @Override
     public void removeProduct(Product product) {
-
+        if(_products.contains(product)){
+            ItemEntry entry = new ItemEntry();
+            entry.setProductID(product.getId());
+            entry.setListID(_shoppingList);
+            entry.setAmount(1);
+            _products.remove(product);
+            _itemSource.removeEntryFromDatabase(entry);
+            ((ProductPresenter) listPagerAdapter.getItem(0)).productsChanged();
+            //updateFragments();
+        }
     }
 
     @Override
@@ -114,5 +123,15 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         {
             ((ProductPresenter) fragment).productsChanged();
         }
+    }
+
+    @Override
+    public Product getProductFromString(String s) {
+        for (Product prod : _products){
+            if(prod.getEntryName() == s){
+                return prod;
+            }
+        }
+        return null;
     }
 }

@@ -16,4 +16,5 @@ public interface ProductHolder
     void removeProduct(Product product);
     List<Product> getProducts();
     List<Product> getAllAvailableProducts();
+    Product getProductFromString(String s);
 }
