@@ -1,20 +1,17 @@
 {
-  "products": [
-    {
-      "name": "test",
-      "location": {
-        "x": 7,
-        "y": 10
-      },
-      "market": "test_market"
-    },
-    {
-      "name": "test2",
-      "location": {
-        "x": 4,
-        "y": 3
-      },
-      "market": "test2_market"
-    }
-  ]
+	"products": [{
+		"name": "test",
+		"location": {
+			"x": 0,
+			"y": 10
+		},
+		"market": "test_market"
+	}, {
+		"name": "test2",
+		"location": {
+			"x": 4,
+			"y": 3
+		},
+		"market": "test2_market"
+	}]
 }

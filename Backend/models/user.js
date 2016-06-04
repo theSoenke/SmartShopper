@@ -1,7 +1,7 @@
 'use strict'
 
 var mongoose = require('mongoose')
-var bcrypt = require('bcryptjs')
+var bcrypt = require('bcrypt')
 
 var Schema = mongoose.Schema
 const SALT_WORK_FACTOR = 10
