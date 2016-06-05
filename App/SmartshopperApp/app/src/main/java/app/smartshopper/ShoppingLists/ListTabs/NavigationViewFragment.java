@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import app.smartshopper.Database.ItemEntry;
 import app.smartshopper.Location.Einkaufsladen;
 import app.smartshopper.Database.Product;
 import app.smartshopper.Location.LocationTool;
@@ -166,8 +167,9 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer {
             marks.remove(0);
             marksName.remove(0);
         }
-        for(Product product : _productHolder.getProducts())
+        for(ItemEntry entry : _productHolder.getItemEntries())
         {
+            Product product  = _productHolder.getProductFromID(entry.getProductID());
             marks.add(new PointF((float) product.getPosX(), (float) product.getPosY()));
             marksName.add(product.getEntryName());
         }

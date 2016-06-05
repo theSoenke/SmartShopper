@@ -28,7 +28,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     ItemEntryDataSource _itemSource;
     long _shoppingList;
     ListPagerAdapter listPagerAdapter;
-    List<Product> _products;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,20 +52,14 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             _shoppingList = listOfEntries.get(0).getId();
 
             _itemSource = new ItemEntryDataSource(getApplicationContext());
-            List<ItemEntry> items = _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + _shoppingList);
+
 
             _productSource = new ProductDataSource(getApplicationContext());
 
-            _products = new ArrayList<>();
-            for (ItemEntry item : items) {
-                List<Product> product = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + "=" + item.getProductID());
 
-                if (product.size() > 0) {
-                    _products.add(product.get(0));
-                }
-            }
+
         } else {
-            Toast.makeText(getApplicationContext(), "There's no list calles '" + listName + "'!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "There's no list called '" + listName + "'!", Toast.LENGTH_SHORT).show();
         }
 
         listPagerAdapter = new ListPagerAdapter(getSupportFragmentManager(), 2);
@@ -79,14 +73,16 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public boolean addProduct(String product) {
-        List<Product> productList = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + product);
-        if (productList.isEmpty()) {
+    public boolean addEntry(String product, int amount) {
+        Product p = getProductFromString(product);
+        if (p.equals(null)) {
             return false;
         } else {
-            Product prod = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + product).get(0);
-            _itemSource.add(prod.getId(), _shoppingList, 1);
-            _products.add(prod);
+            ItemEntry e = new ItemEntry();
+            e.setProductID(p.getId());
+            e.setListID(_shoppingList);
+            e.setAmount(amount);
+            _itemSource.add(e);
             ((ProductPresenter) listPagerAdapter.getItem(0)).productsChanged();
             //updateFragments();
             return true;
@@ -94,23 +90,28 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void removeProduct(Product product) {
-        if(_products.contains(product)){
-            ItemEntry entry = new ItemEntry();
-            entry.setProductID(product.getId());
-            entry.setListID(_shoppingList);
-            entry.setAmount(1);
-            _products.remove(product);
-            _itemSource.removeEntryFromDatabase(entry);
-            ((ProductPresenter) listPagerAdapter.getItem(0)).productsChanged();
-            //updateFragments();
+    public void removeEntry(Product p) {
+
+        List<ItemEntry> entrylist = getEntryFromProduct(p);
+        if(entrylist.size() > 0){
+            if(entrylist.size() > 1){
+                Toast.makeText(getApplicationContext(), "More than one entry for " +  p.getEntryName() + ", i will delete them all", Toast.LENGTH_SHORT).show();
+            }
+            for(int i = 0; i < entrylist.size(); i++){
+                _itemSource.removeEntryFromDatabase(entrylist.get(i));
+            }
+        }else{
+            Toast.makeText(getApplicationContext(), "Couldn't find the item to delete :(", Toast.LENGTH_SHORT).show();
         }
     }
 
+
+
     @Override
-    public List<Product> getProducts() {
-        return _products;
+    public List<ItemEntry> getItemEntries(){
+        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + _shoppingList);
     }
+
 
     @Override
     public List<Product> getAllAvailableProducts() {
@@ -127,11 +128,25 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     @Override
     public Product getProductFromString(String s) {
-        for (Product prod : _products){
-            if(prod.getEntryName() == s){
-                return prod;
-            }
+        List<Product> productList = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + "'" + s + "'");
+        if (productList.isEmpty()) {
+            return null;
+        } else {
+            return productList.get(0);
         }
-        return null;
+    }
+
+    @Override
+    public Product getProductFromID(long PID){
+        List<Product> productList = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = " + PID);
+        if (productList.isEmpty()) {
+            return null;
+        } else {
+            return productList.get(0);
+        }
+    }
+
+    public List<ItemEntry> getEntryFromProduct(Product p){
+        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + p.getId() + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + _shoppingList);
     }
 }

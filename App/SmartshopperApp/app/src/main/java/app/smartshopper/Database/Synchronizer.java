@@ -81,18 +81,18 @@ public class Synchronizer {
 
         long OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0).getId();
 
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Hammer'").get(0).getId(), Baumarkt, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bohrmaschine'").get(0).getId(), Baumarkt, 1);
+        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Hammer'").get(0).getId(), Baumarkt, 2);
+        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bohrmaschine'").get(0).getId(), Baumarkt, 4);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Farbe'").get(0).getId(), Baumarkt, 1);
 
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Wurst'").get(0).getId(), Wocheneinkauf, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Käse'").get(0).getId(), Wocheneinkauf, 1);
+        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Käse'").get(0).getId(), Wocheneinkauf, 5);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Tiefkühlpizza'").get(0).getId(), Wocheneinkauf, 1);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Toast'").get(0).getId(), Wocheneinkauf, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bratwurst'").get(0).getId(), Wocheneinkauf, 1);
+        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bratwurst'").get(0).getId(), Wocheneinkauf, 7);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Curry-Ketchup'").get(0).getId(), Wocheneinkauf, 1);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Tomate'").get(0).getId(), Wocheneinkauf, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Zwiebeln'").get(0).getId(), Wocheneinkauf, 1);
+        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Zwiebeln'").get(0).getId(), Wocheneinkauf, 3);
 
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bier'").get(0).getId(), Greänkemarkt, 1);
 

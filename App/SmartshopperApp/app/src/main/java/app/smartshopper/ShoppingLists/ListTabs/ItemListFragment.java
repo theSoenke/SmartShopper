@@ -2,6 +2,7 @@ package app.smartshopper.ShoppingLists.ListTabs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -88,7 +90,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (_productHolder.addProduct("'" + productListAdapter.getItem(position).toString() + "'")) {
+                if (_productHolder.addEntry(productListAdapter.getItem(position).toString(), 2)) {
                     Toast.makeText(getContext(), "item added", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 } else {
@@ -137,9 +139,9 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
         final String itemName = _listAdapter.getItem(position);
         dialog.setContentView(R.layout.dialog_configure_item);
-        dialog.setTitle("Configure " + "'" +itemName+ "'");
+        dialog.setTitle("Configure " + "'" + itemName + "'");
         TextView tw = (TextView) dialog.findViewById(R.id.dialog_ConfigItemTextView);
-        tw.setText("choose action for " +  "'" + itemName + "'");
+        tw.setText("choose action for " + "'" + itemName + "'");
         Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
         Button btDelete = (Button) dialog.findViewById(R.id.dialog_btDeleteItem);
         Button btBought = (Button) dialog.findViewById(R.id.dialog_btMarkItem);
@@ -163,6 +165,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
                 dialog.dismiss();
             }
         });
+
         dialog.show();
     }
 
@@ -178,21 +181,22 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void productsChanged() {
-        for (int i = 0; 0 < _listAdapter.getCount(); ++i) {
-            _listAdapter.remove(_listAdapter.getItem(0));
-        }
-        List<Product> products = _productHolder.getProducts();
-        for (Product product : products) {
-            String representation = product.getEntryName();
-            _listAdapter.add(representation);
-
+        _listAdapter.clear();
+        List<ItemEntry> entryList = _productHolder.getItemEntries();
+        if (entryList != null) {
+            for (ItemEntry item : entryList) {
+                String entryString = _productHolder.getProductFromID(item.getProductID()).
+                        getEntryName();
+                _listAdapter.add(entryString);
+            }
         }
     }
 
-    public void deleteItem(Product p){
-        _productHolder.removeProduct(p);
+    public void deleteItem(Product p) {
+        _productHolder.removeEntry(p);
     }
-    public void MarkItemAsBought(){
+
+    public void MarkItemAsBought() {
 
     }
 }

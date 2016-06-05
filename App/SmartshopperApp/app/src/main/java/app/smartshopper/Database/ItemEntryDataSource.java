@@ -23,6 +23,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
                 });
     }
 
+
     @Override
     public void add(ItemEntry entry) {
         ContentValues values = new ContentValues();
