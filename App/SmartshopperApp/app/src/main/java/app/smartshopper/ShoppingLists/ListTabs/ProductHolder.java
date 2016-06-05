@@ -19,6 +19,7 @@ public interface ProductHolder
     List<ItemEntry> getItemEntries();
     List<Product> getAllAvailableProducts();
     Product getProductFromID (long PID);
-    Product getProductFromString(String s);
-    List<ItemEntry> getItemEntryFromString (String s);
+    //Product getProductFromString(String s);
+    //List<ItemEntry> getItemEntryFromString (String s);
+    void changeItemAmount (String entry, int amount);
 }

@@ -126,7 +126,6 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         }
     }
 
-    @Override
     public Product getProductFromString(String s) {
         List<Product> productList = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + "'" + s + "'");
         if (productList.isEmpty()) {
@@ -146,16 +145,26 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         }
     }
 
-    public List<ItemEntry> getEntryFromProduct(Product p){
-        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + p.getId() + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + _shoppingList);
-    }
-
-    @Override
     public List<ItemEntry> getItemEntryFromString(String entryName){
         String[] split = entryName.split("\\s+");
 
         return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + getProductFromString(split[1]).getId()
                         + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + _shoppingList
                         + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + split[0]);
+    }
+
+    @Override
+    public void changeItemAmount (String entry, int amount){
+        List<ItemEntry> entrylist = getItemEntryFromString(entry);
+        if(entrylist.size() > 0){
+            for(int i = 0; i < entrylist.size(); i++){
+                _itemSource.removeEntryFromDatabase(entrylist.get(i));
+            }
+            ItemEntry newEntry = entrylist.get(0);
+            newEntry.setAmount(amount);
+            _itemSource.add(newEntry);
+        }else{
+            Toast.makeText(getApplicationContext(), "Couldn't find the item to Change :(", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -136,15 +136,15 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final Dialog dialog = new Dialog(getContext());
-
         final String itemName = _listAdapter.getItem(position);
+        String[] split = itemName.split("\\s+");
         dialog.setContentView(R.layout.dialog_configure_item);
-        dialog.setTitle("Configure " + "'" + itemName + "'");
+        dialog.setTitle("Configure " + "'" + split[1] + "'");
         TextView tw = (TextView) dialog.findViewById(R.id.dialog_ConfigItemTextView);
-        tw.setText("choose action for " + "'" + itemName + "'");
         Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
         Button btDelete = (Button) dialog.findViewById(R.id.dialog_btDeleteItem);
         Button btBought = (Button) dialog.findViewById(R.id.dialog_btMarkItem);
+        Button btAmount = (Button) dialog.findViewById(R.id.dialog_btChangeItemAmount);
         btAbort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,9 +166,47 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
                 dialog.dismiss();
             }
         });
+        btAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openChangeAmountDialog(itemName);
+                dialog.dismiss();
+            }
+        });
+
 
         dialog.show();
     }
+
+    private void openChangeAmountDialog(String itemname) {
+
+        final String iname = itemname;
+        String[] split = iname.split("\\s+");
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_enter_item_amount);
+        dialog.setTitle(split[1]);
+        final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtNewItemAmount);
+         AmountEditText.setText(split[0]);
+        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortItemAmountChange);
+        Button btConfirm = (Button) dialog.findViewById(R.id.dialog_btConfirmItemAmountChange);
+        btAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _productHolder.changeItemAmount(iname, Integer.parseInt(AmountEditText.getText().toString()));
+                productsChanged();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -196,4 +234,6 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
     public void MarkItemAsBought() {
 
     }
+
+
 }
