@@ -90,12 +90,12 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void removeEntry(Product p) {
+    public void removeEntry(String entry) {
 
-        List<ItemEntry> entrylist = getEntryFromProduct(p);
+        List<ItemEntry> entrylist = getItemEntryFromString(entry);
         if(entrylist.size() > 0){
             if(entrylist.size() > 1){
-                Toast.makeText(getApplicationContext(), "More than one entry for " +  p.getEntryName() + ", i will delete them all", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "More than one entry for " +  getProductFromID(entrylist.get(0).getProductID()).getEntryName() + ", i will delete them all", Toast.LENGTH_SHORT).show();
             }
             for(int i = 0; i < entrylist.size(); i++){
                 _itemSource.removeEntryFromDatabase(entrylist.get(i));
@@ -148,5 +148,14 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     public List<ItemEntry> getEntryFromProduct(Product p){
         return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + p.getId() + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + _shoppingList);
+    }
+
+    @Override
+    public List<ItemEntry> getItemEntryFromString(String entryName){
+        String[] split = entryName.split("\\s+");
+
+        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + getProductFromString(split[1]).getId()
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + _shoppingList
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + split[0]);
     }
 }

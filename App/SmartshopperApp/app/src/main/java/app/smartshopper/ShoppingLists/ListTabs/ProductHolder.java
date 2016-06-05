@@ -15,9 +15,10 @@ import app.smartshopper.Database.Product;
 public interface ProductHolder
 {
     boolean addEntry(String product, int amount);
-    void removeEntry(Product product);
+    void removeEntry(String entry);
     List<ItemEntry> getItemEntries();
     List<Product> getAllAvailableProducts();
     Product getProductFromID (long PID);
     Product getProductFromString(String s);
+    List<ItemEntry> getItemEntryFromString (String s);
 }

@@ -154,7 +154,8 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         btDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteItem(_productHolder.getProductFromString(itemName));
+                _productHolder.removeEntry(itemName);
+                productsChanged();
                 dialog.dismiss();
             }
         });
@@ -185,15 +186,11 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         List<ItemEntry> entryList = _productHolder.getItemEntries();
         if (entryList != null) {
             for (ItemEntry item : entryList) {
-                String entryString = _productHolder.getProductFromID(item.getProductID()).
+                String entryString = item.getAmount() + " " + _productHolder.getProductFromID(item.getProductID()).
                         getEntryName();
                 _listAdapter.add(entryString);
             }
         }
-    }
-
-    public void deleteItem(Product p) {
-        _productHolder.removeEntry(p);
     }
 
     public void MarkItemAsBought() {
