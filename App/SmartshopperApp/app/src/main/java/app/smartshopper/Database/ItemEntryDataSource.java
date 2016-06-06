@@ -19,7 +19,8 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
                 new String[]{
                         MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID,
                         MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID,
-                        MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT
+                        MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT,
+                        MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT,
                 });
     }
 
@@ -30,10 +31,13 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         values.put(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID, entry.getProductID());
         values.put(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID, entry.getListID());
         values.put(MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT, entry.getAmount());
+        values.put(MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT, entry.isBought());
 
         String insertQuery = MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + entry.getProductID() +
                 " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + entry.getListID() +
-                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + entry.getAmount();
+                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + entry.getAmount() +
+                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + entry.isBought();
+
 
         super.addEntryToDatabase(
                 entry,
@@ -56,6 +60,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         entry.setProductID(productID);
         entry.setListID(listID);
         entry.setAmount(amount);
+        entry.setBought(0);
 
         add(entry);
 
@@ -83,6 +88,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         entry.setProductID(cursor.getInt(0));
         entry.setListID(cursor.getInt(1));
         entry.setAmount(cursor.getInt(2));
+        entry.setBought(cursor.getInt(3));
         return entry;
     }
 

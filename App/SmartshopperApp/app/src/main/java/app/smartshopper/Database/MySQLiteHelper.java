@@ -22,6 +22,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String ITEMENTRY_COLUMN_PRODUCT_ID = "product_id";
     public static final String ITEMENTRY_COLUMN_LIST_ID = "list_id";
     public static final String ITEMENTRY_COLUMN_AMOUNT = "amount";
+    public static final String ITEMENTRY_COLUMN_BOUGHT = "bought";
 
     public static final String USER_TABLE_NAME = "user_table";
     public static final String USER_COLUMN_ID = "id";
@@ -33,7 +34,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "list.db";
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
 
     //Database creation statement
     private static final String PRODUCT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PRODUCT_TABLE_NAME + "(" +
@@ -50,6 +51,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             ITEMENTRY_COLUMN_PRODUCT_ID + " INTEGER," +
             ITEMENTRY_COLUMN_LIST_ID + " INTEGER," +
             ITEMENTRY_COLUMN_AMOUNT + " INTEGER NOT NULL," +
+            ITEMENTRY_COLUMN_BOUGHT + " INTEGER NOT NULL," +
             "PRIMARY KEY(" + ITEMENTRY_COLUMN_PRODUCT_ID + ", " + ITEMENTRY_COLUMN_LIST_ID + "));";
 
     private static final String USER_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + USER_TABLE_NAME + "(" +

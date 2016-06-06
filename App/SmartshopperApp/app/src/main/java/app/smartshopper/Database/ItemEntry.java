@@ -8,6 +8,7 @@ public class ItemEntry extends DatabaseEntry {
     private long productID;
     private long listID;
     private int amount;
+    private int isBought;
 
     public long getProductID() {
         return productID;
@@ -33,13 +34,22 @@ public class ItemEntry extends DatabaseEntry {
         this.amount = amount;
     }
 
+    public int isBought() {
+        return isBought;
+    }
+
+    public void setBought(int bought) {
+        isBought = bought;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Object && obj != null) {
             ItemEntry e = (ItemEntry) obj;
             return e.getProductID() == getProductID() &&
                     e.getListID() == getListID() &&
-                    e.getAmount() == getAmount();
+                    e.getAmount() == getAmount() &&
+                    e.isBought() == isBought();
         }
         return false;
     }

@@ -90,7 +90,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (_productHolder.addEntry(productListAdapter.getItem(position).toString(), 2)) {
+                if (_productHolder.addEntry(productListAdapter.getItem(position).toString(), 1)) {
                     Toast.makeText(getContext(), "item added", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 } else {
@@ -162,7 +162,8 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         btBought.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MarkItemAsBought();
+                _productHolder.markItemAsBought(itemName);
+                productsChanged();
                 dialog.dismiss();
             }
         });
@@ -226,14 +227,12 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
             for (ItemEntry item : entryList) {
                 String entryString = item.getAmount() + " " + _productHolder.getProductFromID(item.getProductID()).
                         getEntryName();
+                if(item.isBought() != 0){
+                    entryString += " (gekauft)";
+                }
                 _listAdapter.add(entryString);
             }
         }
     }
-
-    public void MarkItemAsBought() {
-
-    }
-
 
 }
