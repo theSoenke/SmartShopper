@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
 
@@ -75,7 +77,7 @@ public class UserDataSource extends DatabaseTable<User> {
     }
 
     @Override
-    public User buildEntryFromJSON(String jsonString) {
+    public User buildEntryFromJSON(JSONObject jsonObject) {
         Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
         return new User();
     }

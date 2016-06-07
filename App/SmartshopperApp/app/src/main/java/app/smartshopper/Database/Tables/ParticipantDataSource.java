@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -105,7 +107,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     }
 
     @Override
-    public Participant buildEntryFromJSON(String jsonString) {
+    public Participant buildEntryFromJSON(JSONObject jsonObject) {
         Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
         return new Participant();
     }
