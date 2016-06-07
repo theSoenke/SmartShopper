@@ -1,4 +1,4 @@
-package app.smartshopper.Database;
+package app.smartshopper.Database.Tables;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import app.smartshopper.Database.Entries.DatabaseEntry;
+import app.smartshopper.Database.MySQLiteHelper;
 
 /**
  * Created by hauke on 10.05.16.

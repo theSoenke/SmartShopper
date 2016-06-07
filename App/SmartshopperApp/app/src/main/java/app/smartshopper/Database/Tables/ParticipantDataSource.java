@@ -1,15 +1,16 @@
-package app.smartshopper.Database;
+package app.smartshopper.Database.Tables;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.Telephony;
 import android.util.Log;
-import android.widget.Toast;
 
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+
+import app.smartshopper.Database.Entries.Participant;
+import app.smartshopper.Database.Entries.User;
+import app.smartshopper.Database.MySQLiteHelper;
 
 /**
  * Created by Hauke on 25.05.2016.

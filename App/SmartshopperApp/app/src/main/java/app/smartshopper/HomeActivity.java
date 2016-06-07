@@ -21,7 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import app.smartshopper.Database.Synchronizer;
+import app.smartshopper.Database.Sync.Synchronizer;
 import app.smartshopper.Settings.SettingsActivity;
 import app.smartshopper.ShoppingLists.GroupList.GroupListFragment;
 import app.smartshopper.ShoppingLists.SingleList.SingleListFragment;

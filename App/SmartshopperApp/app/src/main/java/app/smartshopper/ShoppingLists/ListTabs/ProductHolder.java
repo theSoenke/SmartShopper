@@ -1,13 +1,9 @@
 package app.smartshopper.ShoppingLists.ListTabs;
 
-import android.widget.ArrayAdapter;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import app.smartshopper.Database.ItemEntry;
-import app.smartshopper.Database.Product;
+import app.smartshopper.Database.Entries.ItemEntry;
+import app.smartshopper.Database.Entries.Product;
 
 /**
  * Created by Rasmus on 02.06.16.

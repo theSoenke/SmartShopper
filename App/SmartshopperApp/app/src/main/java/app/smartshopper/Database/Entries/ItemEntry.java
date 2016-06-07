@@ -1,4 +1,4 @@
-package app.smartshopper.Database;
+package app.smartshopper.Database.Entries;
 
 /**
  * Created by hauke on 10.05.16.

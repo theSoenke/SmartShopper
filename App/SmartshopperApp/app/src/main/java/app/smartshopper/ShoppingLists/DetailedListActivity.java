@@ -7,15 +7,14 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import app.smartshopper.Database.ItemEntry;
+import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.ItemEntryDataSource;
 import app.smartshopper.Database.MySQLiteHelper;
-import app.smartshopper.Database.Product;
+import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.ProductDataSource;
-import app.smartshopper.Database.ShoppingList;
+import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.ShoppingListDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;

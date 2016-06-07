@@ -1,4 +1,4 @@
-package app.smartshopper.Database;
+package app.smartshopper.Database.Tables;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,14 +9,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
+import app.smartshopper.Database.Entries.Participant;
+import app.smartshopper.Database.Entries.ShoppingList;
+import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Properties;
 
 /**

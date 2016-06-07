@@ -34,11 +34,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import app.smartshopper.Database.ItemEntry;
+import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Location.Einkaufsladen;
-import app.smartshopper.Database.Product;
+import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Location.LocationTool;
 import app.smartshopper.R;
 

@@ -1,4 +1,4 @@
-package app.smartshopper.Database;
+package app.smartshopper.Database.Tables;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,7 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.util.Log;
 
-import org.json.JSONObject;
+import app.smartshopper.Database.Entries.ItemEntry;
+import app.smartshopper.Database.MySQLiteHelper;
 
 /**
  * Created by hauke on 10.05.16.

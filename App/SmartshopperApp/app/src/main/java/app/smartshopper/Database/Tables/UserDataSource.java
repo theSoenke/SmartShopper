@@ -1,9 +1,12 @@
-package app.smartshopper.Database;
+package app.smartshopper.Database.Tables;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
+
+import app.smartshopper.Database.Entries.User;
+import app.smartshopper.Database.MySQLiteHelper;
 
 /**
  * Created by Hauke on 25.05.2016.

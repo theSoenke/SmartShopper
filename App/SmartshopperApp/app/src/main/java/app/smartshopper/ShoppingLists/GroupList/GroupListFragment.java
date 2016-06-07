@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import app.smartshopper.Database.ParticipantDataSource;
-import app.smartshopper.Database.ShoppingList;
+import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.ShoppingListDataSource;
-import app.smartshopper.Database.User;
+import app.smartshopper.Database.Entries.User;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 

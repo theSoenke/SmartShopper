@@ -1,6 +1,8 @@
-package app.smartshopper.Database;
+package app.smartshopper.Database.Sync;
 
 import android.content.Context;
+
+import app.smartshopper.Database.MySQLiteHelper;
 
 /**
  * Created by hauke on 11.05.16.
