@@ -4,22 +4,22 @@ package app.smartshopper.Database.Entries;
  * Created by Hauke on 25.05.2016.
  */
 public class Participant extends DatabaseEntry {
-    private long shoppingListID;
-    private long userID;
+    private String shoppingListID;
+    private String userID;
 
-    public long getShoppingListID() {
+    public String getShoppingListID() {
         return shoppingListID;
     }
 
-    public void setShoppingListID(long shoppingListID) {
+    public void setShoppingListID(String shoppingListID) {
         this.shoppingListID = shoppingListID;
     }
 
-    public long getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(long userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 
@@ -27,8 +27,8 @@ public class Participant extends DatabaseEntry {
     public boolean equals(Object obj) {
         if (obj instanceof Object && obj != null) {
             Participant p = (Participant) obj;
-            return p.getShoppingListID() == getShoppingListID() &&
-                    p.getUserID() == getUserID();
+            return p.getShoppingListID().equals(getShoppingListID()) &&
+                    p.getUserID().equals(getUserID());
         }
         return false;
     }

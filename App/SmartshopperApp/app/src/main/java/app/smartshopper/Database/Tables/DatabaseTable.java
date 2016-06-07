@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.MySQLiteHelper;
@@ -82,11 +83,10 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
 
         // check if product already exists and set the ID
         if (cursor.getCount() <= 0) {
-            long insertId = database.insert(tableName, null, values);
-            newEntry.setId(insertId);
+            database.insert(tableName, null, values);
         } else {
             cursor.moveToFirst();
-            newEntry.setId(cursor.getInt(0));
+            newEntry.setId(cursor.getString(0));
         }
     }
 
@@ -178,4 +178,34 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      * @return A new database entry object.
      */
     public abstract T buildEntryFromJSON(JSONObject jsonObject);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // FIXME Remove all this when the API gives us the ID by adding or downloading
+    private static int ID = 0;
+
+    public static String generateUniqueID() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(Integer.toHexString(ID));
+        while (sb.length() < 24) {
+            sb.append(Integer.toHexString(0));
+        }
+        ID++;
+        return sb.toString().substring(0, 24);
+    }
 }

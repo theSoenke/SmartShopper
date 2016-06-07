@@ -55,10 +55,10 @@ public class ParticipantListActivity extends AppCompatActivity {
         ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getApplicationContext());
         List<ShoppingList> shoppingList = shoppingListDataSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
         if (shoppingList.size() > 0) {
-            long listID = shoppingList.get(0).getId();
+            String listID = shoppingList.get(0).getId();
 
             ParticipantDataSource source = new ParticipantDataSource(getApplicationContext());
-            List<Participant> participantList = source.getEntry(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = " + listID);
+            List<Participant> participantList = source.getEntry(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + listID + "'");
 
             for (Participant participant : participantList) {
                 listAdapter.add(source.getNameOf(participant));

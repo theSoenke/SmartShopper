@@ -110,7 +110,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     @Override
     public List<ItemEntry> getItemEntries(){
-        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + _shoppingList.getId());
+        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "='" + _shoppingList.getId() + "'");
     }
 
 
@@ -137,8 +137,8 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public Product getProductFromID(long PID){
-        List<Product> productList = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = " + PID);
+    public Product getProductFromID(String PID){
+        List<Product> productList = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + PID + "'");
         if (productList.isEmpty()) {
             return null;
         } else {
@@ -155,8 +155,8 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                 bought = 1;
             }
         }
-        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + getProductFromString(split[1]).getId()
-                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + _shoppingList
+        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + getProductFromString(split[1]).getId() + "'"
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + _shoppingList + "'"
                         + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + split[0]
                         + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
     }

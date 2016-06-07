@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import java.util.LinkedList;
 import java.util.List;
 
-import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
@@ -42,8 +41,8 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         values.put(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID, entry.getShoppingListID());
         values.put(MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID, entry.getUserID());
 
-        String insertQuery = MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = " + entry.getShoppingListID() +
-                " AND " + MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID + " = " + entry.getUserID();
+        String insertQuery = MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "'" +
+                " AND " + MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
 
         Log.i("INSERT PARTICIPANT", insertQuery);
 
@@ -59,13 +58,13 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
                 MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
     }
 
-    public List<User> getUserOfList(long id) {
-        String query = MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = " + id;
+    public List<User> getUserOfList(String id) {
+        String query = MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + id + "'";
         List<Participant> participantList = getEntry(query);
         List<User> userList = new LinkedList<User>();
 
         for (Participant participant : participantList) {
-            List<User> results = _userDataSource.getEntry(MySQLiteHelper.USER_COLUMN_ID + " = " + participant.getUserID());
+            List<User> results = _userDataSource.getEntry(MySQLiteHelper.USER_COLUMN_ID + " = '" + participant.getUserID() + "'");
 
             if (results.size() > 0) {
                 userList.add(results.get(0));
@@ -83,7 +82,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
      * @param userID         The ID of the user.
      * @return The new participant with an unique ID combination.
      */
-    public Participant add(long shoppingListID, long userID) {
+    public Participant add(String shoppingListID, String userID) {
         Participant entry = new Participant();
         entry.setShoppingListID(shoppingListID);
         entry.setUserID(userID);
@@ -96,8 +95,8 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     @Override
     public Participant cursorToEntry(Cursor cursor) {
         Participant participant = new Participant();
-        participant.setShoppingListID(cursor.getInt(0));
-        participant.setUserID(cursor.getInt(1));
+        participant.setShoppingListID(cursor.getString(0));
+        participant.setUserID(cursor.getString(1));
         return participant;
     }
 
@@ -118,8 +117,8 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
      * @return The name of the participant.
      */
     public String getNameOf(Participant participant) {
-        long userId = participant.getUserID();
-        List<User> userList = _userDataSource.getEntry(MySQLiteHelper.USER_COLUMN_ID + " = " + userId);
+        String userId = participant.getUserID();
+        List<User> userList = _userDataSource.getEntry(MySQLiteHelper.USER_COLUMN_ID + " = '" + userId + "'");
 
         String participantName = "";
 

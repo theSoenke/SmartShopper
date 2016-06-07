@@ -76,17 +76,17 @@ public class Synchronizer {
     private void syncItemEntries(Context context, ProductDataSource p, ShoppingListDataSource s) {
         ItemEntryDataSource i = new ItemEntryDataSource(context);
 
-        long Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0).getId();
+        String Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0).getId();
 
-        long Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0).getId();
+        String Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0).getId();
 
-        long Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0).getId();
+        String Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0).getId();
 
-        long Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0).getId();
+        String Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0).getId();
 
-        long Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0).getId();
+        String Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0).getId();
 
-        long OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0).getId();
+        String OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0).getId();
 
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Hammer'").get(0).getId(), Baumarkt, 2);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bohrmaschine'").get(0).getId(), Baumarkt, 4);
@@ -131,18 +131,18 @@ public class Synchronizer {
     private void syncParticipants(Context context, ShoppingListDataSource s, UserDataSource u) {
         ParticipantDataSource p = new ParticipantDataSource(context);
 
-        long Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0).getId();
-        long Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0).getId();
-        long OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0).getId();
+        String Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0).getId();
+        String Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0).getId();
+        String OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0).getId();
 
-        long Dieter = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Dieter'").get(0).getId();
-        long Batman = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Batman'").get(0).getId();
-        long SpiderMan = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'SpiderMan'").get(0).getId();
-        long Ronny = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Ronny Schäfer'").get(0).getId();
-        long AshKetchup = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Ash Ketchup'").get(0).getId();
-        long ProfEich = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Professor Eich'").get(0).getId();
-        long Rocko = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Rocko'").get(0).getId();
-        long Misty = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Misty'").get(0).getId();
+        String Dieter = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Dieter'").get(0).getId();
+        String Batman = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Batman'").get(0).getId();
+        String SpiderMan = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'SpiderMan'").get(0).getId();
+        String Ronny = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Ronny Schäfer'").get(0).getId();
+        String AshKetchup = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Ash Ketchup'").get(0).getId();
+        String ProfEich = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Professor Eich'").get(0).getId();
+        String Rocko = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Rocko'").get(0).getId();
+        String Misty = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Misty'").get(0).getId();
 
         p.add(Geburtstag, Dieter);
         p.add(Geburtstag, Batman);

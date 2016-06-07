@@ -5,24 +5,24 @@ package app.smartshopper.Database.Entries;
  */
 public class ItemEntry extends DatabaseEntry {
 
-    private long productID;
-    private long listID;
+    private String productID;
+    private String listID;
     private int amount;
     private int isBought;
 
-    public long getProductID() {
+    public String getProductID() {
         return productID;
     }
 
-    public void setProductID(long productID) {
+    public void setProductID(String productID) {
         this.productID = productID;
     }
 
-    public long getListID() {
+    public String getListID() {
         return listID;
     }
 
-    public void setListID(long listID) {
+    public void setListID(String listID) {
         this.listID = listID;
     }
 
@@ -46,8 +46,8 @@ public class ItemEntry extends DatabaseEntry {
     public boolean equals(Object obj) {
         if (obj instanceof Object && obj != null) {
             ItemEntry e = (ItemEntry) obj;
-            return e.getProductID() == getProductID() &&
-                    e.getListID() == getListID() &&
+            return e.getProductID().equals(getProductID()) &&
+                    e.getListID().equals(getListID()) &&
                     e.getAmount() == getAmount() &&
                     e.isBought() == isBought();
         }

@@ -19,7 +19,7 @@ public interface ProductHolder {
 
     List<Product> getAllAvailableProducts();
 
-    Product getProductFromID(long PID);
+    Product getProductFromID(String PID);
 
     void markItemAsBought(String entry);
 

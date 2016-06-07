@@ -37,7 +37,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
 
     @Override
     public String getWhereClause(Product entry) {
-        return MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getId();
+        return MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getId() + "'";
     }
 
     /**
@@ -45,8 +45,8 @@ public class ProductDataSource extends DatabaseTable<Product> {
      * @param id The ID of the product you want.
      * @return A product with the given ID or null if it doesn't exist.
      */
-    public Product get(long id){
-        List<Product> listOfProducts = getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + "=" + id);
+    public Product get(String id){
+        List<Product> listOfProducts = getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + id + "'");
         if(listOfProducts != null){
             return listOfProducts.get(0);
         }
@@ -55,12 +55,15 @@ public class ProductDataSource extends DatabaseTable<Product> {
 
     @Override
     public void add(Product product) {
+        product.setId(generateUniqueID());
         ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.PRODUCT_COLUMN_ID, product.getId());
         values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product.getEntryName());
         values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_X, product.getPosX());
         values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y, product.getPosY());
 
-        String insertQuery = MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product.getEntryName() + "'" +
+        String insertQuery = MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + product.getId() + "'" +
+                " AND " + MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product.getEntryName() + "'" +
                 " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_X + " = " + product.getPosX() +
                 " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y + " = " + product.getPosY();
 
@@ -81,6 +84,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
      */
     public Product add(String product_name, int posx, int posy) {
         Product product = new Product();
+        product.setId(generateUniqueID());
         product.setEntryName(product_name);
         product.setPosX(posx);
         product.setPosY(posy);
@@ -93,7 +97,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
     @Override
     public Product cursorToEntry(Cursor cursor) {
         Product product = new Product();
-        product.setId(cursor.getInt(0));
+        product.setId(cursor.getString(0));
         product.setEntryName(cursor.getString(1));
         product.setPosX(cursor.getInt(2));
         product.setPosY(cursor.getInt(3));
@@ -121,7 +125,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
         Product product = new Product();
 
         try {
-            long id = jsonObject.getLong("id");
+            String id = jsonObject.getString("id");
                 product.setId(id);
 
             String name = jsonObject.getString("name");

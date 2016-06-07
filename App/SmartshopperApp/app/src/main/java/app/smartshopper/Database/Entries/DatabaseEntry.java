@@ -4,14 +4,14 @@ package app.smartshopper.Database.Entries;
  * Created by hauke on 10.05.16.
  */
 public class DatabaseEntry {
-    private long id;
+    private String id;
     private String entryName;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

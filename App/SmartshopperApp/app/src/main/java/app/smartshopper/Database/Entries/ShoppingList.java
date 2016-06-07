@@ -14,7 +14,7 @@ public class ShoppingList extends DatabaseEntry {
     public boolean equals(Object obj) {
         if (obj instanceof Object && obj != null) {
             ShoppingList l = (ShoppingList) obj;
-            return l.getId() == getId() ||
+            return l.getId().equals(getId()) ||
                     l.getEntryName().equals(getEntryName());
         }
         return false;

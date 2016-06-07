@@ -52,10 +52,13 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
 
     @Override
     public void add(ShoppingList list) {
+        list.setId(generateUniqueID());
         ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
         values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
 
-        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
+        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = '" + list.getId() + "'" +
+                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
 
         super.addEntryToDatabase(
                 list,
@@ -72,6 +75,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      */
     public ShoppingList add(String listName) {
         ShoppingList list = new ShoppingList();
+        list.setId(generateUniqueID());
         list.setEntryName(listName);
 
         add(list);
@@ -103,18 +107,18 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     public List<ShoppingList> getAllGroupLists() {
         List<Participant> participantList = _participantSource.getAllEntries();
         List<ShoppingList> shoppingLists = getAllEntries();
-        Map<Long, ShoppingList> shoppingListMap = new HashMap<Long, ShoppingList>(); // <ID, List>
+        Map<String, ShoppingList> shoppingListMap = new HashMap<String, ShoppingList>(); // <ID, List>
 
         // to not ask the database for every list cache it in a map
         for (ShoppingList list : shoppingLists) {
-            shoppingListMap.put(new Long(list.getId()), list);
+            shoppingListMap.put(list.getId(), list);
         }
 
         // now go through all participants and get their shopping list.
         // It's a set, so there won't be duplicates.
         Set<ShoppingList> shoppingListSet = new LinkedHashSet<ShoppingList>();
         for (Participant participant : participantList) {
-            Long listID = new Long(participant.getShoppingListID());
+            String listID = participant.getShoppingListID();
             ShoppingList list = shoppingListMap.get(listID);
             shoppingListSet.add(list);
         }
@@ -138,7 +142,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      */
     private List<Product> getProductsOf(ShoppingList list) {
         List<Product> listOfProducts = new LinkedList<Product>();
-        List<ItemEntry> listOfItemEntries = _itemEntrySource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + list.getId());
+        List<ItemEntry> listOfItemEntries = _itemEntrySource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "'");
 
         for (ItemEntry itemEntry : listOfItemEntries) {
             Product product = _productDataSource.get(itemEntry.getProductID());
@@ -158,7 +162,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      */
     private List<User> getParticipantsOf(ShoppingList list) {
         List<User> listOfUser = new LinkedList<User>();
-        List<Participant> listOfParticipants = _participantSource.getEntry(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + "=" + list.getId());
+        List<Participant> listOfParticipants = _participantSource.getEntry(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + list.getId() + "'");
 
         for (Participant itemEntry : listOfParticipants) {
             User user = _userDataSource.get(itemEntry.getUserID());
@@ -173,7 +177,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     @Override
     public ShoppingList cursorToEntry(Cursor cursor) {
         ShoppingList list = new ShoppingList();
-        list.setId(cursor.getInt(0));
+        list.setId(cursor.getString(0));
         list.setEntryName(cursor.getString(1));
         return list;
     }
@@ -228,7 +232,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
             shoppingList.setEntryName(entryName);
 
             // set ID of the list
-            long id = jsonObject.getLong("id");
+            String id = jsonObject.getString("id");
             shoppingList.setId(id);
 
             JSONArray productArray = jsonObject.getJSONArray("products");
@@ -243,7 +247,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
             for (int i = 0; i < participantArray.length(); i++) {
                 JSONObject participantObject = participantArray.getJSONObject(i);
                 User user = new User();
-                user.setId(participantObject.getLong("id"));
+                user.setId(participantObject.getString("id"));
                 //TODO uncomment this when implemented in remote database
 //                user.setEntryName(participantObject.getString("name"));
                 listOfUsers.add(user);

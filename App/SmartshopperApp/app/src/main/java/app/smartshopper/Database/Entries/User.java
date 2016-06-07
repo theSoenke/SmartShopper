@@ -9,7 +9,7 @@ public class User extends DatabaseEntry {
         if (obj instanceof Object && obj != null) {
             User u = (User) obj;
             return u.getEntryName().equals(getEntryName()) &&
-                    u.getId() == getId();
+                    u.getId().equals(getId());
         }
         return false;
     }

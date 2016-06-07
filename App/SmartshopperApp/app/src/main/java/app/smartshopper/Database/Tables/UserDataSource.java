@@ -34,11 +34,11 @@ public class UserDataSource extends DatabaseTable<User> {
 
     @Override
     public String getWhereClause(User entry) {
-        return MySQLiteHelper.USER_COLUMN_ID + " = '" + entry.getId();
+        return MySQLiteHelper.USER_COLUMN_ID + " = '" + entry.getId() + "'";
     }
 
-    public User get(long id){
-        List<User> listOfUser = getEntry(MySQLiteHelper.USER_COLUMN_ID + "=" + id);
+    public User get(String id){
+        List<User> listOfUser = getEntry(MySQLiteHelper.USER_COLUMN_ID + " = '" + id + "'");
         if(listOfUser != null){
             return listOfUser.get(0);
         }
@@ -48,9 +48,12 @@ public class UserDataSource extends DatabaseTable<User> {
     @Override
     public void add(User user) {
         ContentValues values = new ContentValues();
+        user.setId(generateUniqueID());
+        values.put(MySQLiteHelper.USER_COLUMN_ID, user.getId());
         values.put(MySQLiteHelper.USER_COLUMN_NAME, user.getEntryName());
 
-        String insertQuery = MySQLiteHelper.USER_COLUMN_NAME + " = '" + user.getEntryName() + "'";
+        String insertQuery = MySQLiteHelper.USER_COLUMN_ID + " = '" + user.getId() + "'" +
+                " AND " + MySQLiteHelper.USER_COLUMN_NAME + " = '" + user.getEntryName() + "'";
 
         super.addEntryToDatabase(
                 user,
@@ -67,6 +70,7 @@ public class UserDataSource extends DatabaseTable<User> {
      */
     public User add(String user_name) {
         User user = new User();
+        user.setId(generateUniqueID());
         user.setEntryName(user_name);
 
         add(user);
@@ -77,7 +81,7 @@ public class UserDataSource extends DatabaseTable<User> {
     @Override
     public User cursorToEntry(Cursor cursor) {
         User user = new User();
-        user.setId(cursor.getInt(0));
+        user.setId(cursor.getString(0));
         user.setEntryName(cursor.getString(1));
         return user;
     }
@@ -93,8 +97,7 @@ public class UserDataSource extends DatabaseTable<User> {
     public User buildEntryFromJSON(JSONObject jsonObject) {
         User user = new User();
         try {
-            long id = 0;
-            id = jsonObject.getLong("id");
+            String id = jsonObject.getString("id");
             user.setId(id);
 
             String name = jsonObject.getString("name");
