@@ -20,18 +20,14 @@ exports.getLists = function (req, res, next) {
 
 exports.uploadList = function (req, res, next) {
   let username = basicAuth(req).name
+  let list = req.body
+  list.owner = username
 
-  let list = List({
-    name: req.body.name,
-    products: req.body.products,
-    owner: username
-  })
-
-  list.save(function (err) {
+  List.create(list, function (err, docs) {
     if (err) {
       return next(err)
     }
-    res.json(list)
+    res.json(docs)
   })
 }
 

@@ -5,8 +5,14 @@ var Schema = mongoose.Schema
 
 let listSchema = new Schema({
   name: { type: String, required: true, text: true },
-  products: [{ name: { type: String, required: true } }],
+  products: [{
+    id: {type: String, required: true},
+    amount: {type: Number, required: true}
+  }],
   owner: { type: String, required: true },
+  participants: [{
+    id: {type: String, required: true}
+  }],
   created_at: Date,
   updated_at: Date
 })
