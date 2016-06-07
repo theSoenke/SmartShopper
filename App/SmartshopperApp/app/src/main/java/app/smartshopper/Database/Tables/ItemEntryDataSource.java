@@ -6,7 +6,11 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.util.Log;
 
+import java.util.List;
+
 import app.smartshopper.Database.Entries.ItemEntry;
+import app.smartshopper.Database.Entries.Product;
+import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.MySQLiteHelper;
 
 /**
@@ -81,6 +85,23 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
     public String getWhereClause(ItemEntry entry) {
         return MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + entry.getProductID() +
                 " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + entry.getListID();
+    }
+
+    /**
+     * Gets the amount of the given product in the given list. So this answers the question "How many things of 'product' do I want to buy?"
+     * @param list The list the given product is in.
+     * @param product The products which amount you want to know.
+     * @return The amount of the product in the list.
+     */
+    public int getAmountOf(ShoppingList list, Product product){
+        List<ItemEntry> listOfEntries = getEntry(
+                MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + list.getId()+
+                        MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + "=" + product.getId()
+        );
+        if(listOfEntries != null){
+            return listOfEntries.get(0).getAmount();
+        }
+        return 0;
     }
 
     @Override

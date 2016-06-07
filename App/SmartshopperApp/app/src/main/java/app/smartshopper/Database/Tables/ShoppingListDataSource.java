@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -15,7 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Participant;
+import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Properties;
@@ -132,6 +136,27 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         return MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = " + entry.getId();
     }
 
+    /**
+     * Gets all products of the given shopping list.
+     * @param list The shopping list which products you want to know.
+     * @return A list with products.
+     */
+    public List<Product> getProductsOf(ShoppingList list){
+        List<Product> listOfProducts = new LinkedList<Product>();
+        ProductDataSource productDataSource = new ProductDataSource(context);
+
+        List<ItemEntry> itemEntries = _itemEntrySource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + list.getId());
+
+        for(ItemEntry itemEntry : itemEntries){
+            Product product = productDataSource.get(itemEntry.getProductID());
+            if(product != null){
+                listOfProducts.add(product);
+            }
+        }
+
+        return listOfProducts;
+    }
+
     @Override
     public ShoppingList cursorToEntry(Cursor cursor)
     {
@@ -149,7 +174,20 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         try {
             jsonObject.put("name", entry.getEntryName());
             jsonObject.put("owner", Properties.getInstance().getUserName());
+            List<Product> listOfProducts = getProductsOf(entry);
             //TODO create method to get all item of a list. Also use this in the ItemListFragment to simplify stuff and abstract/hide the SQL queries a bit more
+            JSONArray array = new JSONArray();
+
+            for(Product product : listOfProducts) {
+                JSONObject object = new JSONObject();
+                object.put("name", product.getEntryName());
+                object.put("id", product.getId());
+                int amount = _itemEntrySource.getAmountOf(entry, product);
+                object.put("amount", amount);
+                array.put(object);
+            }
+
+            jsonObject.put("products", array);
         } catch (JSONException e) {
             e.printStackTrace();
         }

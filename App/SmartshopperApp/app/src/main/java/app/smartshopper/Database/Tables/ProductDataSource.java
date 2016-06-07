@@ -5,7 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import java.util.List;
+
 import app.smartshopper.Database.Entries.Product;
+import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.MySQLiteHelper;
 
 /**
@@ -31,6 +34,19 @@ public class ProductDataSource extends DatabaseTable<Product> {
     @Override
     public String getWhereClause(Product entry) {
         return MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getId();
+    }
+
+    /**
+     * Gets the product with the given ID.
+     * @param id The ID of the product you want.
+     * @return A product with the given ID or null if it doesn't exist.
+     */
+    public Product get(long id){
+        List<Product> listOfProducts = getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + "=" + id);
+        if(listOfProducts != null){
+            return listOfProducts.get(0);
+        }
+        return null;
     }
 
     @Override
