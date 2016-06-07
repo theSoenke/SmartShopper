@@ -2,6 +2,7 @@
 
 const basicAuth = require('basic-auth')
 const List = require('../models/list')
+const User = require('../models/list')
 
 // get all lists from user
 exports.getLists = function (req, res, next) {
@@ -24,15 +25,22 @@ exports.getLists = function (req, res, next) {
 exports.uploadList = function (req, res, next) {
   let username = basicAuth(req).name
   let list = req.body
-  list.owner = username
+
+  // get user id
+  User
+    .find({username: username})
+    .exec(function (err, doc) {
+      if (err) return next(err)
+      list.owner = doc._id
+    })
 
   List.create(list, function (err, docs) {
-    if (err) {
-      return next(err)
-    }
+    if (err) return next(err)
 
+    // return and poulate new list
     List.findById(docs._id)
       .populate('participants', 'username')
+      .populate('owner', '_id username')
       .exec(function (err, doc) {
         if (err) return next(err)
         res.json(doc)
