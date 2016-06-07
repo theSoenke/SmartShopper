@@ -1,4 +1,4 @@
-package app.smartshopper;
+package app.smartshopper.Settings;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

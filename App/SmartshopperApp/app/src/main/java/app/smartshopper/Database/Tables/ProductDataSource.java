@@ -16,7 +16,7 @@ import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.MySQLiteHelper;
 
 /**
- * Created by Felix on 02.05.2016. Refactored by Hauke on 10.05.2016.
+ * Created by Felix on 02.05.2016.
  */
 public class ProductDataSource extends DatabaseTable<Product> {
     /**
@@ -103,6 +103,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
     @Override
     public JSONObject getJSONFromEntry(Product product) {
         JSONObject jsonObject = super.getJSONFromEntry(product);
+
         try {
             JSONArray jsonArray = new JSONArray();
             new JSONObject().put("x",product.getPosX());

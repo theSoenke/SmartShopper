@@ -24,12 +24,10 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     protected final String[] allColumns;
     private final MySQLiteHelper dbHelper;
     protected SQLiteDatabase database;
-    protected Context context;
 
     public DatabaseTable(Context context, String tableName, String[] columns) {
         this.tableName = tableName;
         this.allColumns = columns;
-        this.context = context;
         this.dbHelper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
         open();
     }

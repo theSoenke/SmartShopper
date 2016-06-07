@@ -3,13 +3,11 @@ package app.smartshopper.Database.Tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -25,11 +23,12 @@ import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Properties;
 
 /**
- * Created by Felix on 02.05.2016. Refactored by Hauke on 10.05.2016.
+ * Created by Felix on 02.05.2016.
  */
 public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     private ParticipantDataSource _participantSource;
     private ItemEntryDataSource _itemEntrySource;
+    private ProductDataSource _productDataSource;
 
     /**
      * Creates a new data source for the shopping list table and initializes it with the columns from the helper.
@@ -45,6 +44,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                 });
         _participantSource = new ParticipantDataSource(context);
         _itemEntrySource = new ItemEntryDataSource(context);
+        _productDataSource = new ProductDataSource(context);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
 
     /**
      * Creates a new shopping list and adds it to the database.
-     * The database then will ad a unique ID to the list.
+     * The database then will add a unique ID to the list.
      *
      * @param listName The name of the new list.
      * @return The new shopping list with unique ID.
@@ -135,12 +135,10 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      */
     public List<Product> getProductsOf(ShoppingList list) {
         List<Product> listOfProducts = new LinkedList<Product>();
-        ProductDataSource productDataSource = new ProductDataSource(context);
-
         List<ItemEntry> itemEntries = _itemEntrySource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + list.getId());
 
         for (ItemEntry itemEntry : itemEntries) {
-            Product product = productDataSource.get(itemEntry.getProductID());
+            Product product = _productDataSource.get(itemEntry.getProductID());
             if (product != null) {
                 listOfProducts.add(product);
             }
@@ -186,7 +184,6 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
 
     @Override
     public ShoppingList buildEntryFromJSON(JSONObject jsonObject) {
-        ProductDataSource productDataSource = new ProductDataSource(super.context);
         List<Product> listOfProducts = new LinkedList<>();
 
         ShoppingList shoppingList = new ShoppingList();
@@ -203,7 +200,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
             JSONArray productArray = (JSONArray) jsonObject.get("products");
             for (int i = 0; i < productArray.length(); i++) {
                 JSONObject productObject = (JSONObject) productArray.get(i);
-                Product product = productDataSource.buildEntryFromJSON(productObject);
+                Product product = _productDataSource.buildEntryFromJSON(productObject);
                 listOfProducts.add(product);
             }
         } catch (JSONException e) {
@@ -216,7 +213,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         for (Product product : listOfProducts) {
             //TODO take real amount (instead of 1)when #1 is implemented,
             _itemEntrySource.add(product.getId(), shoppingList.getId(), 1);
-            productDataSource.add(product);
+            _productDataSource.add(product);
         }
 
         return new ShoppingList();
