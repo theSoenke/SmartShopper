@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,8 +163,8 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     /**
      * Creates a new object of the given type T based on the data in the json string.
      *
-     * @param jsonString A string that contains all data to create an object of T.
+     * @param jsonObject A json object that contains all data to create an object of T.
      * @return A new database entry object.
      */
-    public abstract T buildEntryFromJSON(String jsonString);
+    public abstract T buildEntryFromJSON(JSONObject jsonObject);
 }

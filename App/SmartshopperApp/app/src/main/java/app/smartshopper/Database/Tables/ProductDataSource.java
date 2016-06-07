@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import app.smartshopper.Database.Entries.Product;
@@ -103,7 +105,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
     }
 
     @Override
-    public Product buildEntryFromJSON(String jsonString) {
+    public Product buildEntryFromJSON(JSONObject jsonObject) {
         Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
         return new Product();
     }

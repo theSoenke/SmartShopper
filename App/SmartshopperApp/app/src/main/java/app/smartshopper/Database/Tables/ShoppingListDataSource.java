@@ -175,7 +175,6 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
             jsonObject.put("name", entry.getEntryName());
             jsonObject.put("owner", Properties.getInstance().getUserName());
             List<Product> listOfProducts = getProductsOf(entry);
-            //TODO create method to get all item of a list. Also use this in the ItemListFragment to simplify stuff and abstract/hide the SQL queries a bit more
             JSONArray array = new JSONArray();
 
             for(Product product : listOfProducts) {
@@ -196,7 +195,8 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     }
 
     @Override
-    public ShoppingList buildEntryFromJSON(String jsonString) {
+    public ShoppingList buildEntryFromJSON(JSONObject jsonObject) {
+
         Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
         return new ShoppingList();
     }
