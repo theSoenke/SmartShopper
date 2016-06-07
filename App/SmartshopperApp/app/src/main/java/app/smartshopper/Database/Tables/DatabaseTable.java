@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -156,9 +157,12 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     public abstract T cursorToEntry(Cursor cursor);
 
     /**
-     * @return A JSON String that describes the given entry.
+     * Turns an entry Object into a json Object.
+     *
+     * @param entry The entry that should be converted into JSONObject.
+     * @return A JSON object that contains all information about the given entry.
      */
-    public abstract String getJSONFromEntry(T entry);
+    public abstract JSONObject getJSONFromEntry(T entry);
 
     /**
      * Creates a new object of the given type T based on the data in the json string.
