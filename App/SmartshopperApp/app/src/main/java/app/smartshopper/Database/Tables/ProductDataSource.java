@@ -99,9 +99,9 @@ public class ProductDataSource extends DatabaseTable<Product> {
     }
 
     @Override
-    public String getJSONFromEntry(Product entry) {
+    public JSONObject getJSONFromEntry(Product entry) {
         Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
-        return "";
+        return null;
     }
 
     @Override

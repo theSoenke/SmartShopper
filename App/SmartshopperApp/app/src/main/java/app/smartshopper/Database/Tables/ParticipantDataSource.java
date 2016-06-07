@@ -101,9 +101,9 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     }
 
     @Override
-    public String getJSONFromEntry(Participant entry) {
+    public JSONObject getJSONFromEntry(Participant entry) {
         Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
-        return "";
+        return null;
     }
 
     @Override

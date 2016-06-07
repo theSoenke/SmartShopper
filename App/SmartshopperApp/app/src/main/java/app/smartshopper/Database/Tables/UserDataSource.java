@@ -71,9 +71,9 @@ public class UserDataSource extends DatabaseTable<User> {
     }
 
     @Override
-    public String getJSONFromEntry(User entry) {
+    public JSONObject getJSONFromEntry(User entry) {
         Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
-        return "";
+        return null;
     }
 
     @Override
