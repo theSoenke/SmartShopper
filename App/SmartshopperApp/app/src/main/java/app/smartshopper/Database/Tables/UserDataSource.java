@@ -8,6 +8,9 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
+import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
 
@@ -32,6 +35,14 @@ public class UserDataSource extends DatabaseTable<User> {
     @Override
     public String getWhereClause(User entry) {
         return MySQLiteHelper.USER_COLUMN_ID + " = '" + entry.getId();
+    }
+
+    public User get(long id){
+        List<User> listOfUser = getEntry(MySQLiteHelper.USER_COLUMN_ID + "=" + id);
+        if(listOfUser != null){
+            return listOfUser.get(0);
+        }
+        return null;
     }
 
     @Override

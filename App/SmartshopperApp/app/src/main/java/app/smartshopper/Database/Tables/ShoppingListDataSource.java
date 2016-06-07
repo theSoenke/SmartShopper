@@ -19,6 +19,7 @@ import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
+import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Properties;
 
@@ -29,6 +30,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     private ParticipantDataSource _participantSource;
     private ItemEntryDataSource _itemEntrySource;
     private ProductDataSource _productDataSource;
+    private UserDataSource _userDataSource;
 
     /**
      * Creates a new data source for the shopping list table and initializes it with the columns from the helper.
@@ -45,6 +47,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         _participantSource = new ParticipantDataSource(context);
         _itemEntrySource = new ItemEntryDataSource(context);
         _productDataSource = new ProductDataSource(context);
+        _userDataSource = new UserDataSource(context);
     }
 
     @Override
@@ -133,11 +136,11 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      * @param list The shopping list which products you want to know.
      * @return A list with products.
      */
-    public List<Product> getProductsOf(ShoppingList list) {
+    private List<Product> getProductsOf(ShoppingList list) {
         List<Product> listOfProducts = new LinkedList<Product>();
-        List<ItemEntry> itemEntries = _itemEntrySource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + list.getId());
+        List<ItemEntry> listOfItemEntries = _itemEntrySource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + list.getId());
 
-        for (ItemEntry itemEntry : itemEntries) {
+        for (ItemEntry itemEntry : listOfItemEntries) {
             Product product = _productDataSource.get(itemEntry.getProductID());
             if (product != null) {
                 listOfProducts.add(product);
@@ -145,6 +148,26 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         }
 
         return listOfProducts;
+    }
+
+    /**
+     * Gets all participants as User objects that are connected with this list.
+     *
+     * @param list The Shopping list which participants you want to know.
+     * @return A list with all users.
+     */
+    private List<User> getParticipantsOf(ShoppingList list) {
+        List<User> listOfUser = new LinkedList<User>();
+        List<Participant> listOfParticipants = _participantSource.getEntry(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + "=" + list.getId());
+
+        for (Participant itemEntry : listOfParticipants) {
+            User user = _userDataSource.get(itemEntry.getUserID());
+            if (user != null) {
+                listOfUser.add(user);
+            }
+        }
+
+        return listOfUser;
     }
 
     @Override
@@ -161,20 +184,29 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         try {
             jsonObject.put("name", shoppingList.getEntryName());
             jsonObject.put("owner", Properties.getInstance().getUserName());
+
+            // add products
             List<Product> listOfProducts = getProductsOf(shoppingList);
             JSONArray array = new JSONArray();
-
             for (Product product : listOfProducts) {
                 JSONObject object = new JSONObject();
-                object.put("name", product.getEntryName());
                 object.put("id", product.getId());
-                //TODO add these lines when #1 is implemented
-//                int amount = _itemEntrySource.getAmountOf(shoppingList, product);
-//                object.put("amount", amount);
+                int amount = _itemEntrySource.getAmountOf(shoppingList, product);
+                object.put("amount", amount);
                 array.put(object);
             }
-
             jsonObject.put("products", array);
+
+            // add participants
+            List<User> listOfParticipants = getParticipantsOf(shoppingList);
+            array = new JSONArray();
+            for (User user : listOfParticipants) {
+                JSONObject object = new JSONObject();
+                object.put("id", user.getId());
+                array.put(object);
+            }
+            jsonObject.put("participants", array);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -185,6 +217,8 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     @Override
     public ShoppingList buildEntryFromJSON(JSONObject jsonObject) {
         List<Product> listOfProducts = new LinkedList<>();
+        List<Integer> listOfAmounts = new LinkedList<>();
+        List<User> listOfUsers = new LinkedList<>();
 
         ShoppingList shoppingList = new ShoppingList();
 
@@ -197,23 +231,44 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
             long id = jsonObject.getLong("id");
             shoppingList.setId(id);
 
-            JSONArray productArray = (JSONArray) jsonObject.get("products");
+            JSONArray productArray = jsonObject.getJSONArray("products");
             for (int i = 0; i < productArray.length(); i++) {
-                JSONObject productObject = (JSONObject) productArray.get(i);
+                JSONObject productObject = productArray.getJSONObject(i);
                 Product product = _productDataSource.buildEntryFromJSON(productObject);
                 listOfProducts.add(product);
+                listOfAmounts.add(productObject.getInt("amount"));
+            }
+
+            JSONArray participantArray = jsonObject.getJSONArray("participants");
+            for (int i = 0; i < participantArray.length(); i++) {
+                JSONObject participantObject = participantArray.getJSONObject(i);
+                User user = new User();
+                user.setId(participantObject.getLong("id"));
+                //TODO uncomment this when implemented in remote database
+//                user.setEntryName(participantObject.getString("name"));
+                listOfUsers.add(user);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        // everything worked just fine at this point (= no exceptions)
+        /*
+         * We don't need to check if everything is valid or something, because
+         * everything worked just fine at this point (= no exceptions).
+         * There might be wrong values (e.g. empty names) but that's not
+         * the fault of this parsing method.
+         */
 
         add(shoppingList);
-        for (Product product : listOfProducts) {
-            //TODO take real amount (instead of 1)when #1 is implemented,
-            _itemEntrySource.add(product.getId(), shoppingList.getId(), 1);
+        for (int i = 0; i < listOfProducts.size(); i++) {
+            Product product = listOfProducts.get(i);
+            User user = listOfUsers.get(i);
+
             _productDataSource.add(product);
+            _itemEntrySource.add(product.getId(), shoppingList.getId(), listOfAmounts.get(i));
+
+            _userDataSource.add(user);
+            _participantSource.add(shoppingList.getId(), user.getId());
         }
 
         return new ShoppingList();
