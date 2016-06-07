@@ -104,7 +104,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     @Override
     public List<ItemEntry> getItemEntries(){
-        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + _shoppingList);
+        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + _shoppingList.getId());
     }
 
 

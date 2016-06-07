@@ -170,8 +170,8 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                 JSONObject object = new JSONObject();
                 object.put("name", product.getEntryName());
                 object.put("id", product.getId());
-                int amount = _itemEntrySource.getAmountOf(entry, product);
-                //TODO add this line when #1 is implemented
+                //TODO add these lines when #1 is implemented
+//                int amount = _itemEntrySource.getAmountOf(entry, product);
 //                object.put("amount", amount);
                 array.put(object);
             }
@@ -186,8 +186,6 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
 
     @Override
     public ShoppingList buildEntryFromJSON(JSONObject jsonObject) {
-        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
-
         ProductDataSource productDataSource = new ProductDataSource(super.context);
         List<Product> listOfProducts = new LinkedList<>();
 

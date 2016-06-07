@@ -132,14 +132,12 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
 
     @Override
     public JSONObject getJSONFromEntry(ItemEntry entry) {
-        Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
-        return null;
+        throw new UnsupportedOperationException("There's no JSON representation of an ItemEntry! Use the data sources for the content you want to have as JSON.");
     }
 
     @Override
     public ItemEntry buildEntryFromJSON(JSONObject jsonObject) {
-        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
-        return new ItemEntry();
+        throw new UnsupportedOperationException("There's no JSON representation of an ItemEntry! Use the data sources to add entries to the local database.");
     }
 
     /**
