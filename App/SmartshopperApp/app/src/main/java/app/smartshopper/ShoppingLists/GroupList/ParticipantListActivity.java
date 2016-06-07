@@ -103,7 +103,6 @@ public class ParticipantListActivity extends AppCompatActivity {
                 Log.i("ADDED", list.getId() + " - " + user.getId());
 
 
-
                 dialog.dismiss();
             }
         });

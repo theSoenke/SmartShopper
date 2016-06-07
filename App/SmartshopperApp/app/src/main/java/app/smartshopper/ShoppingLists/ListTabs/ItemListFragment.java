@@ -28,7 +28,7 @@ import app.smartshopper.R;
 
 /**
  * Created by hauke on 28.04.16.
- *
+ * <p/>
  * An ItemListFragment contains a list of items that belong to a certain list (single or group list).
  * When started the fragment reads all items from the database and displays them.
  * The "add"- and "change amount"-dialog is also located here.
@@ -185,7 +185,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         dialog.setContentView(R.layout.dialog_enter_item_amount);
         dialog.setTitle(split[1]);
         final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtNewItemAmount);
-         AmountEditText.setText(split[0]);
+        AmountEditText.setText(split[0]);
         Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortItemAmountChange);
         Button btConfirm = (Button) dialog.findViewById(R.id.dialog_btConfirmItemAmountChange);
         btAbort.setOnClickListener(new View.OnClickListener() {
@@ -225,7 +225,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
             for (ItemEntry item : entryList) {
                 String entryString = item.getAmount() + " " + _productHolder.getProductFromID(item.getProductID()).
                         getEntryName();
-                if(item.isBought() != 0){
+                if (item.isBought() != 0) {
                     entryString += " (gekauft)";
                 }
                 _listAdapter.add(entryString);
