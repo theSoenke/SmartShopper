@@ -23,7 +23,7 @@ import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.ShoppingListDataSource;
+import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.R;
 
 /**

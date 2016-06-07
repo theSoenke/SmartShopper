@@ -19,11 +19,11 @@ import java.util.List;
 
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Entries.Participant;
-import app.smartshopper.Database.ParticipantDataSource;
 import app.smartshopper.Database.Entries.ShoppingList;
-import app.smartshopper.Database.ShoppingListDataSource;
 import app.smartshopper.Database.Entries.User;
-import app.smartshopper.Database.UserDataSource;
+import app.smartshopper.Database.Tables.ParticipantDataSource;
+import app.smartshopper.Database.Tables.ShoppingListDataSource;
+import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.R;
 
 /**

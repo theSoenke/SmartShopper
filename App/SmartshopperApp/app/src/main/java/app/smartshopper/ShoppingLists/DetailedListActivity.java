@@ -10,12 +10,12 @@ import android.widget.Toast;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
-import app.smartshopper.Database.ItemEntryDataSource;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.ProductDataSource;
 import app.smartshopper.Database.Entries.ShoppingList;
-import app.smartshopper.Database.ShoppingListDataSource;
+import app.smartshopper.Database.Tables.ItemEntryDataSource;
+import app.smartshopper.Database.Tables.ProductDataSource;
+import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
 import app.smartshopper.ShoppingLists.ListTabs.ProductHolder;

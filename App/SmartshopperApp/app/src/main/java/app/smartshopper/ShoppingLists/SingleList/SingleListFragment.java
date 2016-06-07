@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ShoppingList;
-import app.smartshopper.Database.ShoppingListDataSource;
+import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import app.smartshopper.R;
 

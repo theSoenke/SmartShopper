@@ -3,6 +3,11 @@ package app.smartshopper.Database.Sync;
 import android.content.Context;
 
 import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.Tables.ItemEntryDataSource;
+import app.smartshopper.Database.Tables.ParticipantDataSource;
+import app.smartshopper.Database.Tables.ProductDataSource;
+import app.smartshopper.Database.Tables.ShoppingListDataSource;
+import app.smartshopper.Database.Tables.UserDataSource;
 
 /**
  * Created by hauke on 11.05.16.
