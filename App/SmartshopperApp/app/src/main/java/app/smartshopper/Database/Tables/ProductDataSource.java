@@ -102,11 +102,8 @@ public class ProductDataSource extends DatabaseTable<Product> {
 
     @Override
     public JSONObject getJSONFromEntry(Product product) {
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = super.getJSONFromEntry(product);
         try {
-            jsonObject.put("id", product.getId());
-            jsonObject.put("name", product.getEntryName());
-
             JSONArray jsonArray = new JSONArray();
             new JSONObject().put("x",product.getPosX());
             new JSONObject().put("y",product.getPosY());

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import app.smartshopper.Database.Entries.User;
@@ -72,13 +73,25 @@ public class UserDataSource extends DatabaseTable<User> {
 
     @Override
     public JSONObject getJSONFromEntry(User entry) {
-        Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
-        return null;
+        JSONObject jsonObject = super.getJSONFromEntry(entry);
+
+        return jsonObject;
     }
 
     @Override
     public User buildEntryFromJSON(JSONObject jsonObject) {
-        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
-        return new User();
+        User user = new User();
+        try {
+            long id = 0;
+            id = jsonObject.getLong("id");
+            user.setId(id);
+
+            String name = jsonObject.getString("name");
+            user.setEntryName(name);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return user;
     }
 }
