@@ -120,15 +120,13 @@ public class ProductDataSource extends DatabaseTable<Product> {
 
     @Override
     public Product buildEntryFromJSON(JSONObject jsonObject) {
-        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
-
         Product product = new Product();
 
         try {
             long id = jsonObject.getLong("id");
                 product.setId(id);
 
-            String name = jsonObject.get("name").toString();
+            String name = jsonObject.getString("name");
             product.setEntryName(name);
 
             JSONArray location = (JSONArray)jsonObject.get("location");

@@ -193,7 +193,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
 
         try {
             //set name of the list
-            String entryName = jsonObject.get("name").toString();
+            String entryName = jsonObject.getString("name");
             shoppingList.setEntryName(entryName);
 
             // set ID of the list
