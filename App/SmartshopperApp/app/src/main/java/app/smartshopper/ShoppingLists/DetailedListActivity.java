@@ -25,9 +25,8 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     ProductDataSource _productSource;
     ItemEntryDataSource _itemSource;
-    long _shoppingList;
+    ShoppingList _shoppingList;
     ListPagerAdapter listPagerAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +47,9 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             if (listOfEntries.size() > 1) {
                 Toast.makeText(getApplicationContext(), "There's more than one list with the name " + listName + "! Taking the first occurrence.", Toast.LENGTH_SHORT).show();
             }
-            _shoppingList = listOfEntries.get(0).getId();
-
+            _shoppingList = listOfEntries.get(0);
             _itemSource = new ItemEntryDataSource(getApplicationContext());
-
-
             _productSource = new ProductDataSource(getApplicationContext());
-
-
-
-        } else {
             Toast.makeText(getApplicationContext(), "There's no list called '" + listName + "'!", Toast.LENGTH_SHORT).show();
         }
 
@@ -78,17 +70,11 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         if (p.equals(null)) {
             return false;
         } else {
-            List<ItemEntry> doubleEntries = _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + p.getId()
-                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + _shoppingList);
-            if(doubleEntries.size() > 0){
-                for (ItemEntry entry : doubleEntries){
-                    amountbuffer += entry.getAmount();
-                    _itemSource.removeEntryFromDatabase(entry);
-                }
-            }
+            amountbuffer = _itemSource.removeDuplicates(_shoppingList, p);
+
             ItemEntry e = new ItemEntry();
             e.setProductID(p.getId());
-            e.setListID(_shoppingList);
+            e.setListID(_shoppingList.getId());
             e.setAmount(amount + amountbuffer);
             e.setBought(0);
             _itemSource.add(e);

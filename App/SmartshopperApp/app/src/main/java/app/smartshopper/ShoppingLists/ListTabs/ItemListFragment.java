@@ -74,7 +74,6 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         final ArrayAdapter<Product> productListAdapter = new ArrayAdapter<Product>(getContext(), R.layout.simple_row, new ArrayList<Product>());
 
         // get all products and add them to the list
-        //FIXME get all products an not only the ones that already exist in the list
         final List<Product> listOfProducts = _productHolder.getAllAvailableProducts();
         productListAdapter.addAll(listOfProducts);
 
@@ -101,7 +100,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String prefix = s.toString();
-                List<Product> newListOfProducts = (List<Product>) ((ArrayList<Product>) listOfProducts).clone();
+                List<Product> newListOfProducts = _productHolder.getAllAvailableProducts();
                 int lengthOfList = newListOfProducts.size();
 
                 for (int i = 0; i < lengthOfList; i++) {

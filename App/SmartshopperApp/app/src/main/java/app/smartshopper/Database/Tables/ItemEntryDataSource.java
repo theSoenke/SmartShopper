@@ -94,14 +94,28 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      * @return The amount of the product in the list.
      */
     public int getAmountOf(ShoppingList list, Product product){
-        List<ItemEntry> listOfEntries = getEntry(
-                MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + list.getId()+
-                        MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + "=" + product.getId()
-        );
-        if(listOfEntries != null){
-            return listOfEntries.get(0).getAmount();
+        ItemEntry item = getItemEntry(list, product);
+        if(item !=null){
+            return item.getAmount();
         }
         return 0;
+    }
+
+    /**
+     * Gets the ItemEntry specified by the given list and product.
+     * @param list The list this item is in.
+     * @param product The product it represents.
+     * @return The ItemEntry, null if it does not exits.
+     */
+    public ItemEntry getItemEntry(ShoppingList list, Product product){
+        List<ItemEntry> listOfEntries = getEntry(
+                MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "=" + list.getId() +
+                MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + "=" + product.getId()
+        );
+        if(listOfEntries != null){
+            return listOfEntries.get(0);
+        }
+        return null;
     }
 
     @Override
@@ -124,5 +138,27 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
     public ItemEntry buildEntryFromJSON(String jsonString) {
         Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
         return new ItemEntry();
+    }
+
+    /**
+     * Removes all duplicate entries for the given list and the product and determines the amount of the products.
+     * @param shoppingList The shopping list the product is in.
+     * @param product The product which duplicates should be removed.
+     * @return The quantity of the products the user wants to buy.
+     */
+    public int removeDuplicates(ShoppingList shoppingList, Product product) {
+        List<ItemEntry> doubleEntries = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = " + product.getId()
+            + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = " + shoppingList);
+
+        int amountbuffer = 0;
+
+        if(doubleEntries.size() > 0){
+            for (ItemEntry entry : doubleEntries){
+                amountbuffer += entry.getAmount();
+                removeEntryFromDatabase(entry);
+            }
+        }
+
+        return amountbuffer;
     }
 }
