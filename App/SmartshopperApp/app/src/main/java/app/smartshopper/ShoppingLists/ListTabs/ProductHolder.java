@@ -7,6 +7,8 @@ import app.smartshopper.Database.Entries.Product;
 
 /**
  * Created by Rasmus on 02.06.16.
+ *
+ * The product holder enables the client to add and remove items and product related data on the implementing class.
  */
 public interface ProductHolder
 {

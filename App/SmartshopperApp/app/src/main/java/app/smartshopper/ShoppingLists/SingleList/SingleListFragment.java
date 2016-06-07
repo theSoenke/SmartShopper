@@ -22,6 +22,11 @@ import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import app.smartshopper.R;
 
+/**
+ * The SingleListFragment contains a list with all single lists (list that's not shared to other participants).
+ * This class also contains the "add"-dialog to create lists and manages the communication with the database.
+ */
+// TODO Maybe Extract the communication and the dialog into extra classes?
 public class SingleListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     @Override

@@ -8,6 +8,10 @@ import android.view.MenuItem;
 
 import app.smartshopper.R;
 
+/**
+ * The AbstractDetailedListActivity creates the tab view and the tab fragments.
+ * It also enables the "back"-button and creates listener to properly switch tabs.
+ */
 public abstract class AbstractDetailedListActivity extends AppCompatActivity {
 
     @Override

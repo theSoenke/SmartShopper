@@ -6,6 +6,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 /**
  * Created by hauke on 28.04.16.
+ *
+ * The ListPagerAdapter contains all tabs that should be displays and enables the switching via the
+ * {@link app.smartshopper.ShoppingLists.DetailedListActivity} by implementing the FragmentStatePagerAdapter interface.
  */
 public class ListPagerAdapter extends FragmentStatePagerAdapter {
 

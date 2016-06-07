@@ -41,6 +41,9 @@ import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Location.LocationTool;
 import app.smartshopper.R;
 
+/**
+ * The NavigationViewFragment contains the map of the store and marks for all items.
+ */
 public class NavigationViewFragment extends Fragment implements BeaconConsumer {
 
     private MapView mapView;

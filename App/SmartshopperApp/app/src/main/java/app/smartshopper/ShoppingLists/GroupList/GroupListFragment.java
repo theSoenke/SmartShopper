@@ -25,6 +25,11 @@ import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 
+/**
+ * The GroupListFragment contains a list of all group-lists (list with more then one participant) and
+ * the "add"-dialog.
+ * It also handles click and the switching to the {@link app.smartshopper.ShoppingLists.DetailedListActivity}.
+ */
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     int expandedParent = -1;

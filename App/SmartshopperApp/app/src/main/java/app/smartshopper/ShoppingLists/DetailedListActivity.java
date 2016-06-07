@@ -21,6 +21,12 @@ import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
 import app.smartshopper.ShoppingLists.ListTabs.ProductHolder;
 import app.smartshopper.ShoppingLists.ListTabs.ProductPresenter;
 
+/**
+ * The DetailedListActivity is the activity that's visible after clicking on a single- or group-list.
+ * It holds the tabs (item list (-> {@link app.smartshopper.ShoppingLists.ListTabs.ItemListFragment} and navigation view (-> {@link app.smartshopper.ShoppingLists.ListTabs.NavigationViewFragment})).
+ *
+ * When started the DetailedListActivity gets all Products to the given list (via view.getTag) and passes the values to the item list and navigation view.
+ */
 public class DetailedListActivity extends AbstractDetailedListActivity implements ProductHolder {
 
     ProductDataSource _productSource;

@@ -28,7 +28,13 @@ import app.smartshopper.R;
 
 /**
  * Created by hauke on 28.04.16.
+ *
+ * An ItemListFragment contains a list of items that belong to a certain list (single or group list).
+ * When started the fragment reads all items from the database and displays them.
+ * The "add"- and "change amount"-dialog is also located here.
  */
+//TODO Move dialogs to extra class(es)
+//TODO Maybe move the database-queries and -logic to extra class
 public class ItemListFragment extends Fragment implements AdapterView.OnItemClickListener, ProductPresenter {
 
     ArrayAdapter<String> _listAdapter;
