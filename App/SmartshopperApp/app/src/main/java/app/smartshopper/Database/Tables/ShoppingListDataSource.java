@@ -158,12 +158,12 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     }
 
     @Override
-    public JSONObject getJSONFromEntry(ShoppingList entry) {
+    public JSONObject getJSONFromEntry(ShoppingList shoppingList) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("name", entry.getEntryName());
+            jsonObject.put("name", shoppingList.getEntryName());
             jsonObject.put("owner", Properties.getInstance().getUserName());
-            List<Product> listOfProducts = getProductsOf(entry);
+            List<Product> listOfProducts = getProductsOf(shoppingList);
             JSONArray array = new JSONArray();
 
             for (Product product : listOfProducts) {
@@ -171,7 +171,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                 object.put("name", product.getEntryName());
                 object.put("id", product.getId());
                 //TODO add these lines when #1 is implemented
-//                int amount = _itemEntrySource.getAmountOf(entry, product);
+//                int amount = _itemEntrySource.getAmountOf(shoppingList, product);
 //                object.put("amount", amount);
                 array.put(object);
             }
@@ -197,12 +197,8 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
             shoppingList.setEntryName(entryName);
 
             // set ID of the list
-            String id = jsonObject.get("id").toString();
-            try {
-                shoppingList.setId(Long.parseLong(id));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
+            long id = jsonObject.getLong("id");
+            shoppingList.setId(id);
 
             JSONArray productArray = (JSONArray) jsonObject.get("products");
             for (int i = 0; i < productArray.length(); i++) {

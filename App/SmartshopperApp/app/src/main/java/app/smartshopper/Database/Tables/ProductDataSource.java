@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -99,14 +101,52 @@ public class ProductDataSource extends DatabaseTable<Product> {
     }
 
     @Override
-    public JSONObject getJSONFromEntry(Product entry) {
-        Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
-        return null;
+    public JSONObject getJSONFromEntry(Product product) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("id", product.getId());
+            jsonObject.put("name", product.getEntryName());
+
+            JSONArray jsonArray = new JSONArray();
+            new JSONObject().put("x",product.getPosX());
+            new JSONObject().put("y",product.getPosY());
+            jsonObject.put("location", jsonArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
     }
 
     @Override
     public Product buildEntryFromJSON(JSONObject jsonObject) {
         Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
+
+        Product product = new Product();
+
+        try {
+            long id = jsonObject.getLong("id");
+                product.setId(id);
+
+            String name = jsonObject.get("name").toString();
+            product.setEntryName(name);
+
+            JSONArray location = (JSONArray)jsonObject.get("location");
+            if(location.length()==2){
+                int xPos = location.getInt(0);
+                int yPos = location.getInt(1);
+                product.setPosX(xPos);
+                product.setPosY(yPos);
+            }
+            else{
+                Log.e("Invalid JSON product", "The product that was given by JSON code has an invalid amount of location values (values.amount!=2))");
+                Log.e("Invalid JSON product", "This is the JSON code: "+jsonObject.toString());
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return new Product();
     }
 }

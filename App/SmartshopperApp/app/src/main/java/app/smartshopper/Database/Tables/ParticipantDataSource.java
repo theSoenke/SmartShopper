@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.util.LinkedList;
 import java.util.List;
 
+import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
@@ -102,14 +103,12 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
 
     @Override
     public JSONObject getJSONFromEntry(Participant entry) {
-        Log.e("Create Entry from JSON", "This is not implemented and gives the empty string as result.");
-        return null;
+        throw new UnsupportedOperationException("There's no JSON representation of an Participant! Use the data sources for the content you want to have as JSON.");
     }
 
     @Override
     public Participant buildEntryFromJSON(JSONObject jsonObject) {
-        Log.e("Create Entry from JSON", "This is not implemented and gives an empty element as result.");
-        return new Participant();
+        throw new UnsupportedOperationException("There's no JSON representation of an Participant! Use the data sources to add entries to the local database.");
     }
 
     /**
