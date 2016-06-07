@@ -1,14 +1,16 @@
 'use strict'
 
-var basicAuth = require('basic-auth')
-var List = require('../models/list')
+const basicAuth = require('basic-auth')
+const List = require('../models/list')
 
+// get all lists from user
 exports.getLists = function (req, res, next) {
   let username = basicAuth(req).name
   let query = {owner: username}
 
   List
     .find(query)
+    .populate('participants')
     .exec(function (err, docs) {
       if (err) {
         return next(err)
@@ -18,6 +20,7 @@ exports.getLists = function (req, res, next) {
     })
 }
 
+// Create a new list
 exports.uploadList = function (req, res, next) {
   let username = basicAuth(req).name
   let list = req.body
@@ -27,10 +30,17 @@ exports.uploadList = function (req, res, next) {
     if (err) {
       return next(err)
     }
-    res.json(docs)
+
+    List.findById(docs._id)
+      .populate('participants', 'username')
+      .exec(function (err, doc) {
+        if (err) return next(err)
+        res.json(doc)
+      })
   })
 }
 
+// Update existing list
 exports.updateList = function (req, res, next) {
   let query = {'_id': req.params.id}
   let properties = {upsert: true, runValidators: true, new: true}
@@ -42,6 +52,7 @@ exports.updateList = function (req, res, next) {
   })
 }
 
+// delete a list
 exports.deleteList = function (req, res, next) {
   List.findByIdAndRemove(req.params.id, function (err) {
     if (err) {
