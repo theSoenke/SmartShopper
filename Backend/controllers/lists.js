@@ -2,70 +2,65 @@
 
 const basicAuth = require('basic-auth')
 const List = require('../models/list')
-const User = require('../models/list')
+const User = require('../models/user')
 
-// get all lists from user
+// Get all lists from user
 exports.getLists = function (req, res, next) {
-  let username = basicAuth(req).name
-  let query = {owner: username}
+  let credentials = basicAuth(req)
 
-  List
-    .find(query)
-    .populate('participants')
-    .exec(function (err, docs) {
-      if (err) {
-        return next(err)
-      }
+  User.findOne({username: credentials.name}, function (err, doc) {
+    if (err) return err
 
-      res.json(docs)
-    })
+    let query = {owner: doc._id}
+    List
+      .find(query)
+      .populate('owner', 'username')
+      .populate('participants')
+      .exec(function (err, docs) {
+        if (err) return next(err)
+        res.json(docs)
+      })
+  })
 }
 
 // Create a new list
 exports.uploadList = function (req, res, next) {
-  let username = basicAuth(req).name
-  let list = req.body
+  let credentials = basicAuth(req)
 
-  // get user id
-  User
-    .find({username: username})
-    .exec(function (err, doc) {
+  User.findOne({username: credentials.name}, function (err, doc) {
+    if (err) return err
+
+    let list = req.body
+    list.owner = doc._id
+
+    List.create(list, function (err, docs) {
       if (err) return next(err)
-      list.owner = doc._id
+
+      // return and poulate new list
+      List.findById(docs._id)
+        .populate('owner', 'username')
+        .populate('participants', 'username')
+        .exec(function (err, doc) {
+          if (err) return next(err)
+          res.json(doc)
+        })
     })
-
-  List.create(list, function (err, docs) {
-    if (err) return next(err)
-
-    // return and poulate new list
-    List.findById(docs._id)
-      .populate('participants', 'username')
-      .populate('owner', '_id username')
-      .exec(function (err, doc) {
-        if (err) return next(err)
-        res.json(doc)
-      })
   })
 }
 
 // Update existing list
 exports.updateList = function (req, res, next) {
-  let query = {'_id': req.params.id}
   let properties = {upsert: true, runValidators: true, new: true}
-  List.findOneAndUpdate(query, req.body, properties, function (err, doc) {
-    if (err) {
-      return next(err)
-    }
+  List.findByIdAndUpdate(req.params.id, req.body, properties, function (err, doc) {
+    if (err) return next(err)
     return res.json(doc)
   })
 }
 
-// delete a list
+// Delete a list
 exports.deleteList = function (req, res, next) {
   List.findByIdAndRemove(req.params.id, function (err) {
-    if (err) {
-      return next(err)
-    }
+    if (err) return next(err)
     res.json({message: 'deleted list', _id: req.params.id})
   })
 }

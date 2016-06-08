@@ -41,9 +41,7 @@ exports.requireAuthentication = function (req, res, next) {
   let credentials = basicAuth(req)
 
   User.findOne({username: credentials.name}, function (err, doc) {
-    if (err) {
-      return next(err)
-    }
+    if (err) return next(err)
 
     if (!doc) {
       let error = new Error('User does not exist')
@@ -51,15 +49,13 @@ exports.requireAuthentication = function (req, res, next) {
     }
 
     doc.comparePasswords(credentials.pass, function (err, isMatch) {
-      if (err) {
-        return next(err)
-      }
+      if (err) return next(err)
 
       if (isMatch) {
         next()
       } else {
         let error = new Error('Passwords do not match')
-        next(error)
+        return next(error)
       }
     })
   })

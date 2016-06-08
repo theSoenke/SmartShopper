@@ -2,17 +2,15 @@
   "name": "list2",
   "products": [
     {
-      "id": "54545asdasdsad",
+      "product": "574b4b086da6fd3e127ce0ea",
       "amount": 1
     },
     {
-      "id": "ikosajdiosdajf",
+      "product": "574b4b086da6fd3e127ce0ea",
       "amount": 10
     }
   ],
   "participants": [
-      {
-          "id": "posopdskdk"
-      }
+          "5752a3291b7b7c110bb46562"
   ]
 }
