@@ -1,22 +1,15 @@
 package app.smartshopper.Location;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.PointF;
 import android.util.Log;
 
 import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.BeaconConsumer;
-import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by Studium on 26.05.2016.
@@ -27,8 +20,8 @@ public class LocationTool{
     private PointF p1, p2, p3, p4;
     List<BeaconEntity> beacons;
 
-    HashMap<Integer,Einkaufsladen> idLadenMap;
-    Einkaufsladen laden = Einkaufsladen.Default;
+    HashMap<Integer,Store> idLadenMap;
+    Store store = Store.Default;
 
     public LocationTool()
     {
@@ -48,11 +41,11 @@ public class LocationTool{
         beacons.add(new BeaconEntity(p3, beaconID3, 3));
         beacons.add(new BeaconEntity(p4, beaconID4, 4));
 
-        idLadenMap = new HashMap<Integer, Einkaufsladen>();
-        idLadenMap.put(beaconID1,Einkaufsladen.Raum);
-        idLadenMap.put(beaconID2,Einkaufsladen.Penny);
-        idLadenMap.put(beaconID3,Einkaufsladen.Penny);
-        idLadenMap.put(beaconID4,Einkaufsladen.Penny);
+        idLadenMap = new HashMap<Integer, Store>();
+        idLadenMap.put(beaconID1, Store.Raum);
+        idLadenMap.put(beaconID2, Store.Penny);
+        idLadenMap.put(beaconID3, Store.Penny);
+        idLadenMap.put(beaconID4, Store.Penny);
 
 
 
@@ -79,7 +72,7 @@ public class LocationTool{
 
     public void updateLaden(int minor)
     {
-        laden = idLadenMap.get(minor);
+        store = idLadenMap.get(minor);
         Log.i("Navigation","Registered minor"+ minor);
     }
 
@@ -213,8 +206,8 @@ public class LocationTool{
         }
     }
 
-    public Einkaufsladen getLaden()
+    public Store getLaden()
     {
-        return laden;
+        return store;
     }
 }
