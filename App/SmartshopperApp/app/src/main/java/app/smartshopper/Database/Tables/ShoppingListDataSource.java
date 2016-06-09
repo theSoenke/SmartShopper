@@ -187,7 +187,6 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("name", shoppingList.getEntryName());
-            jsonObject.put("owner", Properties.getInstance().getUserName());
 
             // add products
             List<Product> listOfProducts = getProductsOf(shoppingList);
