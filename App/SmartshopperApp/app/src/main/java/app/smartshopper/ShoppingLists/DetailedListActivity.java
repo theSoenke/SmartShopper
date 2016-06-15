@@ -73,17 +73,15 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     @Override
     public boolean addEntry(String product, int amount) {
-        int amountbuffer=0;
-        Product p = getProductFromString(product);
+        Product p = _productSource.getProductFromString(product);
         if (p.equals(null)) {
             return false;
         } else {
-            amountbuffer = _itemSource.removeDuplicates(_shoppingList, p);
 
             ItemEntry e = new ItemEntry();
             e.setProductID(p.getId());
             e.setListID(_shoppingList.getId());
-            e.setAmount(amount + amountbuffer);
+            e.setAmount(amount +  _itemSource.removeDuplicates(_shoppingList.getId(),p.getId()));
             e.setBought(0);
             _itemSource.add(e);
             ((ProductPresenter) listPagerAdapter.getItem(0)).productsChanged();
@@ -95,26 +93,14 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public void removeEntry(String entry) {
 
-        List<ItemEntry> entrylist = getItemEntryFromString(entry);
-        if(entrylist.size() > 0){
-            if(entrylist.size() > 1){
-                Toast.makeText(getApplicationContext(), "More than one entry for " +  getProductFromID(entrylist.get(0).getProductID()).getEntryName() + ", i will delete them all", Toast.LENGTH_SHORT).show();
-            }
-            for(ItemEntry e : entrylist){
-                _itemSource.removeEntryFromDatabase(e);
-            }
-        }else{
-            Toast.makeText(getApplicationContext(), "Couldn't find the item to delete :(", Toast.LENGTH_SHORT).show();
+        ItemEntry remover = getItemEntryFromString(entry);
+        if(remover != null) {
+            _itemSource.removeEntryFromDatabase(remover);
+        }else {
+            Toast.makeText(getApplicationContext(), "Couldn't find the item to Delete :(", Toast.LENGTH_SHORT).show();
         }
+
     }
-
-
-
-    @Override
-    public List<ItemEntry> getItemEntries(){
-        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + _shoppingList.getId() + "'");
-    }
-
 
     @Override
     public List<Product> getAllAvailableProducts() {
@@ -129,26 +115,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         }
     }
 
-    public Product getProductFromString(String s) {
-        List<Product> productList = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + "'" + s + "'");
-        if (productList.isEmpty()) {
-            return null;
-        } else {
-            return productList.get(0);
-        }
-    }
-
-    @Override
-    public Product getProductFromID(String PID){
-        List<Product> productList = _productSource.getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + PID + "'");
-        if (productList.isEmpty()) {
-            return null;
-        } else {
-            return productList.get(0);
-        }
-    }
-
-    public List<ItemEntry> getItemEntryFromString(String entryName){
+    public ItemEntry getItemEntryFromString(String entryName){
 
         int bought = 0;
         String[] split = entryName.split("\\s+");
@@ -157,22 +124,16 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                 bought = 1;
             }
         }
-        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + getProductFromString(split[1]).getId() + "'"
-                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + _shoppingList.getId() + "'"
-                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + split[0]
-                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
+        return _itemSource.getItemEntry(_shoppingList, _productSource.getProductFromString(split[1]), Integer.parseInt(split[0]), bought);
     }
 
     @Override
     public void changeItemAmount (String entry, int amount){
-        List<ItemEntry> entrylist = getItemEntryFromString(entry);
-        if(entrylist.size() > 0){
-            for(int i = 0; i < entrylist.size(); i++){
-                _itemSource.removeEntryFromDatabase(entrylist.get(i));
-            }
-            ItemEntry newEntry = entrylist.get(0);
-            newEntry.setAmount(amount);
-            _itemSource.add(newEntry);
+        ItemEntry e = getItemEntryFromString(entry);
+        if(e != null){
+            _itemSource.removeEntryFromDatabase(e);
+            e.setAmount(amount);
+            _itemSource.add(e);
         }else{
             Toast.makeText(getApplicationContext(), "Couldn't find the item to Change :(", Toast.LENGTH_SHORT).show();
         }
@@ -180,20 +141,28 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     @Override
     public void markItemAsBought(String entry) {
-        List<ItemEntry> entries = getItemEntryFromString(entry);
-        if(entries.size()> 0){
-            ItemEntry entry1 = entries.get(0);
-            _itemSource.removeEntryFromDatabase(entry1);
-            int bought = entry1.isBought();
+        ItemEntry e = getItemEntryFromString(entry);
+            _itemSource.removeEntryFromDatabase(e);
+            int bought = e.isBought();
             if(bought == 0){
                 bought = 1;
             }else{
                 bought = 0;
             }
-            entry1.setBought(bought);
-            _itemSource.add(entry1);
-        }
+            e.setBought(bought);
+            _itemSource.add(e);
     }
 
+    @Override
+    public List<ItemEntry> getItemEntries() {
+        return _itemSource.getEntriesForList(_shoppingList);
+    }
 
+    @Override
+    public Product getProductFromID(String productID) {
+        return _productSource.getProductFromID(productID);
+    }
 }
+
+
+

@@ -1,5 +1,6 @@
 package app.smartshopper.Database.Tables;
 
+import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -120,6 +121,17 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         }
         return null;
     }
+    public ItemEntry getItemEntry(ShoppingList l, Product p, int amount, int bought){
+        List<ItemEntry> listOfEntries = getEntry(
+                MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + p.getId() + "'"
+                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + l.getId() + "'"
+                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + amount
+                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
+        if (listOfEntries != null) {
+            return listOfEntries.get(0);
+        }
+        return null;
+    }
 
     @Override
     public ItemEntry cursorToEntry(Cursor cursor) {
@@ -144,13 +156,13 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
     /**
      * Removes all duplicate entries for the given list and the product and determines the amount of the products.
      *
-     * @param shoppingList The shopping list the product is in.
-     * @param product      The product which duplicates should be removed.
+     * @param ListId       The ID of the shopping list the product is in.
+     * @param ProductID    The ID of the product which duplicates should be removed.
      * @return The quantity of the products the user wants to buy.
      */
-    public int removeDuplicates(ShoppingList shoppingList, Product product) {
-        List<ItemEntry> doubleEntries = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
-                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + shoppingList + "'");
+    public int removeDuplicates(String ListId, String ProductID) {
+        List<ItemEntry> doubleEntries = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'"
+                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListId + "'");
 
         int amountbuffer = 0;
 
@@ -163,4 +175,9 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
 
         return amountbuffer;
     }
+
+    public List<ItemEntry> getEntriesForList(ShoppingList shoppingList) {
+        return getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID +  " = '" + shoppingList.getId() + "'");
+    }
+
 }
