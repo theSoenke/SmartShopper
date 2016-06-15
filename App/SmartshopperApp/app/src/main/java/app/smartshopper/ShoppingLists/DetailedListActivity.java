@@ -47,7 +47,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
         // get all lists with this name
         ShoppingListDataSource shoppingListSource = new ShoppingListDataSource(getApplicationContext());
-        List<ShoppingList> listOfEntries = shoppingListSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + "='" + listName + "'");
+        List<ShoppingList> listOfEntries = shoppingListSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
 
         if (listOfEntries.size() > 0) {
             if (listOfEntries.size() > 1) {
@@ -56,6 +56,8 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             _shoppingList = listOfEntries.get(0);
             _itemSource = new ItemEntryDataSource(getApplicationContext());
             _productSource = new ProductDataSource(getApplicationContext());
+        }else{
+
             Toast.makeText(getApplicationContext(), "There's no list called '" + listName + "'!", Toast.LENGTH_SHORT).show();
         }
 
@@ -110,7 +112,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     @Override
     public List<ItemEntry> getItemEntries(){
-        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + "='" + _shoppingList.getId() + "'");
+        return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + _shoppingList.getId() + "'");
     }
 
 
@@ -156,7 +158,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             }
         }
         return _itemSource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + getProductFromString(split[1]).getId() + "'"
-                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + _shoppingList + "'"
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + _shoppingList.getId() + "'"
                         + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + split[0]
                         + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
     }
