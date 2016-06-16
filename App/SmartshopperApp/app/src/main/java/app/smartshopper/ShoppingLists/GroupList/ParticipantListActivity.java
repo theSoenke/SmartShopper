@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,6 +49,13 @@ public class ParticipantListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         ListView listView = (ListView) findViewById(R.id.participantList_list);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                openRemoveParticipantDialog();
+            }
+        });
 
         // Create ArrayAdapter using an empty list
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.simple_row, new ArrayList<String>());
@@ -113,6 +121,22 @@ public class ParticipantListActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+        dialog.show();
+    }
+
+    private void openRemoveParticipantDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_remove_participant);
+        dialog.setTitle("Remove participant ");
+
+        Button cancelButton = (Button) dialog.findViewById(R.id.remove_participant_cancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
         dialog.show();
     }
 
