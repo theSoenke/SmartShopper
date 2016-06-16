@@ -180,4 +180,10 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         return getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID +  " = '" + shoppingList.getId() + "'");
     }
 
+    public boolean EntryExists(String ListID, String ProductID, int bought) {
+        List<ItemEntry> list = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListID + "'"
+        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'" +
+                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
+        return !list.isEmpty();
+    }
 }
