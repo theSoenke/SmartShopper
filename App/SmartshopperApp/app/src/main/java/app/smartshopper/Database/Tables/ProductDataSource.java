@@ -149,4 +149,20 @@ public class ProductDataSource extends DatabaseTable<Product> {
 
         return new Product();
     }
+    public Product getProductFromString(String s){
+        List<Product> productList = getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + "'" + s + "'");
+        if (productList.isEmpty()) {
+            return null;
+        } else {
+            return productList.get(0);
+        }
+    }
+    public Product getProductFromID(String ID){
+        List<Product> productList = getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + ID + "'");
+        if (productList.isEmpty()) {
+            return null;
+        } else {
+            return productList.get(0);
+        }
+    }
 }

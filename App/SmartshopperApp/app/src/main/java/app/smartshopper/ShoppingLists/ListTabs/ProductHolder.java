@@ -15,13 +15,13 @@ public interface ProductHolder {
 
     void removeEntry(String entry);
 
-    List<ItemEntry> getItemEntries();
-
     List<Product> getAllAvailableProducts();
-
-    Product getProductFromID(String PID);
 
     void markItemAsBought(String entry);
 
     void changeItemAmount(String entry, int amount);
+
+    List<ItemEntry> getItemEntries();
+
+    Product getProductFromID(String productID);
 }
