@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2000mm"
+   height="800mm"
+   viewBox="0 0 7086.6142 2834.6457"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r"
+   sodipodi:docname="iBeacon_protocol.svg"
+   inkscape:export-filename="/home/hauke/Studium/SoSe_16/Proj/iBeacon_protocol.png"
+   inkscape:export-xdpi="19.049999"
+   inkscape:export-ydpi="19.049999">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient5580"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop5582" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.18810111"
+     inkscape:cx="3537.9908"
+     inkscape:cy="1019.043"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1018"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:object-paths="false" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,1782.2835)">
+    <rect
+       style="opacity:0.98000004;fill:#5892d4;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:10.62992096;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4136"
+       width="6377.9531"
+       height="531.49603"
+       x="354.33096"
+       y="-1533.3662" />
+    <rect
+       style="opacity:0.98000004;fill:#58d4cd;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:10.62992096;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect5607"
+       width="1275.5906"
+       height="531.49603"
+       x="354.33075"
+       y="-633.36615"
+       inkscape:tile-cx="992.12628"
+       inkscape:tile-cy="1300.36"
+       inkscape:tile-w="1275.5906"
+       inkscape:tile-h="531.49603"
+       inkscape:tile-x0="354.33099"
+       inkscape:tile-y0="1034.612" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect5607"
+       xlink:href="#rect5607"
+       transform="translate(1275.5906,2.360016e-7)"
+       id="use5611"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect5607"
+       xlink:href="#rect5607"
+       transform="translate(2551.1812,2.360016e-7)"
+       id="use5613"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect5607"
+       xlink:href="#rect5607"
+       transform="translate(3826.7717,2.360016e-7)"
+       id="use5615"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect5607"
+       xlink:href="#rect5607"
+       transform="translate(5102.3623,2.360016e-7)"
+       id="use5617"
+       width="100%"
+       height="100%" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="3543.1543"
+       y="-1305.9434"
+       id="text5619"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="3543.1543"
+         y="-1305.9434"
+         id="tspan5623"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:125px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono';text-align:center;text-anchor:middle">iBeacon Data</tspan><tspan
+         sodipodi:role="line"
+         x="3543.1543"
+         y="-1149.6934"
+         id="tspan5627"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:125px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono';text-align:center;text-anchor:middle">31 bytes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="989.76855"
+       y="-400.34821"
+       id="text5629"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5631"
+         x="989.76855"
+         y="-400.34821"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">iBeacon Prefix</tspan><tspan
+         sodipodi:role="line"
+         x="989.76855"
+         y="-283.16071"
+         id="tspan5633"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">9 bytes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="2266.7095"
+       y="-401.79022"
+       id="text5635"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5637"
+         x="2266.7095"
+         y="-401.79022"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">UUID</tspan><tspan
+         sodipodi:role="line"
+         x="2266.7095"
+         y="-284.60272"
+         id="tspan5639"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">16 bytes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="3544.2227"
+       y="-400.34821"
+       id="text5660"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5662"
+         x="3544.2227"
+         y="-400.34821"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">Major ID</tspan><tspan
+         sodipodi:role="line"
+         x="3544.2227"
+         y="-283.16071"
+         id="tspan5664"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">2 bytes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="4819.8135"
+       y="-400.34821"
+       id="text5666"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5668"
+         x="4819.8135"
+         y="-400.34821"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">Minor ID</tspan><tspan
+         sodipodi:role="line"
+         x="4819.8135"
+         y="-283.16071"
+         id="tspan5670"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">2 bytes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="6095.1753"
+       y="-401.79022"
+       id="text5672"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5674"
+         x="6095.1753"
+         y="-401.79022"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">TX Power</tspan><tspan
+         sodipodi:role="line"
+         x="6095.1753"
+         y="-284.60272"
+         id="tspan5676"
+         style="font-size:93.75px;text-align:center;text-anchor:middle">1 byte</tspan></text>
+    <rect
+       style="opacity:1;fill:#58d484;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:10.62992096;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect5697"
+       width="698.03149"
+       height="520.86615"
+       x="354.33072"
+       y="277.26373" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="705.96118"
+       y="513.44635"
+       id="text5724"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5726"
+         x="705.96118"
+         y="513.44635"
+         style="text-align:center;text-anchor:middle">Adv Flag</tspan><tspan
+         sodipodi:role="line"
+         x="705.96118"
+         y="600.94635"
+         id="tspan5728"
+         style="text-align:center;text-anchor:middle">3 bytes</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#646464;stroke-width:10.62992096;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 349.016,-638.68075 3543.2166,-1001.8782 6737.599,-638.68075"
+       id="path6616"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#646464;stroke-width:10.62992001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 349.016,271.94925 992.126,-97.017698 3289.176,271.94925"
+       id="path6616-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <rect
+       style="opacity:1;fill:#58d484;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:10.62992096;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect6696"
+       width="520.86615"
+       height="520.86615"
+       x="1200.3981"
+       y="277.26373"
+       inkscape:tile-cx="1460.83"
+       inkscape:tile-cy="2327.5383"
+       inkscape:tile-w="520.86615"
+       inkscape:tile-h="520.86615"
+       inkscape:tile-x0="1200.397"
+       inkscape:tile-y0="2067.1052" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect6696"
+       xlink:href="#rect6696"
+       id="use6706"
+       transform="translate(-0.00105869,3.1644574e-6)"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect6696"
+       xlink:href="#rect6696"
+       transform="translate(520.86509,3.1644574e-6)"
+       id="use6708"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect6696"
+       xlink:href="#rect6696"
+       transform="translate(1041.7312,3.1644574e-6)"
+       id="use6710"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect6696"
+       xlink:href="#rect6696"
+       transform="translate(1562.5973,3.1644574e-6)"
+       id="use6712"
+       width="100%"
+       height="100%" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="1461.5137"
+       y="513.25836"
+       id="text5730"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5732"
+         x="1461.5137"
+         y="513.25836"
+         style="text-align:center;text-anchor:middle">Adv Header</tspan><tspan
+         sodipodi:role="line"
+         x="1461.5137"
+         y="600.75836"
+         id="tspan5734"
+         style="text-align:center;text-anchor:middle">2 bytes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="1980.6709"
+       y="468.8931"
+       id="text5736"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5738"
+         x="1980.6709"
+         y="468.8931"
+         style="text-align:center;text-anchor:middle">Company</tspan><tspan
+         sodipodi:role="line"
+         x="1980.6709"
+         y="556.39313"
+         id="tspan5740"
+         style="text-align:center;text-anchor:middle">ID</tspan><tspan
+         sodipodi:role="line"
+         x="1980.6709"
+         y="643.89313"
+         id="tspan5744"
+         style="text-align:center;text-anchor:middle">2 bytes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="2502.6135"
+       y="469.50833"
+       id="text5748"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5750"
+         x="2502.6135"
+         y="469.50833">iBeacon</tspan><tspan
+         sodipodi:role="line"
+         x="2502.6135"
+         y="557.00836"
+         id="tspan5752">Type</tspan><tspan
+         sodipodi:role="line"
+         x="2502.6135"
+         y="644.50836"
+         id="tspan5754">1 byte</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="3023.4797"
+       y="469.50833"
+       id="text5756"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5758"
+         x="3023.4797"
+         y="469.50833"
+         style="text-align:center;text-anchor:middle">iBeacon</tspan><tspan
+         sodipodi:role="line"
+         x="3023.4797"
+         y="557.00836"
+         id="tspan5760"
+         style="text-align:center;text-anchor:middle">length</tspan><tspan
+         sodipodi:role="line"
+         x="3023.4797"
+         y="644.50836"
+         id="tspan5762"
+         style="text-align:center;text-anchor:middle">1 byte</tspan></text>
+  </g>
+</svg>
