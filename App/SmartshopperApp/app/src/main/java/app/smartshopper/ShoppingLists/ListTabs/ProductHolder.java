@@ -19,9 +19,12 @@ public interface ProductHolder {
 
     void markItemAsBought(String entry);
 
+    void markItemAsBought(String itemName, int i);
+
     void changeItemAmount(String entry, int amount);
 
     List<ItemEntry> getItemEntries();
 
     Product getProductFromID(String productID);
+
 }

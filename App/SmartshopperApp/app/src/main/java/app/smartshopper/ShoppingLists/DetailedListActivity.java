@@ -158,6 +158,26 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
+    public void markItemAsBought(String itemName, int i) {
+        ItemEntry e = getItemEntryFromString(itemName);
+        if(i> 0){
+            _itemSource.removeEntryFromDatabase(e);
+            if(i <= e.getAmount()){
+                ItemEntry f = new ItemEntry();
+                f.setBought(1);
+                f.setListID(e.getListID());
+                f.setProductID(e.getProductID());
+                f.setAmount(i);
+                e.setAmount(e.getAmount() - i);
+                _itemSource.add(f);
+            }else{
+                e.setBought(1);
+            }
+            _itemSource.add(e);
+        }
+    }
+
+    @Override
     public List<ItemEntry> getItemEntries() {
         return _itemSource.getEntriesForList(_shoppingList);
     }
@@ -166,6 +186,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     public Product getProductFromID(String productID) {
         return _productSource.getProductFromID(productID);
     }
+
 }
 
 

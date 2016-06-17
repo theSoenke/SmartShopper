@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation ="vertical"
+    android:padding="10dp"
+    >
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="abort"
+        android:id="@+id/dialog_btAbortBoughtItemDialog"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/dialog_btBoughtAll"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/dialog_btBoughtAll" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="mark amount"
+        android:id="@+id/dialog_btBoughtAmount"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/dialog_txtBoughtItemAmount"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number|none"
+        android:digits="0123456789"
+        android:ems="5"
+        android:id="@+id/dialog_txtBoughtItemAmount"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/dialog_btBoughtAmount" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="mark all"
+        android:id="@+id/dialog_btBoughtAll"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/dialog_btBoughtAmount"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/dialog_btBoughtAmount"
+         />
+
+
+</RelativeLayout>

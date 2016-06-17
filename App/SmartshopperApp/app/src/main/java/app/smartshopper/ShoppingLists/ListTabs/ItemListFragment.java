@@ -160,7 +160,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         btBought.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _productHolder.markItemAsBought(itemName);
+                openMarkItemDialog(itemName);
                 productsChanged();
                 dialog.dismiss();
             }
@@ -174,6 +174,38 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         });
 
 
+        dialog.show();
+    }
+
+    private void openMarkItemDialog(final String itemName) {
+        final String item = itemName;
+        String[] split = item.split("\\s+");
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_choose_bought_amount);
+        dialog.setTitle("how many " + split[1] + " did u buy?");
+        final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtBoughtItemAmount);
+        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortBoughtItemDialog);
+        Button btBoughtAmount = (Button) dialog.findViewById(R.id.dialog_btBoughtAmount);
+        Button btBoughtAll = (Button) dialog.findViewById(R.id.dialog_btBoughtAll);
+        btAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btBoughtAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _productHolder.markItemAsBought(itemName, Integer.parseInt(AmountEditText.getText().toString()));
+                dialog.dismiss();
+            }
+        });
+        btBoughtAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _productHolder.markItemAsBought(item);
+            }
+        });
         dialog.show();
     }
 
