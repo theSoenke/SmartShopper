@@ -116,7 +116,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
                 MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "'" +
                         MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
         );
-        if (listOfEntries != null) {
+        if (!listOfEntries.isEmpty()) {
             return listOfEntries.get(0);
         }
         return null;
@@ -127,7 +127,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
                 + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + l.getId() + "'"
                 + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + amount
                 + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
-        if (listOfEntries != null) {
+        if (!listOfEntries.isEmpty()) {
             return listOfEntries.get(0);
         }
         return null;
