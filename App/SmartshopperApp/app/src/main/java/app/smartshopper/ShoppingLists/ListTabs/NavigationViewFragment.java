@@ -153,8 +153,6 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 locationLayer = new LocationLayer(mapView, new PointF(50, 50));
                 locationLayer.setOpenCompass(false);
                 mapView.addLayer(locationLayer);
-                /*locationLayer.setCompassIndicatorCircleRotateDegree(60);
-                locationLayer.setCompassIndicatorArrowRotateDegree(-30);*/
                 productsChanged();
                 mapView.refresh();
             }
