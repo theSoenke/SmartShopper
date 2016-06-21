@@ -88,8 +88,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             }
             e.setBought(0);
             _itemSource.add(e);
-            ((ProductPresenter) listPagerAdapter.getItem(0)).productsChanged();
-            //updateFragments();
+            updateFragments();
             return true;
         }
     }
@@ -100,6 +99,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         ItemEntry remover = getItemEntryFromString(entry);
         if(remover != null) {
             _itemSource.removeEntryFromDatabase(remover);
+            updateFragments();
         }else {
             Toast.makeText(getApplicationContext(), "Couldn't find the item to Delete :(", Toast.LENGTH_SHORT).show();
         }
@@ -138,6 +138,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             _itemSource.removeEntryFromDatabase(e);
             e.setAmount(amount);
             _itemSource.add(e);
+            updateFragments();
         }else{
             Toast.makeText(getApplicationContext(), "Couldn't find the item to Change :(", Toast.LENGTH_SHORT).show();
         }
@@ -146,15 +147,16 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public void markItemAsBought(String entry) {
         ItemEntry e = getItemEntryFromString(entry);
-            _itemSource.removeEntryFromDatabase(e);
-            int bought = e.isBought();
-            if(bought == 0){
-                bought = 1;
-            }else{
-                bought = 0;
-            }
-            e.setBought(bought);
-            _itemSource.add(e);
+        _itemSource.removeEntryFromDatabase(e);
+        int bought = e.isBought();
+        if(bought == 0){
+            bought = 1;
+        }else{
+            bought = 0;
+        }
+        e.setBought(bought);
+        _itemSource.add(e);
+        updateFragments();
     }
 
     @Override
@@ -174,6 +176,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                 e.setBought(1);
             }
             _itemSource.add(e);
+            updateFragments();
         }
     }
 

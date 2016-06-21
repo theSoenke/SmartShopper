@@ -30,8 +30,8 @@ public class Synchronizer {
 
     private ProductDataSource syncProducts(Context context) {
         ProductDataSource s = new ProductDataSource(context);
-        s.add("Hammer", 0, 0);
-        s.add("Bohrmaschine", 0, 0);
+        s.add("Hammer", 200, 100);
+        s.add("Bohrmaschine", 100, 100);
         s.add("Farbe", 0, 0);
 
         s.add("Wurst", 0, 0);

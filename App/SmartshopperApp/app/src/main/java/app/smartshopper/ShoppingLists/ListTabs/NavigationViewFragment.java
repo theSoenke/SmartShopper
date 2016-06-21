@@ -1,5 +1,6 @@
 package app.smartshopper.ShoppingLists.ListTabs;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.onlylemi.mapview.library.MapView;
@@ -33,8 +36,11 @@ import org.altbeacon.beacon.Region;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import app.smartshopper.Location.Store;
 import app.smartshopper.Database.Entries.ItemEntry;
@@ -42,12 +48,13 @@ import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Location.LocationTool;
 import app.smartshopper.R;
 
-public class NavigationViewFragment extends Fragment implements BeaconConsumer {
+public class NavigationViewFragment extends Fragment implements BeaconConsumer, ProductPresenter {
 
     private MapView mapView;
     private BitmapLayer bitmapLayer;
     private List<PointF> marks;
     private List<String> marksName;
+    private Map<Integer, Set<ItemEntry>> markIndexItemEntryMap;
     private ProductHolder _productHolder;
 
     private BeaconManager beaconManager;
@@ -84,6 +91,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer {
         MapUtils.init(0, 0);
         marks = new ArrayList<>();
         marksName = new ArrayList<>();
+        markIndexItemEntryMap = new HashMap<>();
 
 
         mapView = (MapView) view.findViewById(R.id.mapview2);
@@ -122,6 +130,23 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer {
                     public void markIsClick(int num)
                     {
                         Toast.makeText(getContext(), marksName.get(num), Toast.LENGTH_SHORT).show();
+                        final Dialog dialog = new Dialog(getContext());
+                        dialog.setContentView(R.layout.dialog_items_at_mark);
+                        dialog.setTitle("Items at this mark:");
+                        ListView list = (ListView) dialog.findViewById(R.id.items_at_mark_list);
+
+                        // Create ArrayAdapter using an empty list
+                        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
+
+                        for (ItemEntry item : markIndexItemEntryMap.get(num)) {
+                            String entryString = item.getAmount() + " " + _productHolder.getProductFromID(item.getProductID()).
+                                    getEntryName();
+                            listAdapter.add(entryString);
+                        }
+
+                        // add adapter with items to list (necessary to display items)
+                        list.setAdapter(listAdapter);
+                        dialog.show();
                     }
                 });
                 mapView.addLayer(markLayer);
@@ -130,7 +155,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer {
                 mapView.addLayer(locationLayer);
                 /*locationLayer.setCompassIndicatorCircleRotateDegree(60);
                 locationLayer.setCompassIndicatorArrowRotateDegree(-30);*/
-
+                productsChanged();
                 mapView.refresh();
             }
 
@@ -166,13 +191,31 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer {
         {
             marks.remove(0);
             marksName.remove(0);
+            markIndexItemEntryMap.clear();
         }
         for(ItemEntry entry : _productHolder.getItemEntries())
         {
-            Product product  = _productHolder.getProductFromID(entry.getProductID());
-            marks.add(new PointF((float) product.getPosX(), (float) product.getPosY()));
-            marksName.add(product.getEntryName());
+            if(entry.isBought()==0) {
+                Product product = _productHolder.getProductFromID(entry.getProductID());
+                PointF position = new PointF((float) product.getPosX(), (float) product.getPosY());
+                String name = product.getEntryName();
+                boolean foundPosition = false;
+                for (int i = 0; i < marks.size(); ++i) {
+                    if (marks.get(i).equals(position)) {
+                        foundPosition = true;
+                        marksName.set(i, marksName.get(i) + ", " + name);
+                        markIndexItemEntryMap.get(i).add(entry);
+                    }
+                }
+                if (!foundPosition) {
+                    markIndexItemEntryMap.put(marks.size(), new HashSet<ItemEntry>());
+                    markIndexItemEntryMap.get(marks.size()).add(entry);
+                    marks.add(position);
+                    marksName.add(name);
+                }
+            }
         }
+        mapView.refresh();
     }
 
     private void updatePosition()
