@@ -10,7 +10,6 @@ import app.smartshopper.Database.Entries.Product;
  * <p/>
  * The product holder enables the client to add and remove items and product related data on the implementing class.
  */
-//TODO pass items and not strings
 public interface ProductHolder {
     boolean addEntry(String product, int amount);
 
@@ -20,9 +19,9 @@ public interface ProductHolder {
 
     void markItemAsBought(ItemEntry itemEntry);
 
-    void markItemAsBought(ItemEntry itemEntry, int i);
+    void markItemAsBought(ItemEntry itemEntry, int amountOfBoughtItems);
 
-    void changeItemAmount(ItemEntry itemEntry, int amount);
+    void changeItemAmount(ItemEntry itemEntry, int newAmount);
 
     List<ItemEntry> getItemEntries();
 

@@ -89,7 +89,6 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             e.setBought(0);
             _itemSource.add(e);
             ((ProductPresenter) listPagerAdapter.getItem(0)).productsChanged();
-            //updateFragments();
             return true;
         }
     }
@@ -110,31 +109,13 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         return _productSource.getAllEntries();
     }
 
-    private void updateFragments() {
-        for (Fragment fragment : listPagerAdapter.getPages()) {
-            ((ProductPresenter) fragment).productsChanged();
-        }
-    }
-
-    public ItemEntry getItemEntryFromString(String entryName) {
-
-        int bought = 0;
-        String[] split = entryName.split("\\s+");
-        if (split.length > 2) {
-            if (split[2].equalsIgnoreCase("(gekauft)")) {
-                bought = 1;
-            }
-        }
-        return _itemSource.getItemEntry(_shoppingList, _productSource.getProductFromString(split[1]), Integer.parseInt(split[0]), bought);
-    }
-
     @Override
-    public void changeItemAmount(ItemEntry itemEntry, int amount) {
+    public void changeItemAmount(ItemEntry itemEntry, int newAmount) {
         if (itemEntry != null) {
             _itemSource.removeEntryFromDatabase(itemEntry);
-            itemEntry.setAmount(amount);
-            if (itemEntry.amountBought() > amount) {
-                itemEntry.setBought(amount);
+            itemEntry.setAmount(newAmount);
+            if (itemEntry.amountBought() > newAmount) {
+                itemEntry.setBought(newAmount);
             }
             _itemSource.add(itemEntry);
         } else {
@@ -150,13 +131,13 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void markItemAsBought(ItemEntry itemEntry, int i) {
-        if (i > itemEntry.getAmount()) {
-            i = itemEntry.getAmount();
+    public void markItemAsBought(ItemEntry itemEntry, int amountOfBoughtItems) {
+        if (amountOfBoughtItems > itemEntry.getAmount()) {
+            amountOfBoughtItems = itemEntry.getAmount();
         }
-        if (i > 0) {
+        if (amountOfBoughtItems > 0) {
             _itemSource.removeEntryFromDatabase(itemEntry);
-            itemEntry.setBought(i);
+            itemEntry.setBought(amountOfBoughtItems);
             _itemSource.add(itemEntry);
         }
     }

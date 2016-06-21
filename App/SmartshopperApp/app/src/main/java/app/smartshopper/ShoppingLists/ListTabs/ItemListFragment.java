@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.R;
 
 /**
@@ -35,7 +33,6 @@ import app.smartshopper.R;
  * The "add"- and "change amount"-dialog is also located here.
  */
 //TODO Move dialogs to extra class(es)
-//TODO Maybe move the database-queries and -logic to extra class
 public class ItemListFragment extends Fragment implements AdapterView.OnItemClickListener, ProductPresenter {
 
     ArrayAdapter<ItemListEntry> _listAdapter;
@@ -69,7 +66,6 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private void openAddItemDialog() {
-        //TODO show all items in the list "dialog_AddItemListView"
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_item);
         dialog.setTitle("Add an item to your list");
@@ -95,7 +91,6 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
             }
         });
 
-        //TODO add listener to the input field to filter the list of items
         itemNameExitField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -103,12 +98,12 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String prefix = s.toString();
+                String prefix = s.toString().toLowerCase();
                 List<Product> newListOfProducts = _productHolder.getAllAvailableProducts();
                 int lengthOfList = newListOfProducts.size();
 
                 for (int i = 0; i < lengthOfList; i++) {
-                    String entry = newListOfProducts.get(i).toString();
+                    String entry = newListOfProducts.get(i).toString().toLowerCase();
                     if (!entry.startsWith(prefix)) {
                         newListOfProducts.remove(i);
                         lengthOfList--;
@@ -138,18 +133,18 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         dialog.setTitle("Configure '" + itemEntry + "'");
 
         TextView tw = (TextView) dialog.findViewById(R.id.dialog_ConfigItemTextView);
-        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
-        Button btDelete = (Button) dialog.findViewById(R.id.dialog_btDeleteItem);
-        Button btBought = (Button) dialog.findViewById(R.id.dialog_btMarkItem);
-        Button btAmount = (Button) dialog.findViewById(R.id.dialog_btChangeItemAmount);
+        Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
+        Button buttonDelete = (Button) dialog.findViewById(R.id.dialog_btDeleteItem);
+        Button buttonBought = (Button) dialog.findViewById(R.id.dialog_btMarkItem);
+        Button buttonAmount = (Button) dialog.findViewById(R.id.dialog_btChangeItemAmount);
 
-        btAbort.setOnClickListener(new View.OnClickListener() {
+        buttonAbort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
-        btDelete.setOnClickListener(new View.OnClickListener() {
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 _productHolder.removeEntry(itemEntry.getItemEntry());
@@ -157,7 +152,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
                 dialog.dismiss();
             }
         });
-        btBought.setOnClickListener(new View.OnClickListener() {
+        buttonBought.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openMarkItemDialog(itemEntry.getItemEntry());
@@ -165,7 +160,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
                 dialog.dismiss();
             }
         });
-        btAmount.setOnClickListener(new View.OnClickListener() {
+        buttonAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openChangeAmountDialog(itemEntry.getItemEntry());
@@ -184,17 +179,17 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         dialog.setTitle("How many " + itemEntry + " did u buy?");
 
         final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtBoughtItemAmount);
-        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortBoughtItemDialog);
-        Button btBoughtAmount = (Button) dialog.findViewById(R.id.dialog_btBoughtAmount);
-        Button btBoughtAll = (Button) dialog.findViewById(R.id.dialog_btBoughtAll);
+        Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortBoughtItemDialog);
+        Button buttonBoughtAmount = (Button) dialog.findViewById(R.id.dialog_btBoughtAmount);
+        Button buttonBoughtAll = (Button) dialog.findViewById(R.id.dialog_btBoughtAll);
 
-        btAbort.setOnClickListener(new View.OnClickListener() {
+        buttonAbort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
-        btBoughtAmount.setOnClickListener(new View.OnClickListener() {
+        buttonBoughtAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 _productHolder.markItemAsBought(itemEntry, Integer.parseInt(AmountEditText.getText().toString()));
@@ -202,7 +197,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
                 dialog.dismiss();
             }
         });
-        btBoughtAll.setOnClickListener(new View.OnClickListener() {
+        buttonBoughtAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 _productHolder.markItemAsBought(itemEntry);
