@@ -7,9 +7,12 @@ import java.util.List;
 import app.smartshopper.Database.Sync.Retrofit.Model.ProductList;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 
 /**
@@ -18,12 +21,13 @@ import retrofit2.http.Path;
 public interface ApiService {
 
 
-    @GET("/lists?limit={limit}")
-    public Call<ProductList> listsLimit(@Path("limit") int limit);
+    @GET("lists")
+    public Call<ProductList> listsLimit(@Query("limit") int limit);
 
-    @POST("/lists")
+
+    @POST("lists")
     public Call<ProductList> lists();
 
-    @POST("/posePoll/{userID}/{question}")
+    @POST("posePoll/{userID}/{question}")
     public void posePoll(@Path("userID")int userID, @Path("question") String question);
 }

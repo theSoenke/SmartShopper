@@ -16,13 +16,17 @@ import retrofit2.Response;
  */
 public class RetrofitTest {
 
+    ApiService restClient;
+    public RetrofitTest()
+    {
+        restClient = new APIFactory().getInstance();
+    }
+
 
     public void testRestClient()
     {
-        String basicAuth = "Basic " + Base64.encodeToString(String.format("%s:%s", "your_user_name", "your_password").getBytes(), Base64.NO_WRAP);
-//        RestClient restClient = new RestClient("felix","test");
-        RestClient restClient = new RestClient();
-        Call<ProductList> call = restClient.getApiService().lists();
+
+        Call<ProductList> call = restClient.listsLimit(2);
 
         call.enqueue(new Callback<ProductList>() {
             @Override
@@ -30,12 +34,10 @@ public class RetrofitTest {
             {
                 if (response.isSuccessful())
                 {
-                    int statusCode = response.code();
                     ProductList productList = response.body();
                     Log.e("RestCall", "success");
                     Log.e("RestCall", productList.getOwner());
-                }
-                else
+                } else
                 {
 
                     Log.e("Error Code", String.valueOf(response.code()));
@@ -48,6 +50,7 @@ public class RetrofitTest {
             public void onFailure(Call<ProductList> call, Throwable t)
             {
                 Log.d("RESTClient", "Failure");
+                Log.d("RESTClient", t.getMessage());
             }
         });
     }
