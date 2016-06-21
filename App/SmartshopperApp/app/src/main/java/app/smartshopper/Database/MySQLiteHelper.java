@@ -69,7 +69,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        dropAll(database); // to reset the whole database
+//        dropAll(database); // to reset the whole database
         database.execSQL(PRODUCT_DATABASE_CREATE);
         database.execSQL(SHOPPINGLIST_DATABASE_CREATE);
         database.execSQL(ITEMENTRY_DATABASE_CREATE);

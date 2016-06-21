@@ -47,7 +47,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
      */
     public Product get(String id){
         List<Product> listOfProducts = getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + id + "'");
-        if(listOfProducts != null){
+        if(listOfProducts != null && !listOfProducts.isEmpty()){
             return listOfProducts.get(0);
         }
         return null;
@@ -55,7 +55,6 @@ public class ProductDataSource extends DatabaseTable<Product> {
 
     @Override
     public void add(Product product) {
-        product.setId(generateUniqueID());
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.PRODUCT_COLUMN_ID, product.getId());
         values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product.getEntryName());
@@ -151,14 +150,6 @@ public class ProductDataSource extends DatabaseTable<Product> {
     }
     public Product getProductFromString(String s){
         List<Product> productList = getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + "'" + s + "'");
-        if (productList.isEmpty()) {
-            return null;
-        } else {
-            return productList.get(0);
-        }
-    }
-    public Product getProductFromID(String ID){
-        List<Product> productList = getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + ID + "'");
         if (productList.isEmpty()) {
             return null;
         } else {

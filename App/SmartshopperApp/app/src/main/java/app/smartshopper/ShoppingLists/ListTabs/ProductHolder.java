@@ -13,15 +13,15 @@ import app.smartshopper.Database.Entries.Product;
 public interface ProductHolder {
     boolean addEntry(String product, int amount);
 
-    void removeEntry(String entry);
+    void removeEntry(ItemEntry itemEntry);
 
     List<Product> getAllAvailableProducts();
 
-    void markItemAsBought(String entry);
+    void markItemAsBought(ItemEntry itemEntry);
 
-    void markItemAsBought(String itemName, int i);
+    void markItemAsBought(ItemEntry itemEntry, int amountOfBoughtItems);
 
-    void changeItemAmount(String entry, int amount);
+    void changeItemAmount(ItemEntry itemEntry, int newAmount);
 
     List<ItemEntry> getItemEntries();
 
