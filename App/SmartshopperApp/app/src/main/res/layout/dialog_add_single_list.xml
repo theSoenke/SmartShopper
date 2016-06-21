@@ -2,41 +2,56 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation ="vertical"
-    android:padding="10dp"
-    >
-
-    <Button
-        android:id="@+id/dialog_btAddSingleList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create List"
-        android:layout_below="@+id/dialog_txtList_input_field"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Abort"
-        android:id="@+id/btAbortAddSingleList"
-        android:layout_below="@+id/dialog_txtList_input_field"
-        android:layout_alignEnd="@+id/dialog_txtList_input_field" />
+    android:orientation="vertical"
+    android:padding="10dp">
 
 
     <EditText
+        android:id="@+id/dialog_txtList_input_field"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/participant_info_label"
         android:textColor="@android:color/black"
-        android:id="@+id/dialog_txtList_input_field"
-        android:layout_below="@+id/participant_info_label" />
+        android:layout_margin="10dp" />
 
     <TextView
+        android:id="@+id/participant_info_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Name of the list to add:"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
-        android:text="Name of the list to add:"
-        android:id="@+id/participant_info_label"/>
+        android:layout_margin="10dp" />
 
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/dialog_txtList_input_field"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/dialog_btAddSingleList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="0.5"
+            android:background="@color/colorPrimary"
+            android:text="Create List"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btAbortAddSingleList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="0.5"
+            android:background="@color/colorPrimary"
+            android:text="Abort"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
 
 </RelativeLayout>

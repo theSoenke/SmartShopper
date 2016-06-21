@@ -24,39 +24,48 @@
         android:layout_height="wrap_content"
         android:text="mark as bought"
         android:id="@+id/dialog_btMarkItem"
-        android:layout_below="@+id/dialog_ConfigItemTextView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        />
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:layout_margin="10dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="delete"
         android:id="@+id/dialog_btDeleteItem"
-        android:layout_marginTop="10dp"
         android:layout_below="@+id/dialog_btChangeItemAmount"
-        android:layout_alignStart="@+id/dialog_btChangeItemAmount"
-        android:layout_alignEnd="@+id/dialog_btChangeItemAmount" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:layout_margin="10dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="abort"
         android:id="@+id/dialog_btAbortConfigItem"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/dialog_btMarkItem"
-        android:layout_alignStart="@+id/dialog_btMarkItem"
-        android:layout_alignEnd="@+id/dialog_btMarkItem" />
+        android:layout_below="@+id/dialog_btDeleteItem"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:layout_margin="10dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Change amount"
         android:id="@+id/dialog_btChangeItemAmount"
-        android:layout_alignTop="@+id/dialog_btMarkItem"
-        android:layout_toEndOf="@+id/dialog_btMarkItem" />
+        android:layout_below="@+id/dialog_btMarkItem"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:layout_margin="10dp" />
 
 
 </RelativeLayout>
