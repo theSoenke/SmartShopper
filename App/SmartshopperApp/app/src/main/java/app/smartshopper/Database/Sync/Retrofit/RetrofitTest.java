@@ -5,6 +5,10 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 import app.smartshopper.Database.Sync.Retrofit.Model.ProductList;
 import app.smartshopper.Settings.SettingsActivity;
 import retrofit2.Call;
@@ -16,26 +20,28 @@ import retrofit2.Response;
  */
 public class RetrofitTest {
 
+    ApiService restClient;
+    public RetrofitTest()
+    {
+        restClient = new APIFactory().getInstance();
+    }
+
 
     public void testRestClient()
     {
-        String basicAuth = "Basic " + Base64.encodeToString(String.format("%s:%s", "your_user_name", "your_password").getBytes(), Base64.NO_WRAP);
-//        RestClient restClient = new RestClient("felix","test");
-        RestClient restClient = new RestClient();
-        Call<ProductList> call = restClient.getApiService().lists();
 
-        call.enqueue(new Callback<ProductList>() {
+        Call<ArrayList<ProductList>> call = restClient.listsLimit(2);
+
+        call.enqueue(new Callback<ArrayList<ProductList>>() {
             @Override
-            public void onResponse(Call<ProductList> call, Response<ProductList> response)
+            public void onResponse(Call<ArrayList<ProductList>> call, Response<ArrayList<ProductList>> response)
             {
                 if (response.isSuccessful())
                 {
-                    int statusCode = response.code();
-                    ProductList productList = response.body();
+                    ArrayList<ProductList> productListArray = response.body();
                     Log.e("RestCall", "success");
-                    Log.e("RestCall", productList.getOwner());
-                }
-                else
+
+                } else
                 {
 
                     Log.e("Error Code", String.valueOf(response.code()));
@@ -45,9 +51,10 @@ public class RetrofitTest {
             }
 
             @Override
-            public void onFailure(Call<ProductList> call, Throwable t)
+            public void onFailure(Call<ArrayList<ProductList>> call, Throwable t)
             {
                 Log.d("RESTClient", "Failure");
+                Log.d("RESTClient", t.getMessage());
             }
         });
     }
