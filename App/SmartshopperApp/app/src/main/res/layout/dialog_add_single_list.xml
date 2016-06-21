@@ -11,9 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create List"
-        android:layout_below="@+id/dialog_txtList_input_field"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white"/>
+        android:layout_below="@+id/dialog_txtList_input_field"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -21,9 +19,7 @@
         android:text="Abort"
         android:id="@+id/btAbortAddSingleList"
         android:layout_below="@+id/dialog_txtList_input_field"
-        android:layout_alignEnd="@+id/dialog_txtList_input_field"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white" />
+        android:layout_alignEnd="@+id/dialog_txtList_input_field" />
 
 
     <EditText
