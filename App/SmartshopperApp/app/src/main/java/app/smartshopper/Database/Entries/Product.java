@@ -25,7 +25,7 @@ public class Product extends DatabaseEntry {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Object && obj != null) {
+        if (obj instanceof Product && obj != null) {
             Product p = (Product) obj;
             return p.getEntryName().equals(getEntryName()) &&
                     p.getPosX() == getPosX() &&
