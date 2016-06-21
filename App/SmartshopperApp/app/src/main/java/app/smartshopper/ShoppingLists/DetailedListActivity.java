@@ -81,7 +81,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             ItemEntry e = new ItemEntry();
             e.setProductID(p.getId());
             e.setListID(_shoppingList.getId());
-            if(_itemSource.EntryExists(_shoppingList.getId(),p.getId(),0)){
+            if(!_itemSource.EntryExists(_shoppingList.getId(),p.getId(),0).isEmpty()){
                 e.setAmount(amount +  _itemSource.removeDuplicates(_shoppingList.getId(),p.getId()));
             }else{
                 e.setAmount(amount);
@@ -144,35 +144,32 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void markItemAsBought(String entry) {
-        ItemEntry e = getItemEntryFromString(entry);
-            _itemSource.removeEntryFromDatabase(e);
-            int bought = e.isBought();
-            if(bought == 0){
-                bought = 1;
-            }else{
-                bought = 0;
-            }
-            e.setBought(bought);
-            _itemSource.add(e);
-    }
-
-    @Override
     public void markItemAsBought(String itemName, int i) {
         ItemEntry e = getItemEntryFromString(itemName);
-        if(i> 0){
-            _itemSource.removeEntryFromDatabase(e);
-            if(i <= e.getAmount()){
-                ItemEntry f = new ItemEntry();
-                f.setBought(1);
-                f.setListID(e.getListID());
-                f.setProductID(e.getProductID());
-                f.setAmount(i);
-                e.setAmount(e.getAmount() - i);
-                _itemSource.add(f);
-            }else{
-                e.setBought(1);
-            }
+        int fbought = 0;
+        if(e.isBought() == 0){
+            fbought = 1;
+        }
+        List<ItemEntry> l = _itemSource.EntryExists(e.getListID(),e.getProductID(),fbought);
+
+        ItemEntry f = new ItemEntry();
+        if(!l.isEmpty()){
+             f = l.get(0);
+            _itemSource.removeEntryFromDatabase(f);
+        }else{
+            f.setListID(e.getListID());
+            f.setProductID(e.getProductID());
+            f.setBought(fbought);
+            f.setAmount(0);
+        }
+        _itemSource.removeEntryFromDatabase(e);
+         if(i > e.getAmount()){
+               i = e.getAmount();
+         }
+         e.setAmount(e.getAmount() - i);
+         f.setAmount(f.getAmount() + i);
+         _itemSource.add(f);
+        if(e.getAmount() > 0){
             _itemSource.add(e);
         }
     }

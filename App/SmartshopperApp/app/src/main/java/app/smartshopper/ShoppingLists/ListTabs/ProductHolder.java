@@ -17,8 +17,6 @@ public interface ProductHolder {
 
     List<Product> getAllAvailableProducts();
 
-    void markItemAsBought(String entry);
-
     void markItemAsBought(String itemName, int i);
 
     void changeItemAmount(String entry, int amount);

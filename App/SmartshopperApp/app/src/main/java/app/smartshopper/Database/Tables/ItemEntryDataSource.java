@@ -114,7 +114,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
     public ItemEntry getItemEntry(ShoppingList list, Product product) {
         List<ItemEntry> listOfEntries = getEntry(
                 MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "'" +
-                        MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
+                MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
         );
         if (!listOfEntries.isEmpty()) {
             return listOfEntries.get(0);
@@ -180,10 +180,10 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         return getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID +  " = '" + shoppingList.getId() + "'");
     }
 
-    public boolean EntryExists(String ListID, String ProductID, int bought) {
-        List<ItemEntry> list = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListID + "'"
-        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'" +
+    public List<ItemEntry> EntryExists(String ListID, String ProductID, int bought) {
+        List<ItemEntry> list = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListID + "'"  +
+                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'" +
                 " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
-        return !list.isEmpty();
+        return list;
     }
 }

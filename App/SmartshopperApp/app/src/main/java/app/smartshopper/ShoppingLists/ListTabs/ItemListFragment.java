@@ -161,7 +161,6 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
             @Override
             public void onClick(View v) {
                 openMarkItemDialog(itemName);
-                productsChanged();
                 dialog.dismiss();
             }
         });
@@ -177,9 +176,10 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         dialog.show();
     }
 
-    private void openMarkItemDialog(final String itemName) {
+    private void openMarkItemDialog(String itemName) {
         final String item = itemName;
-        String[] split = item.split("\\s+");
+        final String[] split = item.split("\\s+");
+
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_choose_bought_amount);
         dialog.setTitle("how many " + split[1] + " did u buy?");
@@ -196,14 +196,17 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         btBoughtAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _productHolder.markItemAsBought(itemName, Integer.parseInt(AmountEditText.getText().toString()));
+                _productHolder.markItemAsBought(item, Integer.parseInt(AmountEditText.getText().toString()));
+                productsChanged();
                 dialog.dismiss();
             }
         });
         btBoughtAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _productHolder.markItemAsBought(item);
+                _productHolder.markItemAsBought(item, Integer.parseInt(split[0]));
+                productsChanged();
+                dialog.dismiss();
             }
         });
         dialog.show();
