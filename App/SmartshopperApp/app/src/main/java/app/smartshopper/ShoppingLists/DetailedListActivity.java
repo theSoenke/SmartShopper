@@ -24,7 +24,7 @@ import app.smartshopper.ShoppingLists.ListTabs.ProductPresenter;
 /**
  * The DetailedListActivity is the activity that's visible after clicking on a single- or group-list.
  * It holds the tabs (item list (-> {@link app.smartshopper.ShoppingLists.ListTabs.ItemListFragment} and navigation view (-> {@link app.smartshopper.ShoppingLists.ListTabs.NavigationViewFragment})).
- *
+ * <p/>
  * When started the DetailedListActivity gets all Products to the given list (via view.getTag) and passes the values to the item list and navigation view.
  */
 public class DetailedListActivity extends AbstractDetailedListActivity implements ProductHolder {
@@ -43,7 +43,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         _productSource = new ProductDataSource(getApplicationContext());
         String listName = "";
         listName = viewPager.getTag().toString();
-        Log.i("List","List name is "+listName);
+        Log.i("List", "List name is " + listName);
 
         // get all lists with this name
         ShoppingListDataSource shoppingListSource = new ShoppingListDataSource(getApplicationContext());
@@ -56,7 +56,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             _shoppingList = listOfEntries.get(0);
             _itemSource = new ItemEntryDataSource(getApplicationContext());
             _productSource = new ProductDataSource(getApplicationContext());
-        }else{
+        } else {
 
             Toast.makeText(getApplicationContext(), "There's no list called '" + listName + "'!", Toast.LENGTH_SHORT).show();
         }
@@ -81,9 +81,9 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             ItemEntry e = new ItemEntry();
             e.setProductID(p.getId());
             e.setListID(_shoppingList.getId());
-            if(_itemSource.EntryExists(_shoppingList.getId(),p.getId(),0)){
-                e.setAmount(amount +  _itemSource.removeDuplicates(_shoppingList.getId(),p.getId()));
-            }else{
+            if (_itemSource.EntryExists(_shoppingList.getId(), p.getId(), 0)) {
+                e.setAmount(amount + _itemSource.removeDuplicates(_shoppingList.getId(), p.getId()));
+            } else {
                 e.setAmount(amount);
             }
             e.setBought(0);
@@ -98,9 +98,9 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     public void removeEntry(String entry) {
 
         ItemEntry remover = getItemEntryFromString(entry);
-        if(remover != null) {
+        if (remover != null) {
             _itemSource.removeEntryFromDatabase(remover);
-        }else {
+        } else {
             Toast.makeText(getApplicationContext(), "Couldn't find the item to Delete :(", Toast.LENGTH_SHORT).show();
         }
 
@@ -111,20 +111,18 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         return _productSource.getAllEntries();
     }
 
-    private void updateFragments()
-    {
-        for(Fragment fragment : listPagerAdapter.getPages())
-        {
+    private void updateFragments() {
+        for (Fragment fragment : listPagerAdapter.getPages()) {
             ((ProductPresenter) fragment).productsChanged();
         }
     }
 
-    public ItemEntry getItemEntryFromString(String entryName){
+    public ItemEntry getItemEntryFromString(String entryName) {
 
         int bought = 0;
         String[] split = entryName.split("\\s+");
-        if(split.length > 2){
-            if(split[2].equalsIgnoreCase("(gekauft)")){
+        if (split.length > 2) {
+            if (split[2].equalsIgnoreCase("(gekauft)")) {
                 bought = 1;
             }
         }
@@ -132,48 +130,46 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void changeItemAmount (String entry, int amount){
+    public void changeItemAmount(String entry, int amount) {
         ItemEntry e = getItemEntryFromString(entry);
-        if(e != null){
+        if (e != null) {
             _itemSource.removeEntryFromDatabase(e);
             e.setAmount(amount);
             _itemSource.add(e);
-        }else{
+        } else {
             Toast.makeText(getApplicationContext(), "Couldn't find the item to Change :(", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void markItemAsBought(String entry) {
-        ItemEntry e = getItemEntryFromString(entry);
-            _itemSource.removeEntryFromDatabase(e);
-            int bought = e.isBought();
-            if(bought == 0){
-                bought = 1;
-            }else{
-                bought = 0;
-            }
-            e.setBought(bought);
-            _itemSource.add(e);
+    public void markItemAsBought(ItemEntry itemEntry) {
+        _itemSource.removeEntryFromDatabase(itemEntry);
+//        int bought = itemEntry.amountBought();
+//        if (bought == 0) {
+//            bought = 1;
+//        } else {
+//            bought = 0;
+//        }
+        itemEntry.setBought(itemEntry.getAmount());
+        _itemSource.add(itemEntry);
     }
 
     @Override
-    public void markItemAsBought(String itemName, int i) {
-        ItemEntry e = getItemEntryFromString(itemName);
-        if(i> 0){
-            _itemSource.removeEntryFromDatabase(e);
-            if(i <= e.getAmount()){
+    public void markItemAsBought(ItemEntry itemEntry, int i) {
+        if (i > 0) {
+            _itemSource.removeEntryFromDatabase(itemEntry);
+            if (i <= itemEntry.getAmount()) {
                 ItemEntry f = new ItemEntry();
                 f.setBought(1);
-                f.setListID(e.getListID());
-                f.setProductID(e.getProductID());
+                f.setListID(itemEntry.getListID());
+                f.setProductID(itemEntry.getProductID());
                 f.setAmount(i);
-                e.setAmount(e.getAmount() - i);
+                itemEntry.setAmount(itemEntry.getAmount() - i);
                 _itemSource.add(f);
-            }else{
-                e.setBought(1);
+            } else {
+                itemEntry.setBought(1);
             }
-            _itemSource.add(e);
+            _itemSource.add(itemEntry);
         }
     }
 
@@ -184,7 +180,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     @Override
     public Product getProductFromID(String productID) {
-        return _productSource.getProductFromID(productID);
+        return _productSource.get(productID);
     }
 
 }
