@@ -195,7 +195,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         }
         for(ItemEntry entry : _productHolder.getItemEntries())
         {
-            if(entry.isBought()) {
+            if(!entry.isBought()) {
                 Product product = _productHolder.getProductFromID(entry.getProductID());
                 PointF position = new PointF((float) product.getPosX(), (float) product.getPosY());
                 String name = product.getEntryName();
