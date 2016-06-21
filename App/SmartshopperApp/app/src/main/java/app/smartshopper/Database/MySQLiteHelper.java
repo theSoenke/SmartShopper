@@ -34,7 +34,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "list.db";
 
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 8;
 
     //Database creation statement
     private static final String PRODUCT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PRODUCT_TABLE_NAME + "(" +
@@ -52,7 +52,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             ITEMENTRY_COLUMN_LIST_ID + " VARCHAR(24)," +
             ITEMENTRY_COLUMN_AMOUNT + " INTEGER NOT NULL," +
             ITEMENTRY_COLUMN_BOUGHT + " INTEGER NOT NULL," +
-            "PRIMARY KEY(" + ITEMENTRY_COLUMN_PRODUCT_ID + ", " + ITEMENTRY_COLUMN_LIST_ID + " , " + ITEMENTRY_COLUMN_BOUGHT + "));";
+            "PRIMARY KEY(" + ITEMENTRY_COLUMN_PRODUCT_ID + ", " + ITEMENTRY_COLUMN_LIST_ID  + "));";
 
     private static final String USER_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + USER_TABLE_NAME + "(" +
             USER_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL," +
@@ -69,7 +69,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        dropAll(database); // to reset the whole database
+//        dropAll(database); // to reset the whole database
         database.execSQL(PRODUCT_DATABASE_CREATE);
         database.execSQL(SHOPPINGLIST_DATABASE_CREATE);
         database.execSQL(ITEMENTRY_DATABASE_CREATE);

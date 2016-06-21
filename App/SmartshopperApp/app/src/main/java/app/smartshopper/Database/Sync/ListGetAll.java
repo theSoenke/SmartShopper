@@ -32,7 +32,6 @@ public class ListGetAll extends AsyncTask<String, String, String>
 
         try
         {
-            Log.i("RestClient", "ListGetAll called");
             URL url = new URL(params[0]);
             hash = params[1];
             urlConnection = (HttpURLConnection) url.openConnection();
