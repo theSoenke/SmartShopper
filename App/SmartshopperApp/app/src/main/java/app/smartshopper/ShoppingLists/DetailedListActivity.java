@@ -95,11 +95,10 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void removeEntry(String entry) {
+    public void removeEntry(ItemEntry itemEntry) {
 
-        ItemEntry remover = getItemEntryFromString(entry);
-        if (remover != null) {
-            _itemSource.removeEntryFromDatabase(remover);
+        if (itemEntry != null) {
+            _itemSource.removeEntryFromDatabase(itemEntry);
         } else {
             Toast.makeText(getApplicationContext(), "Couldn't find the item to Delete :(", Toast.LENGTH_SHORT).show();
         }
@@ -130,12 +129,11 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void changeItemAmount(String entry, int amount) {
-        ItemEntry e = getItemEntryFromString(entry);
-        if (e != null) {
-            _itemSource.removeEntryFromDatabase(e);
-            e.setAmount(amount);
-            _itemSource.add(e);
+    public void changeItemAmount(ItemEntry itemEntry, int amount) {
+        if (itemEntry != null) {
+            _itemSource.removeEntryFromDatabase(itemEntry);
+            itemEntry.setAmount(amount);
+            _itemSource.add(itemEntry);
         } else {
             Toast.makeText(getApplicationContext(), "Couldn't find the item to Change :(", Toast.LENGTH_SHORT).show();
         }

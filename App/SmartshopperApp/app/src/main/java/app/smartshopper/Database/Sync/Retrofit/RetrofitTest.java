@@ -23,7 +23,7 @@ public class RetrofitTest {
     ApiService restClient;
     public RetrofitTest()
     {
-        restClient = new APIFactory().getInstance();
+//        restClient = new APIFactory().getInstance();
     }
 
 

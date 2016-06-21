@@ -152,7 +152,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         btDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _productHolder.removeEntry(itemEntry.getName());
+                _productHolder.removeEntry(itemEntry.getItemEntry());
                 productsChanged();
                 dialog.dismiss();
             }
@@ -232,7 +232,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         btConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _productHolder.changeItemAmount(itemEntry.getEntryName(), Integer.parseInt(AmountEditText.getText().toString()));
+                _productHolder.changeItemAmount(itemEntry, Integer.parseInt(AmountEditText.getText().toString()));
                 productsChanged();
                 dialog.dismiss();
             }
