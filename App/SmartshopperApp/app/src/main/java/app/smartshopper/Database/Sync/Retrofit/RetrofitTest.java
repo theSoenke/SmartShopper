@@ -23,6 +23,7 @@ public class RetrofitTest {
     ApiService restClient;
     public RetrofitTest()
     {
+        // FIXME APIFactory can't be found
 //        restClient = new APIFactory().getInstance();
     }
 

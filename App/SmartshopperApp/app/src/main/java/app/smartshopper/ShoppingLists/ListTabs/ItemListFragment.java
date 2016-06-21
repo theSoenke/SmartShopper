@@ -197,7 +197,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         btBoughtAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _productHolder.markItemAsBought(itemEntry, itemEntry.getAmount() - Integer.parseInt(AmountEditText.getText().toString()));
+                _productHolder.markItemAsBought(itemEntry, Integer.parseInt(AmountEditText.getText().toString()));
                 productsChanged();
                 dialog.dismiss();
             }

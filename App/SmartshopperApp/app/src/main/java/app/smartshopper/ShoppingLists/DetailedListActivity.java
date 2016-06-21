@@ -133,6 +133,9 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         if (itemEntry != null) {
             _itemSource.removeEntryFromDatabase(itemEntry);
             itemEntry.setAmount(amount);
+            if (itemEntry.amountBought() > amount) {
+                itemEntry.setBought(amount);
+            }
             _itemSource.add(itemEntry);
         } else {
             Toast.makeText(getApplicationContext(), "Couldn't find the item to Change :(", Toast.LENGTH_SHORT).show();
@@ -142,31 +145,18 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public void markItemAsBought(ItemEntry itemEntry) {
         _itemSource.removeEntryFromDatabase(itemEntry);
-//        int bought = itemEntry.amountBought();
-//        if (bought == 0) {
-//            bought = 1;
-//        } else {
-//            bought = 0;
-//        }
         itemEntry.setBought(itemEntry.getAmount());
         _itemSource.add(itemEntry);
     }
 
     @Override
     public void markItemAsBought(ItemEntry itemEntry, int i) {
+        if (i > itemEntry.getAmount()) {
+            i = itemEntry.getAmount();
+        }
         if (i > 0) {
             _itemSource.removeEntryFromDatabase(itemEntry);
-            if (i <= itemEntry.getAmount()) {
-                ItemEntry f = new ItemEntry();
-                f.setBought(1);
-                f.setListID(itemEntry.getListID());
-                f.setProductID(itemEntry.getProductID());
-                f.setAmount(i);
-                itemEntry.setAmount(itemEntry.getAmount() - i);
-                _itemSource.add(f);
-            } else {
-                itemEntry.setBought(1);
-            }
+            itemEntry.setBought(i);
             _itemSource.add(itemEntry);
         }
     }
