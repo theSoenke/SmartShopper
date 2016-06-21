@@ -81,12 +81,17 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             ItemEntry e = new ItemEntry();
             e.setProductID(p.getId());
             e.setListID(_shoppingList.getId());
-            if (_itemSource.EntryExists(_shoppingList.getId(), p.getId(), 0)) {
-                e.setAmount(amount + _itemSource.removeDuplicates(_shoppingList.getId(), p.getId()));
+
+            ItemEntry oldEntry = _itemSource.getItemEntry(_shoppingList, p);
+            e.setBought(oldEntry.amountBought());
+
+            if (_itemSource.EntryExists(_shoppingList.getId(), p.getId())) {
+                e.setAmount(amount + _itemSource.getAmountOf(_shoppingList, p));
+                _itemSource.removeEntryFromDatabase(e);
             } else {
                 e.setAmount(amount);
             }
-            e.setBought(0);
+
             _itemSource.add(e);
             ((ProductPresenter) listPagerAdapter.getItem(0)).productsChanged();
             return true;

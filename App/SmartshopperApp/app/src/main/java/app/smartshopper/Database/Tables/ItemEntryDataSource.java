@@ -114,7 +114,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      */
     public ItemEntry getItemEntry(ShoppingList list, Product product) {
         List<ItemEntry> listOfEntries = getEntry(
-                MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "'" +
+                MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "' AND " +
                         MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
         );
         if (!listOfEntries.isEmpty()) {
@@ -122,12 +122,13 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         }
         return null;
     }
-    public ItemEntry getItemEntry(ShoppingList l, Product p, int amount, int bought){
+
+    public ItemEntry getItemEntry(ShoppingList l, Product p, int amount, int bought) {
         List<ItemEntry> listOfEntries = getEntry(
                 MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + p.getId() + "'"
-                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + l.getId() + "'"
-                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + amount
-                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + l.getId() + "'"
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + amount
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
         if (!listOfEntries.isEmpty()) {
             return listOfEntries.get(0);
         }
@@ -158,8 +159,8 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
     /**
      * Removes all duplicate entries for the given list and the product and determines the amount of the products.
      *
-     * @param ListId       The ID of the shopping list the product is in.
-     * @param ProductID    The ID of the product which duplicates should be removed.
+     * @param ListId    The ID of the shopping list the product is in.
+     * @param ProductID The ID of the product which duplicates should be removed.
      * @return The quantity of the products the user wants to buy.
      */
     public int removeDuplicates(String ListId, String ProductID) {
@@ -179,13 +180,12 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
     }
 
     public List<ItemEntry> getEntriesForList(ShoppingList shoppingList) {
-        return getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID +  " = '" + shoppingList.getId() + "'");
+        return getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + shoppingList.getId() + "'");
     }
 
-    public boolean EntryExists(String ListID, String ProductID, int bought) {
+    public boolean EntryExists(String ListID, String ProductID) {
         List<ItemEntry> list = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListID + "'"
-        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'" +
-                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
+                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'");
         return !list.isEmpty();
     }
 }
