@@ -23,6 +23,7 @@ router.get('/', function (req, res) {
 
 router.use(auth.checkAuthHeader)
 router.post('/user/register', auth.registerUser)
+router.post('/user/token', auth.registerFcmToken)
 
 router.use(auth.requireAuthentication)
 router.get('/lists', lists.getLists)

@@ -60,3 +60,28 @@ exports.requireAuthentication = function (req, res, next) {
     })
   })
 }
+
+exports.registerFcmToken = function (req, res, next) {
+  let credentials = basicAuth(req)
+  let token = req.body.token
+
+  if (!token) {
+    let error = new Error('Token is missing')
+    return next(error)
+  }
+
+  User.findOne({username: credentials.name}, function (err, doc) {
+    if (err) return next(err)
+
+    if (!doc) {
+      let error = new Error('User does not exist')
+      return next(error)
+    }
+
+    doc.fcmToken = token
+    doc.save(function (err, o) {
+      if (err) return next(err)
+      res.json(o)
+    })
+  })
+}
