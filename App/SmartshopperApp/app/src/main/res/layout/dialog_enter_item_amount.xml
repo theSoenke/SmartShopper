@@ -30,9 +30,10 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="0.5"
-            android:background="@color/colorPrimary"
             android:text="Change amount"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:background="@drawable/drawable_button"
+            />
 
         <Button
             android:id="@+id/dialog_btAbortItemAmountChange"
@@ -40,9 +41,10 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="0.5"
-            android:background="@color/colorPrimary"
+            android:enabled="true"
             android:text="abort"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:background="@drawable/drawable_button" />
     </LinearLayout>
 
 

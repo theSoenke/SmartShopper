@@ -2,6 +2,7 @@ package app.smartshopper.ShoppingLists.ListTabs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -130,7 +131,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         final ItemListEntry itemEntry = _listAdapter.getItem(position);
 
         dialog.setContentView(R.layout.dialog_configure_item);
-        dialog.setTitle("Configure '" + itemEntry + "'");
+        dialog.setTitle("Configure '" + itemEntry.getItemEntry().getEntryName() + "'");
 
         TextView tw = (TextView) dialog.findViewById(R.id.dialog_ConfigItemTextView);
         Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
@@ -174,10 +175,10 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
     private void openMarkItemDialog(final ItemEntry itemEntry) {
 
-        final Dialog dialog = new Dialog(getContext());
+        final Dialog dialog = new Dialog(getContext(),R.style.CustomDialog);
 
         dialog.setContentView(R.layout.dialog_choose_bought_amount);
-        dialog.setTitle("How many " + itemEntry + " did u buy?");
+        dialog.setTitle("How many " + itemEntry.getEntryName() + " did u buy?");
 
         final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtBoughtItemAmount);
         Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortBoughtItemDialog);

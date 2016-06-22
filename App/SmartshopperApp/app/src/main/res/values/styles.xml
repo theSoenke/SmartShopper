@@ -7,9 +7,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:dialogTheme">@style/CustomDialog</item>
-        <item name="android:buttonStyle">@style/button</item>
 
     </style>
+
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -22,16 +22,19 @@
 
     <style name="CustomDialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">false</item>
+        <item name="android:windowBackground">@drawable/drawable_dialog</item>
+        <item name="android:windowTitleStyle">@style/TitleStyle</item>
+
     </style>
 
-    <style name="button" parent="@android:style/Widget.Button">
-            <item name="android:gravity">center_vertical|center_horizontal</item>
-            <item name="android:textColor">@android:color/white</item>
-            <item name="android:textSize">16sp</item>
-            <item name="android:textStyle">bold</item>
-            <item name="android:background">@drawable/drawable_button</item>
-            <item name="android:focusable">true</item>
-            <item name="android:clickable">true</item>
+    <style name="TitleStyle">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMediumInverse</item>
+        <item name="android:gravity">center</item>
+
     </style>
+
+
 
 </resources>
