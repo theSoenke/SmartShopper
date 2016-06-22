@@ -3,7 +3,6 @@ package app.smartshopper;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.AsyncTask;
@@ -25,6 +24,8 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+
+import app.smartshopper.Database.Preferences;
 
 
 /**
@@ -88,7 +89,7 @@ public class LoginActivity extends AppCompatActivity
 
 	public static boolean isAuthenticated(Context context)
 	{
-		if(preferencesExist(context))
+		if(Preferences.preferencesExist(context))
 		{
 			return true;
 		}
@@ -158,8 +159,8 @@ public class LoginActivity extends AppCompatActivity
 
 			final String hash = Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
 
-			saveSharedSetting(this, "hash", hash);
-			saveSharedSetting(this, "userName", userName);
+			Preferences.saveSharedSetting(this, "hash", hash);
+			Preferences.saveSharedSetting(this, "userName", userName);
 
 			mAuthTask = new UserLoginTask(hash);
 			mAuthTask.execute(HOST_URL + "/lists");
@@ -189,31 +190,6 @@ public class LoginActivity extends AppCompatActivity
 		{
 			mProgressDialog.dismiss();
 		}
-	}
-
-	public static void saveSharedSetting(Context context, String settingName, String settingValue)
-	{
-		SharedPreferences sharedPref = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPref.edit();
-		editor.putString(settingName, settingValue);
-		editor.apply();
-	}
-
-	public static String readSharedSetting(Context context, String settingName, String defaultValue)
-	{
-		SharedPreferences sharedPref = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-		return sharedPref.getString(settingName, defaultValue);
-	}
-
-	public static void clearPreferences(Context context)
-	{
-		context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE).edit().clear().commit();
-	}
-
-	public static boolean preferencesExist(Context context)
-	{
-		SharedPreferences sharedPref = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-		return (sharedPref != null && sharedPref.contains(HASH));
 	}
 
 	/**
@@ -297,7 +273,7 @@ public class LoginActivity extends AppCompatActivity
 			}
 			else
 			{
-				clearPreferences(LoginActivity.this);
+				Preferences.clearPreferences(LoginActivity.this);
 				mPasswordView.setError(getString(R.string.error_incorrect_password));
 				mPasswordView.requestFocus();
 			}

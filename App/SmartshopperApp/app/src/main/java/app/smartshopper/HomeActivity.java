@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Sync.Synchronizer;
 import app.smartshopper.Settings.SettingsActivity;
 import app.smartshopper.ShoppingLists.GroupList.GroupListFragment;
@@ -118,9 +119,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		if (id == app.smartshopper.R.id.action_settings)
+		if (id == R.id.action_settings)
 		{
 			openSettings();
+			return true;
+		}
+		else if (id == R.id.action_logout)
+		{
+			logout();
 			return true;
 		}
 
@@ -170,6 +176,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	private void openSettings()
 	{
 		this.startActivity(new Intent(this, SettingsActivity.class));
+	}
+
+	/**
+	 * Logout user and switch to login activity
+	 */
+	private void logout()
+	{
+		Preferences.clearPreferences(this);
+		this.startActivity(new Intent(this, LoginActivity.class));
 	}
 
 	/**
