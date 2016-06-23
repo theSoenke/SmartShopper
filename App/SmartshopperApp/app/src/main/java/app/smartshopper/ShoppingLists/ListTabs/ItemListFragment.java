@@ -71,6 +71,8 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         dialog.setContentView(R.layout.dialog_add_item);
         dialog.setTitle("Add an item to your list");
         final EditText itemNameExitField = (EditText) dialog.findViewById(R.id.dialog_txtItemName);
+        final EditText itemAmountEditField = (EditText) dialog.findViewById(R.id.dialog_AddItemAmountEditText);
+        Button cancelButton = (Button) dialog.findViewById(R.id.dialog_AddItemCancelButton);
         final ListView productList = (ListView) dialog.findViewById(R.id.dialog_AddItemListView);
         final ArrayAdapter<Product> productListAdapter = new ArrayAdapter<Product>(getContext(), R.layout.simple_row, new ArrayList<Product>());
 
@@ -83,12 +85,31 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (_productHolder.addEntry(productListAdapter.getItem(position).toString(), 1)) {
-                    Toast.makeText(getContext(), "item added", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(getContext(), "could not find your item", Toast.LENGTH_SHORT).show();
+                int amountOfItems = 1;
+
+                // when the text field is not empty
+                if (!itemAmountEditField.getText().toString().isEmpty()) {
+                    amountOfItems = Integer.parseInt(itemAmountEditField.getText().toString());
                 }
+
+                if (amountOfItems != 0) {
+                    if (_productHolder.addEntry(productListAdapter.getItem(position).toString(), amountOfItems)) {
+                        Toast.makeText(getContext(), "item added", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(getContext(), "could not find your item", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(getContext(), "Please enter a number greater then 0!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
             }
         });
 
@@ -175,7 +196,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
     private void openMarkItemDialog(final ItemEntry itemEntry) {
 
-        final Dialog dialog = new Dialog(getContext(),R.style.CustomDialog);
+        final Dialog dialog = new Dialog(getContext(), R.style.CustomDialog);
 
         dialog.setContentView(R.layout.dialog_choose_bought_amount);
         dialog.setTitle("How many " + itemEntry.getEntryName() + " did u buy?");

@@ -1,31 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation ="vertical"
-    android:padding="10dp"
-    >
 
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:id="@+id/dialog_txtItemName"
-        android:layout_below="@+id/dialog_AddItemTextView" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_AddItemContentLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <TextView
+        android:id="@+id/dialog_AddItemAmountTextField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/black"
+        android:layout_alignParentStart="true"
+        android:text="Amount of Items:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/dialog_AddItemAmountEditText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/dialog_AddItemAmountTextField"
+        android:ems="10"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/dialog_AddItemTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/dialog_AddItemAmountEditText"
         android:text="Name of the item to add:"
-        android:id="@+id/dialog_AddItemTextView"/>
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/dialog_txtItemName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/dialog_AddItemTextView"
+        android:textColor="@android:color/black" />
 
     <ListView
+        android:id="@+id/dialog_AddItemListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/dialog_AddItemListView"
-        android:layout_below="@+id/dialog_txtItemName"
-        android:layout_alignParentStart="true" />
+        android:layout_above="@+id/dialog_AddItemCancelButton"
+        android:layout_alignParentStart="false"
+        android:layout_below="@+id/dialog_txtItemName" />
+
+    <Button
+        android:id="@+id/dialog_AddItemCancelButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Cancel" />
 
 </RelativeLayout>
