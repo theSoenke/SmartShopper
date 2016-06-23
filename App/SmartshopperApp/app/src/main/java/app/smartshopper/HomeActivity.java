@@ -21,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Sync.Synchronizer;
 import app.smartshopper.Settings.SettingsActivity;
@@ -36,6 +38,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+
+		//check for Token
+		Toast.makeText(this, "Token: " + FirebaseInstanceId.getInstance().getToken(), Toast.LENGTH_LONG).show();
 
 		if(!LoginActivity.isAuthenticated(this))
 		{
