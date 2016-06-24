@@ -12,6 +12,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import app.smartshopper.HomeActivity;
+import app.smartshopper.R;
 
 /**
  * Created by Felix on 22.06.2016.
@@ -37,6 +38,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                 .setContentTitle(remoteMessage.getFrom())
                 .setContentText(remoteMessage.getNotification().getBody())
                 .setAutoCancel(true)
+                .setSmallIcon(R.drawable.notification_template_icon_bg)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
