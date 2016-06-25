@@ -31,10 +31,7 @@ import app.smartshopper.Database.Preferences;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity
-{
-	private static final String PREFERENCES_FILE = "prefs";
-	private static final String HASH = "hash";
+public class LoginActivity extends AppCompatActivity {
 	private static final String HOST_URL = "http://api.tecfuture.de:3000";
 
 	private UserLoginTask mAuthTask = null; // Keep track of the login task to ensure we can cancel it if requested.
@@ -50,8 +47,7 @@ public class LoginActivity extends AppCompatActivity
 
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
@@ -59,11 +55,9 @@ public class LoginActivity extends AppCompatActivity
 		mUserView = (TextInputLayout) findViewById(R.id.user_name);
 		mPasswordView = (TextInputLayout) findViewById(R.id.password);
 
-		mPasswordView.getEditText().setOnEditorActionListener(new TextView.OnEditorActionListener()
-		{
+		mPasswordView.getEditText().setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
-			public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent)
-			{
+			public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
 				if (id == R.id.login || id == EditorInfo.IME_ACTION_DONE)
 				{
 					attemptLogin();
@@ -74,11 +68,9 @@ public class LoginActivity extends AppCompatActivity
 		});
 
 		Button signInButton = (Button) findViewById(R.id.email_sign_in_button);
-		signInButton.setOnClickListener(new OnClickListener()
-		{
+		signInButton.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View view)
-			{
+			public void onClick(View view) {
 				attemptLogin();
 			}
 		});
@@ -87,9 +79,8 @@ public class LoginActivity extends AppCompatActivity
 		mProgressDialog.setMessage(getString(R.string.wait));
 	}
 
-	public static boolean isAuthenticated(Context context)
-	{
-		if(Preferences.preferencesExist(context))
+	public static boolean isAuthenticated(Context context) {
+		if (Preferences.preferencesExist(context))
 		{
 			return true;
 		}
@@ -102,8 +93,7 @@ public class LoginActivity extends AppCompatActivity
 	 * If there are form errors (invalid username, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
-	private void attemptLogin()
-	{
+	private void attemptLogin() {
 		if (mAuthTask != null)
 		{
 			return;
@@ -167,21 +157,18 @@ public class LoginActivity extends AppCompatActivity
 		}
 	}
 
-	private boolean isUserNameValid(String user)
-	{
+	private boolean isUserNameValid(String user) {
 		return user.length() > 3;
 	}
 
-	private boolean isPasswordValid(String password)
-	{
+	private boolean isPasswordValid(String password) {
 		return password.length() > 4;
 	}
 
 	/**
 	 * Shows the progress UI
 	 */
-	private void showProgress(final boolean show)
-	{
+	private void showProgress(final boolean show) {
 		if (show)
 		{
 			mProgressDialog.show();
@@ -196,19 +183,16 @@ public class LoginActivity extends AppCompatActivity
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<String, Void, Boolean>
-	{
+	public class UserLoginTask extends AsyncTask<String, Void, Boolean> {
 		private final String LOG_TAG = UserLoginTask.class.getName();
 		private final String mHash;
 
-		public UserLoginTask(String hash)
-		{
+		public UserLoginTask(String hash) {
 			mHash = hash;
 		}
 
 		@Override
-		protected Boolean doInBackground(String... params)
-		{
+		protected Boolean doInBackground(String... params) {
 			HttpURLConnection urlConnection = null;
 			BufferedReader reader = null;
 
@@ -263,8 +247,7 @@ public class LoginActivity extends AppCompatActivity
 		}
 
 		@Override
-		protected void onPostExecute(final Boolean result)
-		{
+		protected void onPostExecute(final Boolean result) {
 			if (result)
 			{
 				Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
@@ -283,8 +266,7 @@ public class LoginActivity extends AppCompatActivity
 		}
 
 		@Override
-		protected void onCancelled()
-		{
+		protected void onCancelled() {
 			mAuthTask = null;
 			showProgress(false);
 		}

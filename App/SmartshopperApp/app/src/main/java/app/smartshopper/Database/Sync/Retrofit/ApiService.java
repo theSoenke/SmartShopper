@@ -19,36 +19,35 @@ import retrofit2.http.Query;
 
 
 /**
- * Created by Studium on 14.06.2016.
+ * Defines api service methods
  */
 public interface ApiService {
 
 
-    @GET("lists")
-    public Call<ArrayList<ProductList>> listsLimit(@Query("limit") int limit);
+	@GET("lists")
+	public Call<ArrayList<ProductList>> listsLimit(@Query("limit") int limit);
 
+	@POST("lists")
+	public Call<ArrayList<ProductList>> lists();
 
-    @POST("lists")
-    public Call<ArrayList<ProductList>> lists();
+	//    DELETE http://api.tecfuture.de:3000/lists/id
+	@DELETE("lists/{id}")
+	public void deleteList(@Path("id") int id);
 
-    //    DELETE http://api.tecfuture.de:3000/lists/id
-    @DELETE("lists/{id}")
-    public void deleteList(@Path("id") int id);
+	//    GET http://api.tecfuture.de:3000/search/query
+	@GET("search/{query}")
+	public Call<ArrayList<Product>> search(@Path("query") String query);
 
-    //    GET http://api.tecfuture.de:3000/search/query
-    @GET("search/{query}")
-    public Call<ArrayList<Product>> search(@Path("query") String query);
+	//    POST http://api.tecfuture.de:3000/products/import
+	@POST("products/import")
+	public Call<ArrayList<Product>> importNew();
 
-    //    POST http://api.tecfuture.de:3000/products/import
-    @POST("products/import")
-    public Call<ArrayList<Product>> importNew();
+	//    GET http://api.tecfuture.de:3000/products
+	@GET("products")
+	public Call<ArrayList<Product>> products();
 
-    //    GET http://api.tecfuture.de:3000/products
-    @GET("products")
-    public Call<ArrayList<Product>> products();
-
-    //    POST http://api.tecfuture.de:3000/user/register
-    @POST("user/register")
-    public Call<String> register();
+	//    POST http://api.tecfuture.de:3000/user/register
+	@POST("user/register")
+	public Call<String> register();
 
 }

@@ -24,25 +24,26 @@ import android.widget.Toast;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import app.smartshopper.Database.Preferences;
+import app.smartshopper.Database.Sync.Retrofit.RetrofitTest;
 import app.smartshopper.Database.Sync.Synchronizer;
 import app.smartshopper.Settings.SettingsActivity;
 import app.smartshopper.ShoppingLists.GroupList.GroupListFragment;
 import app.smartshopper.ShoppingLists.SingleList.SingleListFragment;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
-{
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 	private MenuItem mOldSelectedMenuItem;
 	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		new Preferences(this);
 
 		//check for Token
 		Toast.makeText(this, "Token: " + FirebaseInstanceId.getInstance().getToken(), Toast.LENGTH_LONG).show();
 
-		if(!LoginActivity.isAuthenticated(this))
+		if (!LoginActivity.isAuthenticated(this))
 		{
 			Intent showLogin = new Intent(this, LoginActivity.class);
 			startActivity(showLogin);
@@ -57,18 +58,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				builder.setTitle("This app needs location access");
 				builder.setMessage("Please grant location access so this app can detect beacons");
 				builder.setPositiveButton(android.R.string.ok, null);
-				builder.setOnDismissListener(new DialogInterface.OnDismissListener()
-				{
+				builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 					@TargetApi(Build.VERSION_CODES.M)
 					@Override
-					public void onDismiss(DialogInterface dialog)
-					{
+					public void onDismiss(DialogInterface dialog) {
 						requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
 					}
 				});
 				builder.show();
 			}
 		}
+
+		RetrofitTest test = new RetrofitTest();
+		test.testRestClient();
 
 		Synchronizer synchronizer = new Synchronizer();
 		synchronizer.sync(getApplicationContext());
@@ -93,8 +95,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	}
 
 	@Override
-	public void onBackPressed()
-	{
+	public void onBackPressed() {
 		DrawerLayout drawer = (DrawerLayout) findViewById(app.smartshopper.R.id.home_layout);
 		if (drawer.isDrawerOpen(GravityCompat.START))
 		{
@@ -107,8 +108,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
+	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		// TODO: Do we really need this menu? The settings are accessible via the navigation view as well.
 		getMenuInflater().inflate(app.smartshopper.R.menu.home_menu, menu);
@@ -116,8 +116,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
+	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
@@ -140,8 +139,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 	@SuppressWarnings("StatementWithEmptyBody")
 	@Override
-	public boolean onNavigationItemSelected(MenuItem item)
-	{
+	public boolean onNavigationItemSelected(MenuItem item) {
 		// Reset the menu item that has been clicked before, so that it's not selected anymore.
 		if (mOldSelectedMenuItem != null)
 		{
@@ -178,16 +176,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	/**
 	 * Switches to the settings activity.
 	 */
-	private void openSettings()
-	{
+	private void openSettings() {
 		this.startActivity(new Intent(this, SettingsActivity.class));
 	}
 
 	/**
 	 * Logout user and switch to login activity
 	 */
-	private void logout()
-	{
+	private void logout() {
 		Preferences.clearPreferences(this);
 		this.startActivity(new Intent(this, LoginActivity.class));
 	}
@@ -198,8 +194,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	 * @param fragmentClass The fragment that should be displayed.
 	 * @param selectedItem  The item in the navigation view to select.
 	 */
-	private void switchToFragment(Class fragmentClass, MenuItem selectedItem)
-	{
+	private void switchToFragment(Class fragmentClass, MenuItem selectedItem) {
 		Fragment fragment;
 
 		try

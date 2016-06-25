@@ -21,7 +21,6 @@ import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
-import app.smartshopper.Properties;
 
 /**
  * Created by Felix on 02.05.2016.

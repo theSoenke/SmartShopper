@@ -1,16 +1,10 @@
 package app.smartshopper.Database.Sync.Retrofit;
 
-import android.content.Context;
-import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 import app.smartshopper.Database.Sync.Retrofit.Model.ProductList;
-import app.smartshopper.Settings.SettingsActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
