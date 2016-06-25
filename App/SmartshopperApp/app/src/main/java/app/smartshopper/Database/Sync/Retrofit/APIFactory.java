@@ -15,10 +15,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class APIFactory // final verhindert Vererbung
 {
-	String API_URL = "http://api.tecfuture.de:3000/";
+	private static final String API_URL = "http://api.tecfuture.de:3000/";
 
-
-	ApiService apiservice;
+	private ApiService mApiService;
 
 
 	public APIFactory() //privater Konstruktor kann nur innerhalb benutzt werden
@@ -37,11 +36,11 @@ public class APIFactory // final verhindert Vererbung
 
 
 		Retrofit retrofit = new Retrofit.Builder().baseUrl(API_URL).addConverterFactory(GsonConverterFactory.create()).client(client).build();
-		apiservice = retrofit.create(ApiService.class);
+		mApiService = retrofit.create(ApiService.class);
 	}
 
 	public ApiService getInstance() {
-		return this.apiservice;
+		return this.mApiService;
 	}
 }
 

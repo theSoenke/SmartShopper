@@ -3,11 +3,10 @@ package app.smartshopper;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.AsyncTask;
-
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -24,24 +23,26 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import app.smartshopper.Database.Preferences;
+import app.smartshopper.Database.Sync.Retrofit.APIFactory;
+import app.smartshopper.Database.Sync.Retrofit.ApiService;
+import app.smartshopper.Database.Sync.Retrofit.Model.ProductList;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
-	private static final String HOST_URL = "http://api.tecfuture.de:3000";
-
-	private UserLoginTask mAuthTask = null; // Keep track of the login task to ensure we can cancel it if requested.
+	private static final String TAG = LoginActivity.class.getSimpleName();
 
 	// UI references.
 	private TextInputLayout mPasswordView;
 	private TextInputLayout mUserView;
-	private View mProgressView;
-
-	private View mLoginFormView;
 
 	private ProgressDialog mProgressDialog;
 
@@ -94,11 +95,6 @@ public class LoginActivity extends AppCompatActivity {
 	 * errors are presented and no actual login attempt is made.
 	 */
 	private void attemptLogin() {
-		if (mAuthTask != null)
-		{
-			return;
-		}
-
 		// Reset errors.
 		mUserView.setError(null);
 		mPasswordView.setError(null);
@@ -143,8 +139,6 @@ public class LoginActivity extends AppCompatActivity {
 		}
 		else
 		{
-			// Show a progress spinner, and kick off a background task to
-			// perform the user login attempt.
 			showProgress(true);
 
 			final String hash = Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
@@ -152,17 +146,46 @@ public class LoginActivity extends AppCompatActivity {
 			Preferences.saveSharedSetting(this, "hash", hash);
 			Preferences.saveSharedSetting(this, "userName", userName);
 
-			mAuthTask = new UserLoginTask(hash);
-			mAuthTask.execute(HOST_URL + "/lists");
+			startAuthentication();
 		}
+	}
+
+	public void startAuthentication() {
+		ApiService restClient = new APIFactory().getInstance();
+		Call<ArrayList<ProductList>> call = restClient.listsLimit(1);
+
+		call.enqueue(new Callback<ArrayList<ProductList>>() {
+			@Override
+			public void onResponse(Call<ArrayList<ProductList>> call, Response<ArrayList<ProductList>> response) {
+				if (response.isSuccessful())
+				{
+					Log.e(TAG, "Login successful");
+
+					mProgressDialog.dismiss(); // Prevent WindowLeaked
+					startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+					finish();
+				}
+				else
+				{
+					Preferences.clearPreferences(LoginActivity.this);
+					mPasswordView.setError(getString(R.string.error_incorrect_password));
+					mPasswordView.requestFocus();
+
+					showProgress(false);
+				}
+
+			}
+
+			@Override
+			public void onFailure(Call<ArrayList<ProductList>> call, Throwable t) {
+				Log.d(TAG, "login failure");
+				Log.d(TAG, t.getMessage());
+			}
+		});
 	}
 
 	private boolean isUserNameValid(String user) {
 		return user.length() > 3;
-	}
-
-	private boolean isPasswordValid(String password) {
-		return password.length() > 4;
 	}
 
 	/**
@@ -178,98 +201,4 @@ public class LoginActivity extends AppCompatActivity {
 			mProgressDialog.dismiss();
 		}
 	}
-
-	/**
-	 * Represents an asynchronous login/registration task used to authenticate
-	 * the user.
-	 */
-	public class UserLoginTask extends AsyncTask<String, Void, Boolean> {
-		private final String LOG_TAG = UserLoginTask.class.getName();
-		private final String mHash;
-
-		public UserLoginTask(String hash) {
-			mHash = hash;
-		}
-
-		@Override
-		protected Boolean doInBackground(String... params) {
-			HttpURLConnection urlConnection = null;
-			BufferedReader reader = null;
-
-			try
-			{
-				URL url = new URL(params[0]);
-				urlConnection = (HttpURLConnection) url.openConnection();
-				urlConnection.setRequestProperty("Authorization", "Basic " + mHash);
-				urlConnection.setConnectTimeout(10000);
-				urlConnection.setReadTimeout(20000);
-				urlConnection.setRequestMethod("GET");
-				urlConnection.connect();
-
-				if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK)
-				{
-					return true;
-				}
-			}
-			catch (SocketTimeoutException e)
-			{
-				Log.d(LOG_TAG, "Timeout");
-			}
-			catch (ConnectException e)
-			{
-				Log.d(LOG_TAG, "Failed to connect");
-			}
-			catch (IOException e)
-			{
-				Log.e(LOG_TAG, "IO Exception", e);
-			}
-			finally
-			{
-				if (urlConnection != null)
-				{
-					urlConnection.disconnect();
-				}
-
-				if (reader != null)
-				{
-					try
-					{
-						reader.close();
-					}
-					catch (final IOException e)
-					{
-						Log.e(LOG_TAG, "Error closing stream", e);
-					}
-				}
-			}
-
-			return false;
-		}
-
-		@Override
-		protected void onPostExecute(final Boolean result) {
-			if (result)
-			{
-				Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-				startActivity(intent);
-				finish();
-			}
-			else
-			{
-				Preferences.clearPreferences(LoginActivity.this);
-				mPasswordView.setError(getString(R.string.error_incorrect_password));
-				mPasswordView.requestFocus();
-			}
-
-			mAuthTask = null;
-			showProgress(false);
-		}
-
-		@Override
-		protected void onCancelled() {
-			mAuthTask = null;
-			showProgress(false);
-		}
-	}
 }
-
