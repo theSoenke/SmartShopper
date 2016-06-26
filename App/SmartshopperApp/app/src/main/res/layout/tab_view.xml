@@ -11,7 +11,7 @@
         app:tabIndicatorColor="@color/colorPrimary"
         app:tabIndicatorHeight="4dp"/>
 
-    <android.support.v4.view.ViewPager
+    <app.smartshopper.ShoppingLists.CustomViewPager
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/singlelist_tab_layout"

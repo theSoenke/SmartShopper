@@ -2,42 +2,54 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation ="vertical"
-    android:padding="10dp"
-    >
-
-    <Button
-        android:id="@+id/dialog_btCreateGroupList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create List"
-        android:layout_below="@+id/dialog_txtGroupListName"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Abort"
-        android:id="@+id/btAbortAddGroupList"
-        android:layout_below="@+id/dialog_txtGroupListName"
-        android:layout_alignEnd="@+id/dialog_txtGroupListName"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white" />
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <EditText
+        android:id="@+id/dialog_txtGroupListName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textView6"
         android:textColor="@android:color/black"
-        android:id="@+id/dialog_txtGroupListName"
-        android:layout_below="@+id/textView6" />
+        android:layout_margin="10dp" />
 
     <TextView
+        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Name of the list to add:"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
-        android:text="Name of the list to add:"
-        android:id="@+id/textView6"/>
+        android:layout_margin="10dp" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/dialog_txtGroupListName"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/dialog_btCreateGroupList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="0.5"
+            android:text="Create List"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary" />
+
+        <Button
+            android:id="@+id/btAbortAddGroupList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="0.5"
+            android:text="Abort"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary" />
+
+    </LinearLayout>
 
 </RelativeLayout>

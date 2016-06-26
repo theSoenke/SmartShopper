@@ -15,7 +15,7 @@ import app.smartshopper.R;
 
 /**
  * Created by marvin on 30.04.16.
- * <p/>
+ * <p>
  * The GroupExpListAdapter enables the use of an expandable list view for group-lists (shopping list with more then one participant)
  * and shows - via expanding - a list of all participants.
  */

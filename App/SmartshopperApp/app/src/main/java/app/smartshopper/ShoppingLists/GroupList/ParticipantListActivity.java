@@ -8,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -47,10 +49,16 @@ public class ParticipantListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        ListView listView = (ListView) findViewById(R.id.participantList_list);
-
         // Create ArrayAdapter using an empty list
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.simple_row, new ArrayList<String>());
+        final ArrayAdapter<Participant> listAdapter = new ArrayAdapter<Participant>(this, R.layout.simple_row, new ArrayList<Participant>());
+        final ListView listView = (ListView) findViewById(R.id.participantList_list);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                openRemoveParticipantDialog((Participant) listView.getAdapter().getItem(position), listAdapter);
+            }
+        });
 
         ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getApplicationContext());
         List<ShoppingList> shoppingList = shoppingListDataSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
@@ -61,7 +69,7 @@ public class ParticipantListActivity extends AppCompatActivity {
             List<Participant> participantList = source.getEntry(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + listID + "'");
 
             for (Participant participant : participantList) {
-                listAdapter.add(source.getNameOf(participant));
+                listAdapter.add(participant);
             }
 
             listView.setAdapter(listAdapter);
@@ -69,7 +77,7 @@ public class ParticipantListActivity extends AppCompatActivity {
             FloatingActionButton addList = (FloatingActionButton) findViewById(R.id.fabAddParticipantList);
             addList.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View vw) {
-                    openAddParticipantDialog();
+                    openAddParticipantDialog(listAdapter);
                 }
             });
         } else {
@@ -78,7 +86,7 @@ public class ParticipantListActivity extends AppCompatActivity {
         }
     }
 
-    private void openAddParticipantDialog() {
+    private void openAddParticipantDialog(final ArrayAdapter<Participant> listAdapter) {
         // TODO replace this dialog by sharing a generated token
 
         final Dialog dialog = new Dialog(this);
@@ -99,9 +107,11 @@ public class ParticipantListActivity extends AppCompatActivity {
 
                 ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
 
-                participantDataSource.add(list.getId(), user.getId());
-                Log.i("ADDED", list.getId() + " - " + user.getId());
+                Participant participant = participantDataSource.add(list.getId(), user.getId());
+                Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
 
+                listAdapter.add(participant);
+                listAdapter.notifyDataSetChanged();
 
                 dialog.dismiss();
             }
@@ -113,6 +123,41 @@ public class ParticipantListActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+        dialog.show();
+    }
+
+    private void openRemoveParticipantDialog(final Participant participant, final ArrayAdapter<Participant> listAdapter) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_remove_participant);
+        dialog.setTitle("Remove participant ");
+
+        Button cancelButton = (Button) dialog.findViewById(R.id.remove_participant_cancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        Button okButton = (Button) dialog.findViewById(R.id.remove_participant_ok);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Context context = getApplicationContext();
+
+                ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
+
+                participantDataSource.removeEntryFromDatabase(participant);
+                Log.i("REMOVED PARTICIPANT", participant.getShoppingListID() + " - " + participant.getUserID());
+
+                listAdapter.remove(participant);
+                listAdapter.notifyDataSetChanged();
+
+                dialog.dismiss();
+            }
+        });
+
         dialog.show();
     }
 

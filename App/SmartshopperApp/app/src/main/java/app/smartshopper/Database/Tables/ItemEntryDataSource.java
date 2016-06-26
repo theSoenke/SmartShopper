@@ -18,6 +18,7 @@ import app.smartshopper.Database.MySQLiteHelper;
  * Created by hauke on 10.05.16.
  */
 public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
+    private ProductDataSource _productDataSource;
 
     public ItemEntryDataSource(Context context) {
         super(context,
@@ -28,6 +29,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
                         MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT,
                         MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT,
                 });
+        _productDataSource = new ProductDataSource(context);
     }
 
 
@@ -37,12 +39,12 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         values.put(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID, entry.getProductID());
         values.put(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID, entry.getListID());
         values.put(MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT, entry.getAmount());
-        values.put(MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT, entry.isBought());
+        values.put(MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT, entry.amountBought());
 
         String insertQuery = MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getProductID() + "'" +
                 " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + entry.getListID() + "'" +
                 " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + entry.getAmount() +
-                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + entry.isBought();
+                " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + entry.amountBought();
 
 
         super.addEntryToDatabase(
@@ -112,10 +114,24 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      */
     public ItemEntry getItemEntry(ShoppingList list, Product product) {
         List<ItemEntry> listOfEntries = getEntry(
-                MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "'" +
-                        MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
+
+                MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "' AND " +
+                MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
+
         );
-        if (listOfEntries != null) {
+        if (!listOfEntries.isEmpty()) {
+            return listOfEntries.get(0);
+        }
+        return null;
+    }
+
+    public ItemEntry getItemEntry(ShoppingList l, Product p, int amount, int bought) {
+        List<ItemEntry> listOfEntries = getEntry(
+                MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + p.getId() + "'"
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + l.getId() + "'"
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + amount
+                        + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
+        if (!listOfEntries.isEmpty()) {
             return listOfEntries.get(0);
         }
         return null;
@@ -128,6 +144,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         entry.setListID(cursor.getString(1));
         entry.setAmount(cursor.getInt(2));
         entry.setBought(cursor.getInt(3));
+        entry.setEntryName(_productDataSource.get(entry.getProductID()).getEntryName());
         return entry;
     }
 
@@ -144,13 +161,13 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
     /**
      * Removes all duplicate entries for the given list and the product and determines the amount of the products.
      *
-     * @param shoppingList The shopping list the product is in.
-     * @param product      The product which duplicates should be removed.
+     * @param ListId    The ID of the shopping list the product is in.
+     * @param ProductID The ID of the product which duplicates should be removed.
      * @return The quantity of the products the user wants to buy.
      */
-    public int removeDuplicates(ShoppingList shoppingList, Product product) {
-        List<ItemEntry> doubleEntries = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
-                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + shoppingList + "'");
+    public int removeDuplicates(String ListId, String ProductID) {
+        List<ItemEntry> doubleEntries = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'"
+                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListId + "'");
 
         int amountbuffer = 0;
 
@@ -162,5 +179,15 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         }
 
         return amountbuffer;
+    }
+
+    public List<ItemEntry> getEntriesForList(ShoppingList shoppingList) {
+        return getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + shoppingList.getId() + "'");
+    }
+
+    public boolean EntryExists(String ListID, String ProductID) {
+        List<ItemEntry> list = getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListID + "'"
+                + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'");
+        return !list.isEmpty();
     }
 }

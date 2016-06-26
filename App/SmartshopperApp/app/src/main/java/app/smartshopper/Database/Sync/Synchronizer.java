@@ -1,7 +1,9 @@
 package app.smartshopper.Database.Sync;
 
 import android.content.Context;
+import android.util.Log;
 
+import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
@@ -15,23 +17,29 @@ import app.smartshopper.Database.Tables.UserDataSource;
 public class Synchronizer {
 
     public void sync(Context context) {
+        Log.i("SYNCHRONIZER", "Start synchronizing local database ...");
         // TODO connect to remote database and sync local database
 
         MySQLiteHelper helper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
         helper.onCreate(helper.getWritableDatabase());
 
+        Log.i("SYNCHRONIZER", "Sync products ...");
         ProductDataSource p = syncProducts(context);
+        Log.i("SYNCHRONIZER", "Sync shopping lists ...");
         ShoppingListDataSource s = syncShoppingLists(context);
+        Log.i("SYNCHRONIZER", "Sync item entries ...");
         syncItemEntries(context, p, s);
 
+        Log.i("SYNCHRONIZER", "Sync user data ...");
         UserDataSource u = syncUsers(context);
         syncParticipants(context, s, u);
+        Log.i("SYNCHRONIZER", "Finished synchronizing");
     }
 
     private ProductDataSource syncProducts(Context context) {
         ProductDataSource s = new ProductDataSource(context);
-        s.add("Hammer", 0, 0);
-        s.add("Bohrmaschine", 0, 0);
+        s.add("Hammer", 200, 100);
+        s.add("Bohrmaschine", 100, 100);
         s.add("Farbe", 0, 0);
 
         s.add("Wurst", 0, 0);
@@ -94,7 +102,16 @@ public class Synchronizer {
 
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Wurst'").get(0).getId(), Wocheneinkauf, 1);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Käse'").get(0).getId(), Wocheneinkauf, 5);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Tiefkühlpizza'").get(0).getId(), Wocheneinkauf, 1);
+
+        // just to have a already bought item that's in the middle of the list
+        ItemEntry entry = new ItemEntry();
+        entry.setEntryName("Tiefkühlpizza");
+        entry.setAmount(1);
+        entry.setBought(1);
+        entry.setListID(Wocheneinkauf);
+        entry.setProductID(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Tiefkühlpizza'").get(0).getId());
+        i.add(entry);
+
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Toast'").get(0).getId(), Wocheneinkauf, 1);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bratwurst'").get(0).getId(), Wocheneinkauf, 7);
         i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Curry-Ketchup'").get(0).getId(), Wocheneinkauf, 1);

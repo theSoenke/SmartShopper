@@ -8,7 +8,7 @@ public class ItemEntry extends DatabaseEntry {
     private String productID;
     private String listID;
     private int amount;
-    private int isBought;
+    private int amountBought;
 
     public String getProductID() {
         return productID;
@@ -34,12 +34,16 @@ public class ItemEntry extends DatabaseEntry {
         this.amount = amount;
     }
 
-    public int isBought() {
-        return isBought;
+    public boolean isBought() {
+        return amount == amountBought;
+    }
+
+    public int amountBought() {
+        return amountBought;
     }
 
     public void setBought(int bought) {
-        isBought = bought;
+        amountBought = bought;
     }
 
     @Override
@@ -49,7 +53,7 @@ public class ItemEntry extends DatabaseEntry {
             return e.getProductID().equals(getProductID()) &&
                     e.getListID().equals(getListID()) &&
                     e.getAmount() == getAmount() &&
-                    e.isBought() == isBought();
+                    e.amountBought() == amountBought();
         }
         return false;
     }

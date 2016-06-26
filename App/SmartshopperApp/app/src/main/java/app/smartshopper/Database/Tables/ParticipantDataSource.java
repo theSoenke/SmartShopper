@@ -54,7 +54,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
 
     @Override
     public String getWhereClause(Participant entry) {
-        return MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "'" +
+        return MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "' AND " +
                 MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
     }
 
@@ -87,6 +87,11 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         entry.setShoppingListID(shoppingListID);
         entry.setUserID(userID);
 
+        User user = _userDataSource.get(userID);
+        if(user != null) {
+            entry.setEntryName(user.getEntryName());
+        }
+
         add(entry);
 
         return entry;
@@ -97,6 +102,10 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         Participant participant = new Participant();
         participant.setShoppingListID(cursor.getString(0));
         participant.setUserID(cursor.getString(1));
+
+        User user = _userDataSource.get(participant.getUserID());
+        participant.setEntryName(user.getEntryName());
+
         return participant;
     }
 

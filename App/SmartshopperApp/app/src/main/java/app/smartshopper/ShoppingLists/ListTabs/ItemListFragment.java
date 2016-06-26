@@ -2,6 +2,7 @@ package app.smartshopper.ShoppingLists.ListTabs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -23,7 +24,6 @@ import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.R;
 
 /**
@@ -34,10 +34,9 @@ import app.smartshopper.R;
  * The "add"- and "change amount"-dialog is also located here.
  */
 //TODO Move dialogs to extra class(es)
-//TODO Maybe move the database-queries and -logic to extra class
 public class ItemListFragment extends Fragment implements AdapterView.OnItemClickListener, ProductPresenter {
 
-    ArrayAdapter<String> _listAdapter;
+    ArrayAdapter<ItemListEntry> _listAdapter;
     ProductHolder _productHolder;
 
     @Override
@@ -47,10 +46,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         ListView list = (ListView) view.findViewById(R.id.itemlist_list);
 
         // Create ArrayAdapter using an empty list
-        _listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
-
-        // get all lists with this name
-        ShoppingListDataSource shoppingListSource = new ShoppingListDataSource(getContext());
+        _listAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
 
         productsChanged();
 
@@ -71,11 +67,12 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private void openAddItemDialog() {
-        //TODO show all items in the list "dialog_AddItemListView"
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_item);
         dialog.setTitle("Add an item to your list");
         final EditText itemNameExitField = (EditText) dialog.findViewById(R.id.dialog_txtItemName);
+        final EditText itemAmountEditField = (EditText) dialog.findViewById(R.id.dialog_AddItemAmountEditText);
+        Button cancelButton = (Button) dialog.findViewById(R.id.dialog_AddItemCancelButton);
         final ListView productList = (ListView) dialog.findViewById(R.id.dialog_AddItemListView);
         final ArrayAdapter<Product> productListAdapter = new ArrayAdapter<Product>(getContext(), R.layout.simple_row, new ArrayList<Product>());
 
@@ -88,16 +85,34 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (_productHolder.addEntry(productListAdapter.getItem(position).toString(), 1)) {
-                    Toast.makeText(getContext(), "item added", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(getContext(), "could not find your item", Toast.LENGTH_SHORT).show();
+                int amountOfItems = 1;
+
+                // when the text field is not empty
+                if (!itemAmountEditField.getText().toString().isEmpty()) {
+                    amountOfItems = Integer.parseInt(itemAmountEditField.getText().toString());
+                }
+
+                if (amountOfItems != 0) {
+                    if (_productHolder.addEntry(productListAdapter.getItem(position).toString(), amountOfItems)) {
+                        Toast.makeText(getContext(), "item added", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(getContext(), "could not find your item", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(getContext(), "Please enter a number greater then 0!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        //TODO add listener to the input field to filter the list of items
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
         itemNameExitField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -105,12 +120,12 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String prefix = s.toString();
+                String prefix = s.toString().toLowerCase();
                 List<Product> newListOfProducts = _productHolder.getAllAvailableProducts();
                 int lengthOfList = newListOfProducts.size();
 
                 for (int i = 0; i < lengthOfList; i++) {
-                    String entry = newListOfProducts.get(i).toString();
+                    String entry = newListOfProducts.get(i).toString().toLowerCase();
                     if (!entry.startsWith(prefix)) {
                         newListOfProducts.remove(i);
                         lengthOfList--;
@@ -134,41 +149,43 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final Dialog dialog = new Dialog(getContext());
-        final String itemName = _listAdapter.getItem(position);
-        String[] split = itemName.split("\\s+");
+        final ItemListEntry itemEntry = _listAdapter.getItem(position);
+
         dialog.setContentView(R.layout.dialog_configure_item);
-        dialog.setTitle("Configure " + "'" + split[1] + "'");
+        dialog.setTitle("Configure '" + itemEntry.getItemEntry().getEntryName() + "'");
+
         TextView tw = (TextView) dialog.findViewById(R.id.dialog_ConfigItemTextView);
-        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
-        Button btDelete = (Button) dialog.findViewById(R.id.dialog_btDeleteItem);
-        Button btBought = (Button) dialog.findViewById(R.id.dialog_btMarkItem);
-        Button btAmount = (Button) dialog.findViewById(R.id.dialog_btChangeItemAmount);
-        btAbort.setOnClickListener(new View.OnClickListener() {
+        Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
+        Button buttonDelete = (Button) dialog.findViewById(R.id.dialog_btDeleteItem);
+        Button buttonBought = (Button) dialog.findViewById(R.id.dialog_btMarkItem);
+        Button buttonAmount = (Button) dialog.findViewById(R.id.dialog_btChangeItemAmount);
+
+        buttonAbort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
-        btDelete.setOnClickListener(new View.OnClickListener() {
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _productHolder.removeEntry(itemName);
+                _productHolder.removeEntry(itemEntry.getItemEntry());
                 productsChanged();
                 dialog.dismiss();
             }
         });
-        btBought.setOnClickListener(new View.OnClickListener() {
+        buttonBought.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _productHolder.markItemAsBought(itemName);
+                openMarkItemDialog(itemEntry.getItemEntry());
                 productsChanged();
                 dialog.dismiss();
             }
         });
-        btAmount.setOnClickListener(new View.OnClickListener() {
+        buttonAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openChangeAmountDialog(itemName);
+                openChangeAmountDialog(itemEntry.getItemEntry());
                 dialog.dismiss();
             }
         });
@@ -177,15 +194,51 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         dialog.show();
     }
 
-    private void openChangeAmountDialog(String itemname) {
+    private void openMarkItemDialog(final ItemEntry itemEntry) {
 
-        final String iname = itemname;
-        String[] split = iname.split("\\s+");
+        final Dialog dialog = new Dialog(getContext(), R.style.CustomDialog);
+
+        dialog.setContentView(R.layout.dialog_choose_bought_amount);
+        dialog.setTitle("How many " + itemEntry.getEntryName() + " did u buy?");
+
+        final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtBoughtItemAmount);
+        Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortBoughtItemDialog);
+        Button buttonBoughtAmount = (Button) dialog.findViewById(R.id.dialog_btBoughtAmount);
+        Button buttonBoughtAll = (Button) dialog.findViewById(R.id.dialog_btBoughtAll);
+
+        buttonAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        buttonBoughtAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _productHolder.markItemAsBought(itemEntry, Integer.parseInt(AmountEditText.getText().toString()));
+                productsChanged();
+                dialog.dismiss();
+            }
+        });
+        buttonBoughtAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _productHolder.markItemAsBought(itemEntry);
+                productsChanged();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private void openChangeAmountDialog(final ItemEntry itemEntry) {
         final Dialog dialog = new Dialog(getContext());
+
         dialog.setContentView(R.layout.dialog_enter_item_amount);
-        dialog.setTitle(split[1]);
+        dialog.setTitle(itemEntry.getEntryName());
+
         final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtNewItemAmount);
-        AmountEditText.setText(split[0]);
+        AmountEditText.setText("");
         Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortItemAmountChange);
         Button btConfirm = (Button) dialog.findViewById(R.id.dialog_btConfirmItemAmountChange);
         btAbort.setOnClickListener(new View.OnClickListener() {
@@ -197,7 +250,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         btConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _productHolder.changeItemAmount(iname, Integer.parseInt(AmountEditText.getText().toString()));
+                _productHolder.changeItemAmount(itemEntry, Integer.parseInt(AmountEditText.getText().toString()));
                 productsChanged();
                 dialog.dismiss();
             }
@@ -205,7 +258,6 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         dialog.show();
 
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -220,17 +272,11 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void productsChanged() {
         _listAdapter.clear();
-        List<ItemEntry> entryList = _productHolder.getItemEntries();
-        if (entryList != null) {
-            for (ItemEntry item : entryList) {
-                String entryString = item.getAmount() + " " + _productHolder.getProductFromID(item.getProductID()).
-                        getEntryName();
-                if (item.isBought() != 0) {
-                    entryString += " (gekauft)";
-                }
-                _listAdapter.add(entryString);
-            }
+        List<ItemEntry> rawItemList = _productHolder.getItemEntries();
+
+        for (ItemEntry itemEntry : rawItemList) {
+            ItemListEntry listEntry = new ItemListEntry(itemEntry);
+            _listAdapter.add(listEntry);
         }
     }
-
 }

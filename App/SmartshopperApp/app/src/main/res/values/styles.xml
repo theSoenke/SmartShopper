@@ -10,6 +10,7 @@
 
     </style>
 
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -21,6 +22,17 @@
 
     <style name="CustomDialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">false</item>
+        <item name="android:windowBackground">@drawable/drawable_dialog</item>
+        <item name="android:windowTitleStyle">@style/TitleStyle</item>
+
+    </style>
+
+    <style name="TitleStyle">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMediumInverse</item>
+        <item name="android:gravity">center</item>
+
     </style>
 
 
