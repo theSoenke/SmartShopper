@@ -94,7 +94,10 @@ public class ShoppingList extends DatabaseEntry {
 
     @Override
     public boolean equals(Object otherList) {
-        //TODO override equals correctly
-        return super.equals(otherList);
+        if (otherList instanceof ShoppingList) {
+            ShoppingList list = (ShoppingList) otherList;
+            return list.getId().equals(getId());
+        }
+        return false;
     }
 }
