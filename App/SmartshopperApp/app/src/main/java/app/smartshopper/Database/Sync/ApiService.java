@@ -3,7 +3,7 @@ package app.smartshopper.Database.Sync;
 import java.util.ArrayList;
 
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.Sync.Retrofit.Model.ProductList;
+import app.smartshopper.Database.Entries.ShoppingList;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
@@ -19,10 +19,10 @@ import retrofit2.http.Query;
 public interface ApiService {
 
 	@GET("lists")
-	public Call<ArrayList<ProductList>> listsLimit(@Query("limit") int limit);
+	public Call<ArrayList<ShoppingList>> listsLimit(@Query("limit") int limit);
 
 	@POST("lists")
-	public Call<ArrayList<ProductList>> lists();
+	public Call<ArrayList<ShoppingList>> lists();
 
 	//    DELETE http://api.tecfuture.de:3000/lists/id
 	@DELETE("lists/{id}")
