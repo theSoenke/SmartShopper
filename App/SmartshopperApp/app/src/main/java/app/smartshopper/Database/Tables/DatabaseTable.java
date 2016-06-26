@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -155,21 +156,6 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     public abstract T cursorToEntry(Cursor cursor);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // FIXME Remove all this when the API gives us the ID by adding or downloading
     private static int ID = 0;
 
@@ -181,5 +167,13 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
         }
         ID++;
         return sb.toString().substring(0, 24);
+    }
+
+    public void beginTransaction() {
+        database.beginTransaction();
+    }
+
+    public void endTransaction() {
+        database.endTransaction();
     }
 }
