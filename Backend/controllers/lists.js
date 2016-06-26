@@ -8,14 +8,15 @@ const User = require('../models/user')
 exports.getLists = function (req, res, next) {
   let credentials = basicAuth(req)
 
-  User.findOne({username: credentials.name}, function (err, doc) {
+  User.findOne({name: credentials.name}, function (err, doc) {
     if (err) return err
 
     let query = {owner: doc._id}
     List
       .find(query)
-      .populate('owner', 'username')
+      .populate('owner', 'name')
       .populate('participants')
+      .populate('products.product', 'name')
       .exec(function (err, docs) {
         if (err) return next(err)
         res.json(docs)
@@ -27,7 +28,7 @@ exports.getLists = function (req, res, next) {
 exports.uploadList = function (req, res, next) {
   let credentials = basicAuth(req)
 
-  User.findOne({username: credentials.name}, function (err, doc) {
+  User.findOne({name: credentials.name}, function (err, doc) {
     if (err) return err
 
     let list = req.body
@@ -38,8 +39,9 @@ exports.uploadList = function (req, res, next) {
 
       // return and poulate new list
       List.findById(docs._id)
-        .populate('owner', 'username')
-        .populate('participants', 'username')
+        .populate('owner', 'name')
+        .populate('participants', 'name')
+        .populate('products.product', 'name')
         .exec(function (err, doc) {
           if (err) return next(err)
           res.json(doc)

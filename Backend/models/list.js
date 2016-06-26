@@ -8,10 +8,11 @@ const ObjectId = Schema.ObjectId
 let listSchema = new Schema({
   name: {type: String, required: true, text: true},
   owner: {type: ObjectId, required: true, ref: 'User'},
-  products: {
+  products: [{
+    _id: false,
     product: {type: ObjectId, ref: 'Product'},
     amount: Number
-  },
+  }],
   participants: [{type: ObjectId, ref: 'User'}],
   created_at: Date,
   updated_at: Date

@@ -7,8 +7,9 @@ var Schema = mongoose.Schema
 const SALT_WORK_FACTOR = 10
 
 let userSchema = new Schema({
-  username: { type: String, required: true, unique: true, text: true },
-  password: { type: String, required: true },
+  name: {type: String, required: true, unique: true, text: true},
+  password: {type: String, required: true},
+  fcmToken: String,
   admin: Boolean,
   created_at: Date,
   updated_at: Date
