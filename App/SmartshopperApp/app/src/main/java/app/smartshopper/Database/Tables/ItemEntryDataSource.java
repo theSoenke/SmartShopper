@@ -58,15 +58,15 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      * including a unique ID.
      * There'll be no duplicate entries in the database.
      *
-     * @param productID The ID of the product.
-     * @param listID    The ID of the list.
-     * @param amount    The amount of this particular product in this list.
+     * @param product The product.
+     * @param list    The list.
+     * @param amount  The amount of this particular product in this list.
      * @return A new item entry with a unique ID combination.
      */
-    public ItemEntry add(String productID, String listID, int amount) {
+    public ItemEntry add(Product product, ShoppingList list, int amount) {
         ItemEntry entry = new ItemEntry();
-        entry.setProductID(productID);
-        entry.setListID(listID);
+        entry.setProductID(product.getId());
+        entry.setListID(list.getId());
         entry.setAmount(amount);
         entry.setBought(0);
 
@@ -116,7 +116,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         List<ItemEntry> listOfEntries = getEntry(
 
                 MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "' AND " +
-                MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
+                        MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
 
         );
         if (!listOfEntries.isEmpty()) {

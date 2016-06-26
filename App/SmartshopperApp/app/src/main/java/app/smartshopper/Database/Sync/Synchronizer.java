@@ -1,16 +1,16 @@
 package app.smartshopper.Database.Sync;
 
 import android.content.Context;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
+import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
@@ -64,6 +64,7 @@ public class Synchronizer {
 
                     Log.i("SYNCHRONIZER", "Sync products ...");
                     syncProducts(remoteProductList, localProductList, p);
+                    localProductList = p.getAllEntries();
 
                     Log.i("SYNCHRONIZER", "Sync shopping lists ...");
                     ShoppingListDataSource s = syncShoppingLists(context);
@@ -136,7 +137,6 @@ public class Synchronizer {
             }
         }
         source.endTransaction();
-        System.exit(0);
 
         // remove old entries that are not in the remote list
         for (Product p : localProductList) {
@@ -149,6 +149,7 @@ public class Synchronizer {
     private ShoppingListDataSource syncShoppingLists(Context context) {
         ShoppingListDataSource s = new ShoppingListDataSource(context);
 
+        s.beginTransaction();
         // single lists
         s.add("Baumarkt");
         s.add("Wocheneinkauf");
@@ -159,60 +160,65 @@ public class Synchronizer {
         s.add("Vereinstreffen");
         s.add("OE-Liste");
 
+        s.endTransaction();
+
         return s;
     }
 
     private void syncItemEntries(Context context, ProductDataSource p, ShoppingListDataSource s) {
         ItemEntryDataSource i = new ItemEntryDataSource(context);
 
-        String Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0).getId();
+        ShoppingList Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0);
+        ShoppingList Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0);
+        ShoppingList Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0);
+        ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
+        ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
+        ShoppingList OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
 
-        String Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0).getId();
+        List<Product> listOfProducts = p.getAllEntries();
 
-        String Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0).getId();
+        i.beginTransaction();
 
-        String Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0).getId();
+        i.add((Product) getEntryByName(listOfProducts, "Bohrmaschine"), Baumarkt, 4);
+        i.add((Product) getEntryByName(listOfProducts, "Farbe"), Baumarkt, 1);
 
-        String Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0).getId();
-
-        String OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0).getId();
-
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bohrmaschine'").get(0).getId(), Baumarkt, 4);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Farbe'").get(0).getId(), Baumarkt, 1);
-
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Wurst'").get(0).getId(), Wocheneinkauf, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Käse'").get(0).getId(), Wocheneinkauf, 5);
+        i.add((Product) getEntryByName(listOfProducts, "Wurst"), Wocheneinkauf, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Käse"), Wocheneinkauf, 5);
 
         // just to have a already bought item that's in the middle of the list
         ItemEntry entry = new ItemEntry();
         entry.setEntryName("Tiefkühlpizza");
         entry.setAmount(1);
         entry.setBought(1);
-        entry.setListID(Wocheneinkauf);
-        entry.setProductID(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Tiefkühlpizza'").get(0).getId());
+        entry.setListID(Wocheneinkauf.getId());
+        entry.setProductID(getEntryByName(listOfProducts, "Tiefkühlpizza").getId());
         i.add(entry);
 
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Toast'").get(0).getId(), Wocheneinkauf, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bratwurst'").get(0).getId(), Wocheneinkauf, 7);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Curry-Ketchup'").get(0).getId(), Wocheneinkauf, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Tomate'").get(0).getId(), Wocheneinkauf, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Zwiebeln'").get(0).getId(), Wocheneinkauf, 3);
+        i.add((Product) getEntryByName(listOfProducts, "Toast"), Wocheneinkauf, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Bratwurst"), Wocheneinkauf, 7);
+        i.add((Product) getEntryByName(listOfProducts, "Curry-Ketchup"), Wocheneinkauf, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Tomate"), Wocheneinkauf, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Zwiebeln"), Wocheneinkauf, 3);
 
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bier'").get(0).getId(), Greänkemarkt, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Bier"), Greänkemarkt, 1);
 
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bier'").get(0).getId(), Geburtstag, 6);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Tomate'").get(0).getId(), Geburtstag, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Bier"), Geburtstag, 6);
+        i.add((Product) getEntryByName(listOfProducts, "Tomate"), Geburtstag, 1);
 
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Kööm'").get(0).getId(), Vereinstreffen, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Klootkugel'").get(0).getId(), Vereinstreffen, 1);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Notizblock'").get(0).getId(), Vereinstreffen, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Kööm"), Vereinstreffen, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Klootkugel"), Vereinstreffen, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Notizblock"), Vereinstreffen, 1);
 
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Bier'").get(0).getId(), OE, 2);
-        i.add(p.getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = 'Kööm'").get(0).getId(), OE, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Bier"), OE, 2);
+        i.add((Product) getEntryByName(listOfProducts, "Kööm"), OE, 1);
+
+        i.endTransaction();
     }
 
     private UserDataSource syncUsers(Context context) {
         UserDataSource u = new UserDataSource(context);
+
+        u.beginTransaction();
 
         u.add("Dieter");
         u.add("Batman");
@@ -223,24 +229,31 @@ public class Synchronizer {
         u.add("Rocko");
         u.add("Misty");
 
+        u.endTransaction();
+
         return u;
     }
 
     private void syncParticipants(Context context, ShoppingListDataSource s, UserDataSource u) {
+        s.beginTransaction();
+        ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
+        ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
+        ShoppingList OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
+        s.endTransaction();
+
+        List<User> listOfUsers = u.getAllEntries();
+
+        User Dieter = (User) getEntryByName(listOfUsers, "Dieter");
+        User Batman = (User) getEntryByName(listOfUsers, "Batman");
+        User SpiderMan = (User) getEntryByName(listOfUsers, "SpiderMan");
+        User Ronny = (User) getEntryByName(listOfUsers, "Ronny Schäfer");
+        User AshKetchup = (User) getEntryByName(listOfUsers, "Ash Ketchup");
+        User ProfEich = (User) getEntryByName(listOfUsers, "Professor Eich");
+        User Rocko = (User) getEntryByName(listOfUsers, "Rocko");
+        User Misty = (User) getEntryByName(listOfUsers, "Misty");
+
         ParticipantDataSource p = new ParticipantDataSource(context);
-
-        String Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0).getId();
-        String Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0).getId();
-        String OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0).getId();
-
-        String Dieter = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Dieter'").get(0).getId();
-        String Batman = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Batman'").get(0).getId();
-        String SpiderMan = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'SpiderMan'").get(0).getId();
-        String Ronny = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Ronny Schäfer'").get(0).getId();
-        String AshKetchup = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Ash Ketchup'").get(0).getId();
-        String ProfEich = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Professor Eich'").get(0).getId();
-        String Rocko = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Rocko'").get(0).getId();
-        String Misty = u.getEntry(MySQLiteHelper.USER_COLUMN_NAME + " = 'Misty'").get(0).getId();
+        p.beginTransaction();
 
         p.add(Geburtstag, Dieter);
         p.add(Geburtstag, Batman);
@@ -252,5 +265,17 @@ public class Synchronizer {
         p.add(OE, ProfEich);
         p.add(OE, Rocko);
         p.add(OE, Misty);
+
+        p.endTransaction();
+    }
+
+
+    private DatabaseEntry getEntryByName(List<? extends DatabaseEntry> list, String name) {
+        for (DatabaseEntry entry : list) {
+            if (entry.getEntryName().equals(name)) {
+                return entry;
+            }
+        }
+        return null;
     }
 }

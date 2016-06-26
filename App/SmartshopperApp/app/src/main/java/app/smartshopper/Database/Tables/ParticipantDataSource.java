@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.Participant;
+import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
 
@@ -78,17 +79,16 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
      * Creates a new participant, adds it to the database and returns it.
      * If the participant is already in the database, nothing happens and the participant will be returned.
      *
-     * @param shoppingListID The ID of the shopping list this participant is connected to.
-     * @param userID         The ID of the user.
+     * @param shoppingList The shopping list this participant is connected to.
+     * @param user         The user to connect with the shopping list.
      * @return The new participant with an unique ID combination.
      */
-    public Participant add(String shoppingListID, String userID) {
+    public Participant add(ShoppingList shoppingList, User user) {
         Participant entry = new Participant();
-        entry.setShoppingListID(shoppingListID);
-        entry.setUserID(userID);
+        entry.setShoppingListID(shoppingList.getId());
+        entry.setUserID(user.getId());
 
-        User user = _userDataSource.get(userID);
-        if(user != null) {
+        if (user != null) {
             entry.setEntryName(user.getEntryName());
         }
 

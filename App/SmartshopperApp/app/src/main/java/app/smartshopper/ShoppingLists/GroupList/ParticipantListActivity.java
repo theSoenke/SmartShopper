@@ -107,7 +107,7 @@ public class ParticipantListActivity extends AppCompatActivity {
 
                 ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
 
-                Participant participant = participantDataSource.add(list.getId(), user.getId());
+                Participant participant = participantDataSource.add(list, user);
                 Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
 
                 listAdapter.add(participant);
