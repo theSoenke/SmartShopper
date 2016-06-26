@@ -5,7 +5,7 @@ set -ex
 if [ ! -d "/var/www" ]
 then
   apt-get update
-  apt-get install -y curl git
+  apt-get install -y curl git nginx
   apt-get install -y python make g++ # bcrypt dependencies
   curl -sL https://deb.nodesource.com/setup_6.x | bash -
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
@@ -35,7 +35,12 @@ then
 
   systemctl daemon-reload
   systemctl enable mongod
-  systemctl start mongod
+  systemctl restart mongod
+
+  # setup nginx reverse proxy
+  cp api.conf /etc/nginx/sites-available/
+  systemctl enable nginx
+  systemctl restart nginx
 
   # create new user to run app
   useradd -mrU web

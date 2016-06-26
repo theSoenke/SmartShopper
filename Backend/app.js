@@ -1,10 +1,7 @@
 'use strict'
 
-const fs = require('fs')
 const express = require('express')
 const bodyParser = require('body-parser')
-const morgan = require('morgan')
-const path = require('path')
 const helmet = require('helmet')
 const config = require('./config')
 
@@ -16,13 +13,10 @@ app.use(helmet())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
-let accessLogStream = fs.createWriteStream(path.join(__dirname, '/access.log'), {flags: 'a'})
-app.use(morgan('combined', {stream: accessLogStream}))
-
 app.use(require('./controllers'))
 
 let port = config.PORT
-let server = app.listen(port, onListening)
+let server = app.listen(port, 'localhost', onListening)
 
 function onListening () {
   let addr = server.address()
