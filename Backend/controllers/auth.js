@@ -21,7 +21,7 @@ exports.registerUser = function (req, res, next) {
   let credentials = basicAuth(req)
 
   let user = User({
-    username: credentials.name,
+    name: credentials.name,
     password: credentials.pass
   })
 
@@ -31,7 +31,7 @@ exports.registerUser = function (req, res, next) {
     }
 
     res.json({
-      username: user.username,
+      name: user.name,
       status: 'User registered'
     })
   })
@@ -40,7 +40,7 @@ exports.registerUser = function (req, res, next) {
 exports.requireAuthentication = function (req, res, next) {
   let credentials = basicAuth(req)
 
-  User.findOne({username: credentials.name}, function (err, doc) {
+  User.findOne({name: credentials.name}, function (err, doc) {
     if (err) return next(err)
 
     if (!doc) {
@@ -70,7 +70,7 @@ exports.registerFcmToken = function (req, res, next) {
     return next(error)
   }
 
-  User.findOne({username: credentials.name}, function (err, doc) {
+  User.findOne({name: credentials.name}, function (err, doc) {
     if (err) return next(err)
 
     if (!doc) {
