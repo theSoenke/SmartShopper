@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
 	"name": "backend",
 	"version": "0.3.0",
 	"scripts": {
@@ -18,24 +17,4 @@
 	"devDependencies": {
 		"standard": "^7.1.1"
 	}
-=======
-  "name": "backend",
-  "version": "0.3.0",
-  "scripts": {
-    "start": "node app.js"
-  },
-  "dependencies": {
-    "basic-auth": "^1.0.4",
-    "bcrypt": "^0.8.6",
-    "body-parser": "^1.15.1",
-    "express": "^4.13.4",
-    "firebase": "^3.0.5",
-    "helmet": "^2.0.0",
-    "mongoose": "^4.4.15",
-    "morgan": "^1.7.0"
-  },
-  "devDependencies": {
-    "standard": "^7.1.1"
-  }
->>>>>>> 40556f02dde201a9f8b607310c6c718b546a3dc3
 }
