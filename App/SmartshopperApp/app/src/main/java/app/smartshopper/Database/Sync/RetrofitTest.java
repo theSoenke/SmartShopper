@@ -1,4 +1,4 @@
-package app.smartshopper.Database.Sync.Retrofit;
+package app.smartshopper.Database.Sync;
 
 import android.util.Log;
 
@@ -33,11 +33,9 @@ public class RetrofitTest {
                 if (response.isSuccessful())
                 {
                     ArrayList<ProductList> productListArray = response.body();
-                    Log.e("RestCall", "success");
-
+                    Log.d("RestCall", "success");
                 } else
                 {
-
                     Log.e("Error Code", String.valueOf(response.code()));
                     Log.e("Error Body", response.errorBody().toString());
                 }

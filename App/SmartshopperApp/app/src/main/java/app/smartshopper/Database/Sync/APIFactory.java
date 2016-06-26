@@ -1,4 +1,4 @@
-package app.smartshopper.Database.Sync.Retrofit;
+package app.smartshopper.Database.Sync;
 
 import java.io.IOException;
 

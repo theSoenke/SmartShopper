@@ -3,7 +3,6 @@ package app.smartshopper;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,17 +16,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import app.smartshopper.Database.Preferences;
-import app.smartshopper.Database.Sync.Retrofit.APIFactory;
-import app.smartshopper.Database.Sync.Retrofit.ApiService;
+import app.smartshopper.Database.Sync.APIFactory;
+import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Sync.Retrofit.Model.ProductList;
 import retrofit2.Call;
 import retrofit2.Callback;

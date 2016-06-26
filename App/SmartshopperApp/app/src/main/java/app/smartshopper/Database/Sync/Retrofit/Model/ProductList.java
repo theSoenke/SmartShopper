@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.smartshopper.Database.Entries.Product;
+import app.smartshopper.Database.Entries.User;
+
 /*
  * ProductList Model
  */

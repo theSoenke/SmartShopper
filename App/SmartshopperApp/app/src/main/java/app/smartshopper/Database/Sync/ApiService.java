@@ -1,8 +1,8 @@
-package app.smartshopper.Database.Sync.Retrofit;
+package app.smartshopper.Database.Sync;
 
 import java.util.ArrayList;
 
-import app.smartshopper.Database.Sync.Retrofit.Model.Product;
+import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Sync.Retrofit.Model.ProductList;
 import retrofit2.Call;
 import retrofit2.http.DELETE;

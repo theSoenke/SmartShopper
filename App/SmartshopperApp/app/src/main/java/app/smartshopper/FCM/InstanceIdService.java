@@ -6,11 +6,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
-
-import app.smartshopper.Database.Sync.Retrofit.APIFactory;
-import app.smartshopper.Database.Sync.Retrofit.ApiService;
-import app.smartshopper.Database.Sync.Retrofit.Model.ProductList;
+import app.smartshopper.Database.Sync.APIFactory;
+import app.smartshopper.Database.Sync.ApiService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -22,7 +22,6 @@ import android.view.MenuItem;
 
 import java.util.List;
 
-import app.smartshopper.Database.Sync.Retrofit.RetrofitTest;
 import app.smartshopper.HomeActivity;
 import app.smartshopper.R;
 

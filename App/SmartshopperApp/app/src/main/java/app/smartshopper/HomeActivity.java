@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import app.smartshopper.Database.Preferences;
-import app.smartshopper.Database.Sync.Retrofit.RetrofitTest;
+import app.smartshopper.Database.Sync.RetrofitTest;
 import app.smartshopper.Database.Sync.Synchronizer;
 import app.smartshopper.Settings.SettingsActivity;
 import app.smartshopper.ShoppingLists.GroupList.GroupListFragment;
