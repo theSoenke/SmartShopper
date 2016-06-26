@@ -45,8 +45,6 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         String insertQuery = MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "'" +
                 " AND " + MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
 
-        Log.i("INSERT PARTICIPANT", insertQuery);
-
         super.addEntryToDatabase(
                 entry,
                 insertQuery,

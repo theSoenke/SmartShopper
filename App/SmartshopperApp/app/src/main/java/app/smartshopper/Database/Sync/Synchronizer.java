@@ -29,28 +29,23 @@ public class Synchronizer {
     private ApiService restClient;
 
     public void sync(Context context) {
-        Log.i("SYNCHRONIZER", "Start synchronizing local database ...");
+        Log.i("Synchronizer", "Start synchronizing local database ...");
         // TODO connect to remote database and sync local database
 
         restClient = new APIFactory().getInstance();
+        Log.i("Synchronizer", "Got the rest client reference.");
 
+        Log.i("Synchronizer", "Create db helper ...");
         MySQLiteHelper helper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
         helper.onCreate(helper.getWritableDatabase());
+        Log.i("Synchronizer", "Created helper");
 
-        ProductDataSource p = syncProducts(context);
-//        Log.i("SYNCHRONIZER", "Sync shopping lists ...");
-//        ShoppingListDataSource s = syncShoppingLists(context);
-//        Log.i("SYNCHRONIZER", "Sync item entries ...");
-//        syncItemEntries(context, p, s);
-//
-//        Log.i("SYNCHRONIZER", "Sync user data ...");
-//        UserDataSource u = syncUsers(context);
-//        syncParticipants(context, s, u);
-//        Log.i("SYNCHRONIZER", "Finished synchronizing");
+        syncProducts(context);
     }
 
-    private ProductDataSource syncProducts(final Context context) {
+    private void syncProducts(final Context context) {
 
+        Log.i("Synchronizer", "Create product data source and enqueue request ...");
         final ProductDataSource p = new ProductDataSource(context);
         Call<ArrayList<Product>> remoteProductListCall = restClient.products();
 
@@ -62,19 +57,20 @@ public class Synchronizer {
                     List<Product> localProductList = p.getAllEntries();
                     Log.d("RestCall", "success");
 
-                    Log.i("SYNCHRONIZER", "Sync products ...");
-                    syncProducts(remoteProductList, localProductList, p);
-                    localProductList = p.getAllEntries();
+                    //TODO find a better solution for this. Beginning in this callback method doesn't feel right :/
 
-                    Log.i("SYNCHRONIZER", "Sync shopping lists ...");
+                    Log.i("Synchronizer", "Sync products ...");
+                    syncProducts(remoteProductList, localProductList, p);
+
+                    Log.i("Synchronizer", "Sync shopping lists ...");
                     ShoppingListDataSource s = syncShoppingLists(context);
-                    Log.i("SYNCHRONIZER", "Sync item entries ...");
+                    Log.i("Synchronizer", "Sync item entries ...");
                     syncItemEntries(context, p, s);
 
-                    Log.i("SYNCHRONIZER", "Sync user data ...");
+                    Log.i("Synchronizer", "Sync user data ...");
                     UserDataSource u = syncUsers(context);
                     syncParticipants(context, s, u);
-                    Log.i("SYNCHRONIZER", "Finished synchronizing");
+                    Log.i("Synchronizer", "Finished synchronizing");
 
                 } else {
                     Log.e("Error Code", String.valueOf(response.code()));
@@ -90,31 +86,7 @@ public class Synchronizer {
             }
         });
 
-//        s.add("Hammer", 200, 100);
-//        s.add("Bohrmaschine", 100, 100);
-//        s.add("Farbe", 0, 0);
-//
-//        s.add("Wurst", 0, 0);
-//        s.add("Käse", 0, 0);
-//        s.add("Tiefkühlpizza", 0, 0);
-//        s.add("Toast", 0, 0);
-//        s.add("Bratwurst", 0, 0);
-//        s.add("Curry-Ketchup", 0, 0);
-//        s.add("Tomate", 0, 0);
-//        s.add("Zwiebeln", 0, 0);
-//
-//        s.add("Bier", 0, 0);
-//
-//        s.add("Geschenke", 0, 0);
-//
-//        s.add("Kööm", 0, 0);
-//        s.add("Klootkugel", 0, 0);
-//        s.add("Notizblock", 0, 0);
-//
-//        s.add("Bier", 0, 0);
-//        s.add("Mate", 0, 0);
-
-        return p;
+        Log.i("Synchronizer", "Finished creating the product source and enqueueing the request.");
     }
 
     /**
@@ -269,7 +241,14 @@ public class Synchronizer {
         p.endTransaction();
     }
 
-
+    /**
+     * Gets a database entry with the given name. This is a solution for finding entries without the database.
+     * Use this to prevent deadlocks in mysql transactions.
+     *
+     * @param list The list with database entries.
+     * @param name The name of the entry you want to know.
+     * @return The database entry with the given name or {@code null} when the entry doesn't exist.
+     */
     private DatabaseEntry getEntryByName(List<? extends DatabaseEntry> list, String name) {
         for (DatabaseEntry entry : list) {
             if (entry.getEntryName().equals(name)) {
