@@ -109,16 +109,6 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         return participant;
     }
 
-    @Override
-    public JSONObject getJSONFromEntry(Participant entry) {
-        throw new UnsupportedOperationException("There's no JSON representation of an Participant! Use the data sources for the content you want to have as JSON.");
-    }
-
-    @Override
-    public Participant buildEntryFromJSON(JSONObject jsonObject) {
-        throw new UnsupportedOperationException("There's no JSON representation of an Participant! Use the data sources to add entries to the local database.");
-    }
-
     /**
      * Gets the users name of the given participant.
      *

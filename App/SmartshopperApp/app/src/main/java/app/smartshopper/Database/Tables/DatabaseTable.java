@@ -154,32 +154,6 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      */
     public abstract T cursorToEntry(Cursor cursor);
 
-    /**
-     * Turns an entry Object into a json object.
-     *
-     * @param entry The entry that should be converted into a json object.
-     * @return A json object that contains all information about the given entry.
-     */
-    public JSONObject getJSONFromEntry(T entry) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("id", entry.getId());
-            jsonObject.put("name", entry.getEntryName());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject;
-    }
-
-    /**
-     * Creates a new object of the given type T based on the data in the given json object.
-     *
-     * @param jsonObject A json object that contains all data to create an object of T.
-     * @return A new database entry object.
-     */
-    public abstract T buildEntryFromJSON(JSONObject jsonObject);
-
-
 
 
 

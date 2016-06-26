@@ -85,27 +85,4 @@ public class UserDataSource extends DatabaseTable<User> {
         user.setEntryName(cursor.getString(1));
         return user;
     }
-
-    @Override
-    public JSONObject getJSONFromEntry(User entry) {
-        JSONObject jsonObject = super.getJSONFromEntry(entry);
-
-        return jsonObject;
-    }
-
-    @Override
-    public User buildEntryFromJSON(JSONObject jsonObject) {
-        User user = new User();
-        try {
-            String id = jsonObject.getString("id");
-            user.setId(id);
-
-            String name = jsonObject.getString("name");
-            user.setEntryName(name);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return user;
-    }
 }

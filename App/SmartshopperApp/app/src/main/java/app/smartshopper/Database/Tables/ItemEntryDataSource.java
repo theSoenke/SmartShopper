@@ -148,16 +148,6 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         return entry;
     }
 
-    @Override
-    public JSONObject getJSONFromEntry(ItemEntry entry) {
-        throw new UnsupportedOperationException("There's no JSON representation of an ItemEntry! Use the data sources for the content you want to have as JSON.");
-    }
-
-    @Override
-    public ItemEntry buildEntryFromJSON(JSONObject jsonObject) {
-        throw new UnsupportedOperationException("There's no JSON representation of an ItemEntry! Use the data sources to add entries to the local database.");
-    }
-
     /**
      * Removes all duplicate entries for the given list and the product and determines the amount of the products.
      *
