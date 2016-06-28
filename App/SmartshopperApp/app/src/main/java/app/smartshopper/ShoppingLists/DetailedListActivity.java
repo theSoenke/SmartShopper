@@ -21,6 +21,8 @@ import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
+import app.smartshopper.Location.Store;
+import app.smartshopper.Location.StoreBeaconTool;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.ListTabs.ItemListEntry;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
@@ -39,10 +41,22 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     ItemEntryDataSource _itemSource;
     ShoppingList _shoppingList;
     ListPagerAdapter listPagerAdapter;
+    //Get Store from BeaconID
+    StoreBeaconTool storeBeaconTool;
+    Store store = Store.Default;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Laden wird bei erkennen von Beacons geändert. Nur falls hier benötigt.
+        storeBeaconTool = new StoreBeaconTool(this) {
+            @Override
+            public void OnBeaconUpdate()
+            {
+               store = getStore();
+            }
+        };
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.tab_view_pager);
 
@@ -287,6 +301,8 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         dialog.show();
 
     }
+
+
 
 }
 

@@ -63,8 +63,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private LocationLayer locationLayer;
 
     private int sector = 0;
-    private int width = 480;
-    private int height = 700;
+    private int width;
+    private int height;
 
     Store store = Store.Default;
 
@@ -77,14 +77,14 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         beaconManager = BeaconManager.getInstanceForApplication(this.getActivity());
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         beaconManager.bind(this);
-        Log.i("Navigation","OnCreate");
+        Log.i("Navigation", "OnCreate");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState)
     {
-        Log.i("Navigation","OnCreateView");
+        Log.i("Navigation", "OnCreateView");
         locationTool = new LocationTool();
 
         View view = inflater.inflate(R.layout.tab_navigation, group, false);
@@ -96,26 +96,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
 
         mapView = (MapView) view.findViewById(R.id.mapview2);
-        Bitmap bitmap = null;
-        try
-        {
-            if (store == Store.Raum)
-            {
-                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
-            }
-            else if (store == Store.Penny)
-            {
-                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("penny.png"));
-            }
-            else
-            {
-                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
-            }
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-            Log.e("ERROR: ", e.getMessage());
-        }
+
         mapView.setMapViewListener(new MapViewListener() {
             @Override
             public void onMapLoadSuccess()
@@ -139,7 +120,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                         // Create ArrayAdapter using an empty list
                         final ArrayAdapter<ItemListEntry> listAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
 
-                        for (ItemListEntry item : markIndexItemListEntryMap.get(num)) {
+                        for (ItemListEntry item : markIndexItemListEntryMap.get(num))
+                        {
                             listAdapter.add(item);
                         }
 
@@ -148,7 +130,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
                         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
-                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
+                            {
                                 final ItemListEntry itemEntry = listAdapter.getItem(position);
                                 _productHolder.openConfigureItemDialog(itemEntry);
                                 dialog.dismiss();
@@ -172,7 +155,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             }
         });
 
-        mapView.loadMap(bitmap);
+        refreshMap();
 
         return view;
     }
@@ -181,39 +164,43 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     public void onAttach(Context context)
     {
         super.onAttach(context);
-        if(context instanceof ProductHolder)
+        if (context instanceof ProductHolder)
         {
             _productHolder = (ProductHolder) context;
-        }
-        else
+        } else
         {
-            throw new ClassCastException(context.toString()+" has to implement ProductHolder!");
+            throw new ClassCastException(context.toString() + " has to implement ProductHolder!");
         }
     }
 
     public void productsChanged()
     {
-        for(int i=0;0<marks.size();++i)
+        for (int i = 0; 0 < marks.size(); ++i)
         {
             marks.remove(0);
             marksName.remove(0);
             markIndexItemListEntryMap.clear();
         }
-        for(ItemEntry entry : _productHolder.getItemEntries())
+        for (ItemEntry entry : _productHolder.getItemEntries())
         {
-            if(!entry.isBought()) {
+            //TODO Nur Produkte die dem Store entsprechen laden.
+            if (!entry.isBought())
+            {
                 Product product = _productHolder.getProductFromID(entry.getProductID());
                 PointF position = new PointF((float) product.getPosX(), (float) product.getPosY());
                 String name = product.getEntryName();
                 boolean foundPosition = false;
-                for (int i = 0; i < marks.size(); ++i) {
-                    if (marks.get(i).equals(position)) {
+                for (int i = 0; i < marks.size(); ++i)
+                {
+                    if (marks.get(i).equals(position))
+                    {
                         foundPosition = true;
                         marksName.set(i, marksName.get(i) + ", " + name);
                         markIndexItemListEntryMap.get(i).add(new ItemListEntry(entry));
                     }
                 }
-                if (!foundPosition) {
+                if (!foundPosition)
+                {
                     markIndexItemListEntryMap.put(marks.size(), new HashSet<ItemListEntry>());
                     markIndexItemListEntryMap.get(marks.size()).add(new ItemListEntry(entry));
                     marks.add(position);
@@ -285,17 +272,17 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             @Override
             public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region)
             {
-                Log.i("Navigation","Beacon noted");
+                Log.i("Navigation", "Beacon noted");
                 locationTool.updateBeacons(beacons);
                 sector = locationTool.computeSector();
-                Log.i("Navigation","Laden: " +store.toString());
-                Log.i("Navigation","Laden Tool: " +locationTool.getLaden().toString());
+                Log.i("Navigation", "Laden: " + store.toString());
+                Log.i("Navigation", "Laden Tool: " + locationTool.getLaden().toString());
 
                 if (store != locationTool.getLaden())
                 {
                     store = locationTool.getLaden();
                     refreshMap();
-                    Log.i("Navigation","Map changed");
+                    Log.i("Navigation", "Map changed");
                 }
                 updatePosition();
             }
@@ -317,14 +304,18 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             if (store == Store.Raum)
             {
                 bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
-            }
-            else if (store == Store.Penny)
+                width = 480;
+                height = 700;
+            } else if (store == Store.Penny)
             {
                 bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("penny.png"));
-            }
-            else
+                width = 440;
+                height = 1000;
+            } else
             {
                 bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+                width = 480;
+                height = 700;
             }
         } catch (IOException e)
         {
@@ -332,6 +323,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             Log.e("ERROR: ", e.getMessage());
         }
         mapView.loadMap(bitmap);
+
+
     }
 
 
@@ -343,12 +336,14 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
 
     @Override
-    public void unbindService(ServiceConnection serviceConnection) {
+    public void unbindService(ServiceConnection serviceConnection)
+    {
         getActivity().unbindService(serviceConnection);
     }
 
     @Override
-    public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
+    public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i)
+    {
         return getActivity().bindService(intent, serviceConnection, i);
     }
 }

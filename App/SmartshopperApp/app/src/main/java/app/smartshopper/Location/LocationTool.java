@@ -206,6 +206,8 @@ public class LocationTool{
         }
     }
 
+
+
     public Store getLaden()
     {
         return store;
