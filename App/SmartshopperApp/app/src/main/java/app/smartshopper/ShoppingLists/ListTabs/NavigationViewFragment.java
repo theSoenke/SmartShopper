@@ -55,12 +55,16 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private BitmapLayer bitmapLayer;
     private List<PointF> marks;
     private List<String> marksName;
+    private List<Integer> marksType;
     private Map<Integer, Set<ItemListEntry>> markIndexItemListEntryMap;
     private ProductHolder _productHolder;
 
     private BeaconManager beaconManager;
     private LocationTool locationTool;
     private LocationLayer locationLayer;
+
+    private static final int UNBOUGHT_ITEM_MARKTYPE = 1;
+    private static final int BOUGHT_ITEM_MARKTYPE = 2;
 
     private int sector = 0;
     private int width;
@@ -92,6 +96,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         MapUtils.init(0, 0);
         marks = new ArrayList<>();
         marksName = new ArrayList<>();
+        marksType = new ArrayList<>();
         markIndexItemListEntryMap = new HashMap<>();
 
 
@@ -106,7 +111,22 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 mapView.addLayer(locationLayer);
 
                 mapView.addLayer(bitmapLayer);
-                MarkLayer markLayer = new MarkLayer(mapView, marks, marksName);
+                MarkLayer markLayer = new MarkLayer(mapView);
+                markLayer.setMarks(marks);
+                markLayer.setMarksName(marksName);
+                markLayer.setMarksType(marksType);
+
+                Bitmap bmpUnboughtMark = null;
+                Bitmap bmpUnboughtMarkTouch = null;
+                try {
+                    bmpUnboughtMark = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_unbought.png"));
+                    bmpUnboughtMarkTouch = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_touch.png"));
+                }
+                catch(IOException e)
+                {
+                    e.printStackTrace();
+                }
+                markLayer.addMarkType(UNBOUGHT_ITEM_MARKTYPE, bmpUnboughtMark, bmpUnboughtMarkTouch);
                 markLayer.setMarkIsClickListener(new MarkLayer.MarkIsClickListener() {
                     @Override
                     public void markIsClick(int num)
@@ -179,6 +199,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         {
             marks.remove(0);
             marksName.remove(0);
+            marksType.remove(0);
             markIndexItemListEntryMap.clear();
         }
         for (ItemEntry entry : _productHolder.getItemEntries())
@@ -205,6 +226,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                     markIndexItemListEntryMap.get(marks.size()).add(new ItemListEntry(entry));
                     marks.add(position);
                     marksName.add(name);
+                    marksType.add(UNBOUGHT_ITEM_MARKTYPE);
                 }
             }
         }
