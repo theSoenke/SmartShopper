@@ -76,4 +76,10 @@ public interface ProductHolder {
      */
     Product getProductFromID(String productID);
 
+    /**
+     * Opens a dialog to configure an ItemListEntry
+     *
+     * @param itemEntry The ItemListEntry to configure
+     */
+    void openConfigureItemDialog(final ItemListEntry itemEntry);
 }

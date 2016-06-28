@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -54,7 +55,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private BitmapLayer bitmapLayer;
     private List<PointF> marks;
     private List<String> marksName;
-    private Map<Integer, Set<ItemEntry>> markIndexItemEntryMap;
+    private Map<Integer, Set<ItemListEntry>> markIndexItemListEntryMap;
     private ProductHolder _productHolder;
 
     private BeaconManager beaconManager;
@@ -91,7 +92,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         MapUtils.init(0, 0);
         marks = new ArrayList<>();
         marksName = new ArrayList<>();
-        markIndexItemEntryMap = new HashMap<>();
+        markIndexItemListEntryMap = new HashMap<>();
 
 
         mapView = (MapView) view.findViewById(R.id.mapview2);
@@ -136,16 +137,23 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                         ListView list = (ListView) dialog.findViewById(R.id.items_at_mark_list);
 
                         // Create ArrayAdapter using an empty list
-                        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
+                        final ArrayAdapter<ItemListEntry> listAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
 
-                        for (ItemEntry item : markIndexItemEntryMap.get(num)) {
-                            String entryString = item.getAmount() + " " + _productHolder.getProductFromID(item.getProductID()).
-                                    getEntryName();
-                            listAdapter.add(entryString);
+                        for (ItemListEntry item : markIndexItemListEntryMap.get(num)) {
+                            listAdapter.add(item);
                         }
 
                         // add adapter with items to list (necessary to display items)
                         list.setAdapter(listAdapter);
+
+                        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                                final ItemListEntry itemEntry = listAdapter.getItem(position);
+                                _productHolder.openConfigureItemDialog(itemEntry);
+                                dialog.dismiss();
+                            }
+                        });
                         dialog.show();
                     }
                 });
@@ -189,7 +197,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         {
             marks.remove(0);
             marksName.remove(0);
-            markIndexItemEntryMap.clear();
+            markIndexItemListEntryMap.clear();
         }
         for(ItemEntry entry : _productHolder.getItemEntries())
         {
@@ -202,12 +210,12 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                     if (marks.get(i).equals(position)) {
                         foundPosition = true;
                         marksName.set(i, marksName.get(i) + ", " + name);
-                        markIndexItemEntryMap.get(i).add(entry);
+                        markIndexItemListEntryMap.get(i).add(new ItemListEntry(entry));
                     }
                 }
                 if (!foundPosition) {
-                    markIndexItemEntryMap.put(marks.size(), new HashSet<ItemEntry>());
-                    markIndexItemEntryMap.get(marks.size()).add(entry);
+                    markIndexItemListEntryMap.put(marks.size(), new HashSet<ItemListEntry>());
+                    markIndexItemListEntryMap.get(marks.size()).add(new ItemListEntry(entry));
                     marks.add(position);
                     marksName.add(name);
                 }
