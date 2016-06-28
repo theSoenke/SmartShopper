@@ -19,6 +19,7 @@ public class LocationTool{
     public int beaconID1, beaconID2, beaconID3, beaconID4;
     private PointF p1, p2, p3, p4;
     List<BeaconEntity> beacons;
+    List<BeaconEntity> sortedBeacons;
 
     HashMap<Integer,Store> idLadenMap;
     Store store = Store.Default;
@@ -79,7 +80,7 @@ public class LocationTool{
 
     public int computeSector()
     {
-        List<BeaconEntity> sortedBeacons = beacons;
+        sortedBeacons = new ArrayList<>(beacons);
         Collections.sort(sortedBeacons);
         updateLaden(sortedBeacons.get(0).getMinor());
         if (sortedBeacons.get(0).getIdentifier() == 1)
