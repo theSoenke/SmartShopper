@@ -62,7 +62,6 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private LocationTool locationTool;
     private LocationLayer locationLayer;
 
-    private int sector = 0;
     private int width;
     private int height;
 
@@ -143,6 +142,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 mapView.addLayer(markLayer);
                 locationLayer = new LocationLayer(mapView, new PointF(50, 50));
                 locationLayer.setOpenCompass(false);
+                locationLayer.isVisible = false;
                 mapView.addLayer(locationLayer);
                 productsChanged();
                 mapView.refresh();
@@ -211,57 +211,56 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         mapView.refresh();
     }
 
-    private void updatePosition()
+    private void updatePosition(int sector)
     {
-        int heightPart = height / 10, widthPart = width / 4;
+        float heightPart = height / 10, widthPart = width / 4;
 
         switch (sector)
         {
+            case 0:
+                locationLayer.isVisible =false;
+                break;
             case 1:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 9 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 9 * heightPart);
                 break;
             case 2:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 7 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 7 * heightPart);
                 break;
             case 3:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 5 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 5 * heightPart);
                 break;
             case 4:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 3 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 3 * heightPart);
                 break;
             case 5:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 1 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 1 * heightPart);
                 break;
             case 6:
-                locationLayer.getCurrentPosition().set(2 * widthPart, 1 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(2 * widthPart, 1 * heightPart);
                 break;
             case 7:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 1 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 1 * heightPart);
                 break;
             case 8:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 3 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 3 * heightPart);
                 break;
             case 9:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 5 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 5 * heightPart);
                 break;
             case 10:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 7 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 7 * heightPart);
                 break;
             case 11:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 9 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 9 * heightPart);
                 break;
         }
+    }
+    
+    public void updateLocationLayer(float width, float height)
+    {
+        locationLayer.setCurrentPosition(new PointF(width, height));
+        locationLayer.isVisible=true;
+        mapView.refresh();
     }
 
 
@@ -274,7 +273,6 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             {
                 Log.i("Navigation", "Beacon noted");
                 locationTool.updateBeacons(beacons);
-                sector = locationTool.computeSector();
                 Log.i("Navigation", "Laden: " + store.toString());
                 Log.i("Navigation", "Laden Tool: " + locationTool.getLaden().toString());
 
@@ -284,7 +282,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                     refreshMap();
                     Log.i("Navigation", "Map changed");
                 }
-                updatePosition();
+                updatePosition(locationTool.computeSector());
             }
         });
 
