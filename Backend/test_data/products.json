@@ -1,101 +1,31 @@
 {
 	"products": [{
-		"name": "Bohrmaschine",
-		"location": {
-			"x": 0,
-			"y": 10
-		},
-		"market": "d537"
+		"name": "Bohrmaschine"
 	}, {
-		"name": "Farbe",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Farbe"
 	}, {
-		"name": "Wurst",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Wurst"
 	}, {
-		"name": "Käse",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Käse"
 	}, {
-		"name": "Tiefkühlpizza",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Tiefkühlpizza"
 	}, {
-		"name": "Toast",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Toast"
 	}, {
-		"name": "Bratwurst",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Bratwurst"
 	}, {
-		"name": "Curry-Ketchup",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Curry-Ketchup"
 	}, {
-		"name": "Tomate",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Tomate"
 	}, {
-		"name": "Zwiebeln",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Zwiebeln"
 	}, {
-		"name": "Bier",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Bier"
 	}, {
-		"name": "Kööm",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Kööm"
 	}, {
-		"name": "Klootkugel",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Klootkugel"
 	}, {
-		"name": "Notizblock",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "d537"
+		"name": "Notizblock"
 	}]
 }

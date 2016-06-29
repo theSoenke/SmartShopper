@@ -1,12 +1,21 @@
 'use strict'
 
 const mongoose = require('mongoose')
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
 let marketSchema = new Schema({
   name: {type: String, required: true, text: true},
-  products: [ObjectId],
+  products: [{
+    _id: false,
+    product: {type: ObjectId, ref: 'Product'},
+    price: Number,
+    location: {
+      x: Number,
+      y: Number
+    }
+  }],
   created_at: Date,
   updated_at: Date
 })
