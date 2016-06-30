@@ -9,14 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.TextView;
+
+import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Sync.APIFactory;
@@ -30,7 +30,8 @@ import retrofit2.Response;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity
+{
 	private static final String TAG = LoginActivity.class.getSimpleName();
 
 	// UI references.
@@ -41,7 +42,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
@@ -49,23 +51,23 @@ public class LoginActivity extends AppCompatActivity {
 		mUserView = (TextInputLayout) findViewById(R.id.user_name);
 		mPasswordView = (TextInputLayout) findViewById(R.id.password);
 
-		mPasswordView.getEditText().setOnEditorActionListener(new TextView.OnEditorActionListener() {
+		Button signInButton = (Button) findViewById(R.id.sign_in_button);
+		signInButton.setOnClickListener(new OnClickListener()
+		{
 			@Override
-			public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-				if (id == R.id.login || id == EditorInfo.IME_ACTION_DONE)
-				{
-					attemptLogin();
-					return true;
-				}
-				return false;
+			public void onClick(View view)
+			{
+				authenticateUser(true);
 			}
 		});
 
-		Button signInButton = (Button) findViewById(R.id.email_sign_in_button);
-		signInButton.setOnClickListener(new OnClickListener() {
+		Button registerButton = (Button) findViewById(R.id.register_button);
+		registerButton.setOnClickListener(new OnClickListener()
+		{
 			@Override
-			public void onClick(View view) {
-				attemptLogin();
+			public void onClick(View view)
+			{
+				authenticateUser(false);
 			}
 		});
 
@@ -73,7 +75,8 @@ public class LoginActivity extends AppCompatActivity {
 		mProgressDialog.setMessage(getString(R.string.wait));
 	}
 
-	public static boolean isAuthenticated(Context context) {
+	public static boolean isAuthenticated(Context context)
+	{
 		if (Preferences.preferencesExist(context))
 		{
 			return true;
@@ -87,7 +90,8 @@ public class LoginActivity extends AppCompatActivity {
 	 * If there are form errors (invalid username, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
-	private void attemptLogin() {
+	private void authenticateUser(boolean login)
+	{
 		// Reset errors.
 		mUserView.setError(null);
 		mPasswordView.setError(null);
@@ -139,17 +143,47 @@ public class LoginActivity extends AppCompatActivity {
 			Preferences.saveSharedSetting(this, "hash", hash);
 			Preferences.saveSharedSetting(this, "userName", userName);
 
-			startAuthentication();
+			if (login)
+			{
+				startAuthentication();
+			}
+			else
+			{
+				startRegistration();
+			}
 		}
 	}
 
-	public void startAuthentication() {
+	private boolean isUserNameValid(String user)
+	{
+		return user.length() > 3;
+	}
+
+	/**
+	 * Shows the progress UI
+	 */
+	private void showProgress(final boolean show)
+	{
+		if (show)
+		{
+			mProgressDialog.show();
+		}
+		else
+		{
+			mProgressDialog.dismiss();
+		}
+	}
+
+	public void startAuthentication()
+	{
 		ApiService restClient = new APIFactory().getInstance();
 		Call<ArrayList<ProductList>> call = restClient.listsLimit(1);
 
-		call.enqueue(new Callback<ArrayList<ProductList>>() {
+		call.enqueue(new Callback<ArrayList<ProductList>>()
+		{
 			@Override
-			public void onResponse(Call<ArrayList<ProductList>> call, Response<ArrayList<ProductList>> response) {
+			public void onResponse(Call<ArrayList<ProductList>> call, Response<ArrayList<ProductList>> response)
+			{
 				if (response.isSuccessful())
 				{
 					Log.e(TAG, "Login successful");
@@ -170,28 +204,49 @@ public class LoginActivity extends AppCompatActivity {
 			}
 
 			@Override
-			public void onFailure(Call<ArrayList<ProductList>> call, Throwable t) {
+			public void onFailure(Call<ArrayList<ProductList>> call, Throwable t)
+			{
 				Log.d(TAG, "login failure");
 				Log.d(TAG, t.getMessage());
 			}
 		});
 	}
 
-	private boolean isUserNameValid(String user) {
-		return user.length() > 3;
-	}
+	public void startRegistration()
+	{
+		ApiService restClient = new APIFactory().getInstance();
+		Call<JsonElement> call = restClient.register();
 
-	/**
-	 * Shows the progress UI
-	 */
-	private void showProgress(final boolean show) {
-		if (show)
+		call.enqueue(new Callback<JsonElement>()
 		{
-			mProgressDialog.show();
-		}
-		else
-		{
-			mProgressDialog.dismiss();
-		}
+			@Override
+			public void onResponse(Call<JsonElement> call, Response<JsonElement> response)
+			{
+
+				if (response.isSuccessful())
+				{
+					Log.e(TAG, "Registration successful");
+
+					mProgressDialog.dismiss(); // Prevent WindowLeaked
+					startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+					finish();
+				}
+				else
+				{
+					Preferences.clearPreferences(LoginActivity.this);
+					mUserView.setError(getString(R.string.error_duplicate_username));
+					mUserView.requestFocus();
+
+					showProgress(false);
+				}
+			}
+
+			@Override
+			public void onFailure(Call<JsonElement> call, Throwable t)
+			{
+				Log.d(TAG, "register failure");
+				Log.d(TAG, t.getMessage());
+			}
+		});
 	}
 }

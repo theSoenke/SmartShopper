@@ -1,5 +1,7 @@
 package app.smartshopper.Database.Sync;
 
+import com.google.gson.JsonElement;
+
 import java.util.ArrayList;
 
 import app.smartshopper.Database.Entries.Product;
@@ -42,8 +44,8 @@ public interface ApiService {
 
 	//    POST http://api.tecfuture.de:3000/user/register
 	@POST("user/register")
-	public Call<String> register();
+	public Call<JsonElement> register();
 
 	@POST("user/token")
-	public Call registerToken(@Field("token") String token);
+	public Call<JsonElement> registerToken(@Field("token") String token);
 }

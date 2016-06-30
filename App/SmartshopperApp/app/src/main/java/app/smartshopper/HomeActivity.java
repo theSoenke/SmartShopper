@@ -69,9 +69,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			}
 		}
 
-		RetrofitTest test = new RetrofitTest();
-		test.testRestClient();
-
 		Synchronizer synchronizer = new Synchronizer();
 		synchronizer.sync(getApplicationContext());
 
