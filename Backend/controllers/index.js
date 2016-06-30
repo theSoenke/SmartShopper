@@ -3,10 +3,11 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const config = require('../config')
+const auth = require('./auth')
 const products = require('./products')
+const markets = require('./markets')
 const search = require('./search')
 const lists = require('./lists')
-const auth = require('./auth')
 
 const router = express.Router()
 
@@ -32,8 +33,9 @@ router.put('/lists/:id', lists.updateList)
 router.delete('/lists/:id', lists.deleteList)
 router.get('/search/:query', search.findProducts)
 router.get('/products', products.getProducts)
+router.get('/markets', markets.getMarkets)
 router.post('/import/products', products.uploadProducts)
-router.post('/import/markets', products.uploadMarketProducts)
+router.post('/import/markets', markets.uploadMarketData)
 
 router.use(function (err, req, res, next) {
   if (req.app.get('env') !== 'development') {
