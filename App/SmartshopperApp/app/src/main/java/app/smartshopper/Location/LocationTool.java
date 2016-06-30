@@ -31,7 +31,7 @@ public class LocationTool{
         p3 = new PointF(4.8f, 7);
         p4 = new PointF(0, 7);
 
-        beaconID1 = 24286; //Felix Beacon esti 008
+        beaconID1 = 41230; //e10
         beaconID2 = 1744; //esti003
         beaconID3 = 21333; //esti005
         beaconID4 = 31883; //esti002
@@ -44,9 +44,9 @@ public class LocationTool{
 
         idLadenMap = new HashMap<Integer, Store>();
         idLadenMap.put(beaconID1, Store.Raum);
-        idLadenMap.put(beaconID2, Store.Penny);
-        idLadenMap.put(beaconID3, Store.Penny);
-        idLadenMap.put(beaconID4, Store.Penny);
+        idLadenMap.put(beaconID2, Store.Raum);
+        idLadenMap.put(beaconID3, Store.Raum);
+        idLadenMap.put(beaconID4, Store.Raum);
 
 
 
@@ -74,7 +74,6 @@ public class LocationTool{
     public void updateLaden(int minor)
     {
         store = idLadenMap.get(minor);
-        Log.i("Navigation","Registered minor"+ minor);
     }
 
 

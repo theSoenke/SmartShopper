@@ -25,6 +25,7 @@ import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.MapViewListener;
 import com.onlylemi.mapview.library.layer.BitmapLayer;
 import com.onlylemi.mapview.library.layer.LocationLayer;
+import com.onlylemi.mapview.library.layer.MapBaseLayer;
 import com.onlylemi.mapview.library.layer.MarkLayer;
 import com.onlylemi.mapview.library.utils.MapUtils;
 
@@ -72,6 +73,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private int height;
 
     Store store = Store.Default;
+    private boolean mapAlreadyLoaded = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
@@ -108,7 +110,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             public void onMapLoadSuccess()
             {
                 Log.i("Map", "onMapLoadSuccess");
-
+                if (!mapAlreadyLoaded)
+                {
                 mapView.addLayer(locationLayer);
 
                 mapView.addLayer(bitmapLayer);
@@ -142,16 +145,16 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                         dialog.setTitle("Items at this mark:");
                         ListView list = (ListView) dialog.findViewById(R.id.items_at_mark_list);
 
-                        // Create ArrayAdapter using an empty list
-                        final ArrayAdapter<ItemListEntry> listAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
+                            // Create ArrayAdapter using an empty list
+                            final ArrayAdapter<ItemListEntry> listAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
 
-                        for (ItemListEntry item : markIndexItemListEntryMap.get(num))
-                        {
-                            listAdapter.add(item);
-                        }
+                            for (ItemListEntry item : markIndexItemListEntryMap.get(num))
+                            {
+                                listAdapter.add(item);
+                            }
 
-                        // add adapter with items to list (necessary to display items)
-                        list.setAdapter(listAdapter);
+                            // add adapter with items to list (necessary to display items)
+                            list.setAdapter(listAdapter);
 
                         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
@@ -180,7 +183,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 mapView.addLayer(locationLayer);
                 productsChanged();
                 mapView.refresh();
-            }
+            }}
 
             @Override
             public void onMapLoadFail()
@@ -248,59 +251,64 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 }
             }
         }
-        mapView.refresh();
+//        mapView.refresh();
     }
 
     private void updatePosition(int sector)
     {
+        Log.i("Navigation", "Sector " + sector);
         float heightPart = height / 10, widthPart = width / 4;
 
         switch (sector)
         {
             case 0:
-                locationLayer.isVisible =false;
+                locationLayer.isVisible = false;
                 break;
             case 1:
-                updateLocationLayer(3 * widthPart, 9 * heightPart);
+                updateLocationLayer(3 * widthPart, 1 * heightPart);
                 break;
             case 2:
-                updateLocationLayer(3 * widthPart, 7 * heightPart);
+                updateLocationLayer(3 * widthPart, 3 * heightPart);
                 break;
             case 3:
                 updateLocationLayer(3 * widthPart, 5 * heightPart);
                 break;
             case 4:
-                updateLocationLayer(3 * widthPart, 3 * heightPart);
+                updateLocationLayer(3 * widthPart, 7 * heightPart);
                 break;
             case 5:
-                updateLocationLayer(3 * widthPart, 1 * heightPart);
+                updateLocationLayer(3 * widthPart, 9 * heightPart);
                 break;
             case 6:
-                updateLocationLayer(2 * widthPart, 1 * heightPart);
+                updateLocationLayer(2 * widthPart, 9 * heightPart);
                 break;
             case 7:
-                updateLocationLayer(1 * widthPart, 1 * heightPart);
+                updateLocationLayer(1 * widthPart, 9 * heightPart);
                 break;
             case 8:
-                updateLocationLayer(1 * widthPart, 3 * heightPart);
+                updateLocationLayer(1 * widthPart, 7 * heightPart);
                 break;
             case 9:
                 updateLocationLayer(1 * widthPart, 5 * heightPart);
                 break;
             case 10:
-                updateLocationLayer(1 * widthPart, 7 * heightPart);
+                updateLocationLayer(1 * widthPart, 3 * heightPart);
                 break;
             case 11:
-                updateLocationLayer(1 * widthPart, 9 * heightPart);
+                updateLocationLayer(1 * widthPart, 1 * heightPart);
+
                 break;
         }
     }
 
     public void updateLocationLayer(float width, float height)
     {
+        Log.i("Navigation", "Layers: " + mapView.getLayers().size());
+
         locationLayer.setCurrentPosition(new PointF(width, height));
-        locationLayer.isVisible=true;
+        locationLayer.isVisible = true;
         mapView.refresh();
+        Log.i("Navigation", "LocationLayer Position: " + locationLayer.getCurrentPosition());
     }
 
 

@@ -42,21 +42,21 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     ShoppingList _shoppingList;
     ListPagerAdapter listPagerAdapter;
     //Get Store from BeaconID
-    StoreBeaconTool storeBeaconTool;
-    Store store = Store.Default;
+//    StoreBeaconTool storeBeaconTool;
+//    Store store = Store.Default;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Laden wird bei erkennen von Beacons geändert. Nur falls hier benötigt.
-        storeBeaconTool = new StoreBeaconTool(this) {
-            @Override
-            public void OnBeaconUpdate()
-            {
-               store = getStore();
-            }
-        };
+//        //Laden wird bei erkennen von Beacons geändert. Nur falls hier benötigt.
+//        storeBeaconTool = new StoreBeaconTool(this) {
+//            @Override
+//            public void OnBeaconUpdate()
+//            {
+//               store = getStore();
+//            }
+//        };
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.tab_view_pager);
 

@@ -54,7 +54,6 @@ public abstract class StoreBeaconTool implements BeaconConsumer {
     public void updateStore(int minor)
     {
         st = idLadenMap.get(minor);
-        Log.i("Navigation", "Registered minor" + minor);
     }
 
     public Store getStore()
