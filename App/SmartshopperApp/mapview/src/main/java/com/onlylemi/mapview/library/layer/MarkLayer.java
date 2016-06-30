@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 
 import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.utils.MapMath;
-import com.onlylemi.mapview.library.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +38,8 @@ public class MarkLayer extends MapBaseLayer {
 
     private Paint paint;
 
+    private boolean markTouchedHighLighted;
+
     public MarkLayer(MapView mapView) {
         super(mapView);
         marks = new ArrayList<>();
@@ -46,6 +47,7 @@ public class MarkLayer extends MapBaseLayer {
         marksType = new ArrayList<>();
         bmpMarkTypes = new HashMap<>();
         bmpMarkTypesTouch = new HashMap<>();
+        markTouchedHighLighted = true;
         initLayer();
     }
 
@@ -57,6 +59,11 @@ public class MarkLayer extends MapBaseLayer {
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
+    }
+
+    public void highlightMarkTouch(boolean enable)
+    {
+        markTouchedHighLighted = enable;
     }
 
     @Override
@@ -111,7 +118,7 @@ public class MarkLayer extends MapBaseLayer {
                     //mark ico
                     canvas.drawBitmap(bmpMark, goal[0] - bmpMark.getWidth() / 2,
                             goal[1] - bmpMark.getHeight() / 2, paint);
-                    if (i == num && isClickMark) {
+                    if (markTouchedHighLighted && i == num && isClickMark) {
                         canvas.drawBitmap(bmpMarkTouch, goal[0] - bmpMarkTouch.getWidth() / 2,
                                 goal[1] - bmpMarkTouch.getHeight(), paint);
                     }

@@ -115,18 +115,23 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 markLayer.setMarks(marks);
                 markLayer.setMarksName(marksName);
                 markLayer.setMarksType(marksType);
+                markLayer.highlightMarkTouch(false);
 
                 Bitmap bmpUnboughtMark = null;
-                Bitmap bmpUnboughtMarkTouch = null;
+                Bitmap bmpMarkTouch = null;
+                Bitmap bmpBoughtMark = null;
+
                 try {
                     bmpUnboughtMark = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_unbought.png"));
-                    bmpUnboughtMarkTouch = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_touch.png"));
+                    bmpMarkTouch = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_touch.png"));
+                    bmpBoughtMark = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_bought.png"));
                 }
                 catch(IOException e)
                 {
                     e.printStackTrace();
                 }
-                markLayer.addMarkType(UNBOUGHT_ITEM_MARKTYPE, bmpUnboughtMark, bmpUnboughtMarkTouch);
+                markLayer.addMarkType(UNBOUGHT_ITEM_MARKTYPE, bmpUnboughtMark, bmpMarkTouch);
+                markLayer.addMarkType(BOUGHT_ITEM_MARKTYPE, bmpBoughtMark, bmpMarkTouch);
                 markLayer.setMarkIsClickListener(new MarkLayer.MarkIsClickListener() {
                     @Override
                     public void markIsClick(int num)
@@ -206,27 +211,31 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         for (ItemEntry entry : _productHolder.getItemEntries())
         {
             //TODO Nur Produkte die dem Store entsprechen laden.
-            if (!entry.isBought())
-            {
-                Product product = _productHolder.getProductFromID(entry.getProductID());
-                PointF position = new PointF((float) product.getPosX(), (float) product.getPosY());
-                String name = product.getEntryName();
-                boolean foundPosition = false;
-                for (int i = 0; i < marks.size(); ++i)
-                {
-                    if (marks.get(i).equals(position))
+            Product product = _productHolder.getProductFromID(entry.getProductID());
+            PointF position = new PointF((float) product.getPosX(), (float) product.getPosY());
+            String name = product.getEntryName();
+            boolean foundPosition = false;
+            for (int i = 0; i < marks.size(); ++i) {
+                if (marks.get(i).equals(position)) {
+                    foundPosition = true;
+                    marksName.set(i, marksName.get(i) + ", " + name);
+                    markIndexItemListEntryMap.get(i).add(new ItemListEntry(entry));
+                    if(!entry.isBought() && marksType.get(i) == BOUGHT_ITEM_MARKTYPE)
                     {
-                        foundPosition = true;
-                        marksName.set(i, marksName.get(i) + ", " + name);
-                        markIndexItemListEntryMap.get(i).add(new ItemListEntry(entry));
+                        marksType.set(i, UNBOUGHT_ITEM_MARKTYPE);
                     }
                 }
-                if (!foundPosition)
+            }
+            if (!foundPosition) {
+                markIndexItemListEntryMap.put(marks.size(), new HashSet<ItemListEntry>());
+                markIndexItemListEntryMap.get(marks.size()).add(new ItemListEntry(entry));
+                marks.add(position);
+                marksName.add(name);
+                if(entry.isBought()) {
+                    marksType.add(BOUGHT_ITEM_MARKTYPE);
+                }
+                else
                 {
-                    markIndexItemListEntryMap.put(marks.size(), new HashSet<ItemListEntry>());
-                    markIndexItemListEntryMap.get(marks.size()).add(new ItemListEntry(entry));
-                    marks.add(position);
-                    marksName.add(name);
                     marksType.add(UNBOUGHT_ITEM_MARKTYPE);
                 }
             }
