@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -136,7 +137,6 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                     @Override
                     public void markIsClick(int num)
                     {
-                        Toast.makeText(getContext(), marksName.get(num), Toast.LENGTH_SHORT).show();
                         final Dialog dialog = new Dialog(getContext());
                         dialog.setContentView(R.layout.dialog_items_at_mark);
                         dialog.setTitle("Items at this mark:");
@@ -159,6 +159,14 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                             {
                                 final ItemListEntry itemEntry = listAdapter.getItem(position);
                                 _productHolder.openConfigureItemDialog(itemEntry);
+                                dialog.dismiss();
+                            }
+                        });
+
+                        Button closeButton = (Button) dialog.findViewById(R.id.dialog_btClose_items_at_mark_list);
+                        closeButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
                                 dialog.dismiss();
                             }
                         });
