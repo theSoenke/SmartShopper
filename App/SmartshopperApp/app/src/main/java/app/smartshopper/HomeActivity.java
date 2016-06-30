@@ -38,14 +38,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		new Preferences(this);
+
 		if (!LoginActivity.isAuthenticated(this))
 		{
 			startActivity(new Intent(this, LoginActivity.class));
 			finish();
 			return;
 		}
-
-		new Preferences(this);
 
 		//check for Token
 		Toast.makeText(this, "Token: " + FirebaseInstanceId.getInstance().getToken(), Toast.LENGTH_LONG).show();
