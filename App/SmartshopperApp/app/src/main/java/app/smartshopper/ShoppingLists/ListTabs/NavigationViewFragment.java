@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import app.smartshopper.Location.Store;
+import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Location.LocationTool;
@@ -65,26 +65,33 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private int width = 480;
     private int height = 700;
 
-    Store store = Store.Default;
+    private Market _store;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState)
-    {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String storeName = getArguments().get("market").toString();
+//        MarketDataSource = new MarketDataSource();
+        //TODO remove after using market data source
+        _store = new Market();
+        _store.setEntryName("default");
 
         beaconManager = BeaconManager.getInstanceForApplication(this.getActivity());
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         beaconManager.bind(this);
-        Log.i("Navigation","OnCreate");
+        Log.i("Navigation", "OnCreate");
 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState)
-    {
-        Log.i("Navigation","OnCreateView");
-        locationTool = new LocationTool();
+    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
+        Log.i("Navigation", "OnCreateView");
+        String storeName = "";
+        if (_store != null) {
+            storeName = _store.getEntryName();
+        }
+        locationTool = new LocationTool(storeName);
 
         View view = inflater.inflate(R.layout.tab_navigation, group, false);
 
@@ -93,15 +100,11 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         marksName = new ArrayList<>();
         markIndexItemEntryMap = new HashMap<>();
 
-
         mapView = (MapView) view.findViewById(R.id.mapview2);
-
         refreshMap();
-
         mapView.setMapViewListener(new MapViewListener() {
             @Override
-            public void onMapLoadSuccess()
-            {
+            public void onMapLoadSuccess() {
                 Log.i("Map", "onMapLoadSuccess");
 
                 mapView.addLayer(locationLayer);
@@ -110,8 +113,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 MarkLayer markLayer = new MarkLayer(mapView, marks, marksName);
                 markLayer.setMarkIsClickListener(new MarkLayer.MarkIsClickListener() {
                     @Override
-                    public void markIsClick(int num)
-                    {
+                    public void markIsClick(int num) {
                         Toast.makeText(getContext(), marksName.get(num), Toast.LENGTH_SHORT).show();
                         final Dialog dialog = new Dialog(getContext());
                         dialog.setContentView(R.layout.dialog_items_at_mark);
@@ -141,8 +143,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             }
 
             @Override
-            public void onMapLoadFail()
-            {
+            public void onMapLoadFail() {
                 Log.i("Map", "onMapLoadFail");
             }
         });
@@ -151,32 +152,25 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     }
 
     @Override
-    public void onAttach(Context context)
-    {
+    public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof ProductHolder)
-        {
+        if (context instanceof ProductHolder) {
             _productHolder = (ProductHolder) context;
-        }
-        else
-        {
-            throw new ClassCastException(context.toString()+" has to implement ProductHolder!");
+        } else {
+            throw new ClassCastException(context.toString() + " has to implement ProductHolder!");
         }
     }
 
-    public void productsChanged()
-    {
-        for(int i=0;0<marks.size();++i)
-        {
+    public void productsChanged() {
+        for (int i = 0; 0 < marks.size(); ++i) {
             marks.remove(0);
             marksName.remove(0);
             markIndexItemEntryMap.clear();
         }
-        for(ItemEntry entry : _productHolder.getItemEntries())
-        {
-            if(!entry.isBought()) {
+        for (ItemEntry entry : _productHolder.getItemEntries()) {
+            if (!entry.isBought()) {
                 Product product = _productHolder.getProductFromID(entry.getProductID());
-                PointF position = _productHolder.getPositionOf(product);//new PointF((float) product.getPosX(), (float) product.getPosY());
+                PointF position = _store.getPositionOf(product);//new PointF((float) product.getPosX(), (float) product.getPosY());
                 String name = product.getEntryName();
                 boolean foundPosition = false;
                 for (int i = 0; i < marks.size(); ++i) {
@@ -197,12 +191,10 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         mapView.refresh();
     }
 
-    private void updatePosition()
-    {
+    private void updatePosition() {
         int heightPart = height / 10, widthPart = width / 4;
 
-        switch (sector)
-        {
+        switch (sector) {
             case 1:
                 locationLayer.getCurrentPosition().set(3 * widthPart, 9 * heightPart);
                 mapView.refresh();
@@ -252,65 +244,54 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
 
     @Override
-    public void onBeaconServiceConnect()
-    {
+    public void onBeaconServiceConnect() {
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
-            public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region)
-            {
-                Log.i("Navigation","Beacon noted");
+            public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
+                Log.i("Navigation", "Beacon noted");
                 locationTool.updateBeacons(beacons);
                 sector = locationTool.computeSector();
-                Log.i("Navigation","Laden: " +store.toString());
-                Log.i("Navigation","Laden Tool: " +locationTool.getLaden().toString());
+                Log.i("Navigation", "Laden: " + _store.toString() + " (" + _store.getEntryName() + ")");
+                Log.i("Navigation", "Laden Tool: " + locationTool.getLaden().toString());
 
-                if (store != locationTool.getLaden())
-                {
-                    store = locationTool.getLaden();
+                if (!_store.getEntryName().equals(locationTool.getLaden())) {
+                    // get store from data source
+//                    _store = locationTool.getLaden();
                     refreshMap();
-                    Log.i("Navigation","Map changed");
+                    Log.i("Navigation", "Map changed");
                 }
                 updatePosition();
             }
         });
 
-        try
-        {
+        try {
             beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
-        } catch (RemoteException e)
-        {
+        } catch (RemoteException e) {
         }
     }
 
-    private void refreshMap()
-    {
-        Bitmap bitmap = null;
-        try
-        {
-            if (store == Store.Raum)
-            {
-                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+    private void refreshMap() {
+        if (_store != null) {
+            try {
+                Bitmap bitmap;
+                if (_store.getEntryName().equals("default")) {
+                    bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+                } else if (_store.getEntryName().equals("penny")) {
+                    bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("penny.png"));
+                } else {
+                    bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+                }
+                mapView.loadMap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("ERROR: ", e.getMessage());
             }
-            else if (store == Store.Penny)
-            {
-                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("penny.png"));
-            }
-            else
-            {
-                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
-            }
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-            Log.e("ERROR: ", e.getMessage());
         }
-        mapView.loadMap(bitmap);
     }
 
 
     @Override
-    public Context getApplicationContext()
-    {
+    public Context getApplicationContext() {
         return getActivity().getApplicationContext();
     }
 

@@ -1,5 +1,6 @@
 package app.smartshopper.ShoppingLists.ListTabs;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -21,6 +22,10 @@ public class ListPagerAdapter extends FragmentStatePagerAdapter {
         _pages = new Fragment[amountOfTabs];
         _pages[0] = new ItemListFragment();
         _pages[1] = new NavigationViewFragment();
+
+        Bundle arguments = new Bundle();
+        arguments.putString("market", "default");
+        _pages[1].setArguments(arguments);
     }
 
     @Override

@@ -1,15 +1,24 @@
 package app.smartshopper.Database.Entries;
 
+import android.graphics.PointF;
+
 import com.google.gson.annotations.SerializedName;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by hauke on 30.06.16.
  */
 public class Market extends DatabaseEntry {
     @SerializedName("products")
-    private List<MarketProduct> _listOfMarketProducts;
+    private Map<String, MarketProduct> _marketProducts;
+
+    public Market() {
+        _marketProducts = new HashMap<String, MarketProduct>();
+    }
 
     private class MarketProduct {
         @SerializedName("product")
@@ -18,6 +27,16 @@ public class Market extends DatabaseEntry {
         private int _price;
         @SerializedName("location")
         private Location _location;
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Product) {
+                return _product.equals(obj);
+            } else if (obj instanceof MarketProduct) {
+                return _product.equals(((MarketProduct) obj)._product);
+            }
+            return false;
+        }
     }
 
     /**
@@ -51,5 +70,14 @@ public class Market extends DatabaseEntry {
         public void setY(int y) {
             this.y = y;
         }
+    }
+
+    public PointF getPositionOf(Product product) {
+        MarketProduct marketProduct = _marketProducts.get(product.getEntryName());
+        PointF position = new PointF();
+        if (marketProduct != null) {
+            position = new PointF(marketProduct._location.x, marketProduct._location.y);
+        }
+        return position;
     }
 }

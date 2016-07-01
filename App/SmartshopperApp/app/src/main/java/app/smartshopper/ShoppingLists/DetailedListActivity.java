@@ -177,12 +177,6 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     public Product getProductFromID(String productID) {
         return _productSource.get(productID);
     }
-
-    @Override
-    public PointF getPositionOf(Product product) {
-        return new PointF();
-    }
-
 }
 
 

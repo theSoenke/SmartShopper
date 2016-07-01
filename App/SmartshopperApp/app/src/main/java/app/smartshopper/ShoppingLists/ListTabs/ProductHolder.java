@@ -77,11 +77,4 @@ public interface ProductHolder {
      * @return The product or {@code null} when the ID is not in the database.
      */
     Product getProductFromID(String productID);
-
-    /**
-     * Gets the position of the given product in the given market.
-     * @param product
-     * @return
-     */
-    PointF getPositionOf(Product product);
 }
