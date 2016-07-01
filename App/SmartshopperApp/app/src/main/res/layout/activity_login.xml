@@ -62,7 +62,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -71,6 +71,15 @@
                 android:background="@color/colorPrimary"
                 android:textColor="@android:color/white" />
 
+            <Button
+                android:id="@+id/register_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_register"
+                android:textStyle="bold"
+                android:textColor="#808080"
+                android:background="#cfcfcf"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

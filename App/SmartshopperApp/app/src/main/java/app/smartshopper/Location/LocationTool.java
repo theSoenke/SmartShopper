@@ -19,6 +19,7 @@ public class LocationTool{
     public int beaconID1, beaconID2, beaconID3, beaconID4;
     private PointF p1, p2, p3, p4;
     List<BeaconEntity> beacons;
+    List<BeaconEntity> sortedBeacons;
 
     HashMap<Integer,String> idLadenMap;
     String _store;
@@ -32,7 +33,7 @@ public class LocationTool{
         p3 = new PointF(4.8f, 7);
         p4 = new PointF(0, 7);
 
-        beaconID1 = 24286; //Felix Beacon esti 008
+        beaconID1 = 41230; //e10
         beaconID2 = 1744; //esti003
         beaconID3 = 21333; //esti005
         beaconID4 = 31883; //esti002
@@ -45,12 +46,9 @@ public class LocationTool{
 
         idLadenMap = new HashMap<Integer, String>();
         idLadenMap.put(beaconID1, "default");
-        idLadenMap.put(beaconID2, "penny");
-        idLadenMap.put(beaconID3, "penny");
-        idLadenMap.put(beaconID4, "penny");
-
-
-
+        idLadenMap.put(beaconID2, "default");
+        idLadenMap.put(beaconID3, "default");
+        idLadenMap.put(beaconID4, "default");
     }
 
     public void updateBeacons(Collection<Beacon> beacons)
@@ -81,7 +79,7 @@ public class LocationTool{
 
     public int computeSector()
     {
-        List<BeaconEntity> sortedBeacons = beacons;
+        sortedBeacons = new ArrayList<>(beacons);
         Collections.sort(sortedBeacons);
         updateLaden(sortedBeacons.get(0).getMinor());
         if (sortedBeacons.get(0).getIdentifier() == 1)

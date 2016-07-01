@@ -38,14 +38,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		new Preferences(this);
+
 		if (!LoginActivity.isAuthenticated(this))
 		{
 			startActivity(new Intent(this, LoginActivity.class));
 			finish();
 			return;
 		}
-
-		new Preferences(this);
 
 		//check for Token
 		Toast.makeText(this, "Token: " + FirebaseInstanceId.getInstance().getToken(), Toast.LENGTH_LONG).show();
@@ -68,9 +68,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				builder.show();
 			}
 		}
-
-		RetrofitTest test = new RetrofitTest();
-		test.testRestClient();
 
 		Synchronizer synchronizer = new Synchronizer();
 		synchronizer.sync(getApplicationContext());
@@ -123,7 +120,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings)
+		if (id == app.smartshopper.R.id.action_settings)
 		{
 			openSettings();
 			return true;

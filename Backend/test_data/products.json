@@ -1,17 +1,31 @@
 {
 	"products": [{
-		"name": "test",
-		"location": {
-			"x": 0,
-			"y": 10
-		},
-		"market": "test_market"
+		"name": "Bohrmaschine"
 	}, {
-		"name": "test2",
-		"location": {
-			"x": 4,
-			"y": 3
-		},
-		"market": "test2_market"
+		"name": "Farbe"
+	}, {
+		"name": "Wurst"
+	}, {
+		"name": "Käse"
+	}, {
+		"name": "Tiefkühlpizza"
+	}, {
+		"name": "Toast"
+	}, {
+		"name": "Bratwurst"
+	}, {
+		"name": "Curry-Ketchup"
+	}, {
+		"name": "Tomate"
+	}, {
+		"name": "Zwiebeln"
+	}, {
+		"name": "Bier"
+	}, {
+		"name": "Kööm"
+	}, {
+		"name": "Klootkugel"
+	}, {
+		"name": "Notizblock"
 	}]
 }

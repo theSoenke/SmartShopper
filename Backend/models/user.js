@@ -1,9 +1,9 @@
 'use strict'
 
-var mongoose = require('mongoose')
-var bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
-var Schema = mongoose.Schema
+const Schema = mongoose.Schema
 const SALT_WORK_FACTOR = 10
 
 let userSchema = new Schema({

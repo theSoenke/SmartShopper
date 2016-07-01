@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class APIFactory // final verhindert Vererbung
 {
-	private static final String API_URL = "https://api.tecfuture.de";
+	private static final String API_URL = "https://api.tecfuture.de/";
 
 	private ApiService mApiService;
 

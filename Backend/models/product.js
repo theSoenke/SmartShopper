@@ -1,14 +1,11 @@
 'use strict'
 
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
+const mongoose = require('mongoose')
+
+const Schema = mongoose.Schema
 
 let productSchema = new Schema({
   name: {type: String, required: true, text: true},
-  location: {
-    x: {type: Number},
-    y: {type: Number}
-  },
   created_at: Date,
   updated_at: Date
 },

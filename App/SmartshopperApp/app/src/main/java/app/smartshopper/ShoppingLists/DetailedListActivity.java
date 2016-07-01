@@ -1,11 +1,15 @@
 package app.smartshopper.ShoppingLists;
 
-import android.graphics.PointF;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -18,6 +22,7 @@ import app.smartshopper.Database.Tables.ItemEntryDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.R;
+import app.smartshopper.ShoppingLists.ListTabs.ItemListEntry;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
 import app.smartshopper.ShoppingLists.ListTabs.ProductHolder;
 import app.smartshopper.ShoppingLists.ListTabs.ProductPresenter;
@@ -34,10 +39,22 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     ItemEntryDataSource _itemSource;
     ShoppingList _shoppingList;
     ListPagerAdapter listPagerAdapter;
+    //Get Store from BeaconID
+//    StoreBeaconTool storeBeaconTool;
+//    Store store = Store.Default;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        //Laden wird bei erkennen von Beacons geändert. Nur falls hier benötigt.
+//        storeBeaconTool = new StoreBeaconTool(this) {
+//            @Override
+//            public void OnBeaconUpdate()
+//            {
+//               store = getStore();
+//            }
+//        };
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.tab_view_pager);
 
@@ -176,6 +193,111 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public Product getProductFromID(String productID) {
         return _productSource.get(productID);
+    }
+
+    @Override
+    public void openConfigureItemDialog(final ItemListEntry itemEntry)
+    {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_configure_item);
+        dialog.setTitle("Configure '" + itemEntry.getItemEntry().getEntryName() + "'");
+
+        TextView tw = (TextView) dialog.findViewById(R.id.dialog_ConfigItemTextView);
+        Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
+        Button buttonDelete = (Button) dialog.findViewById(R.id.dialog_btDeleteItem);
+        Button buttonBought = (Button) dialog.findViewById(R.id.dialog_btMarkItem);
+        Button buttonAmount = (Button) dialog.findViewById(R.id.dialog_btChangeItemAmount);
+
+        buttonAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeEntry(itemEntry.getItemEntry());
+                dialog.dismiss();
+            }
+        });
+        buttonBought.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMarkItemDialog(itemEntry.getItemEntry());
+                dialog.dismiss();
+            }
+        });
+        buttonAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openChangeAmountDialog(itemEntry.getItemEntry());
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private void openMarkItemDialog(final ItemEntry itemEntry) {
+
+        final Dialog dialog = new Dialog(this, R.style.CustomDialog);
+
+        dialog.setContentView(R.layout.dialog_choose_bought_amount);
+        dialog.setTitle("How many " + itemEntry.getEntryName() + " did u buy?");
+
+        final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtBoughtItemAmount);
+        Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortBoughtItemDialog);
+        Button buttonBoughtAmount = (Button) dialog.findViewById(R.id.dialog_btBoughtAmount);
+        Button buttonBoughtAll = (Button) dialog.findViewById(R.id.dialog_btBoughtAll);
+
+        buttonAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        buttonBoughtAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                markItemAsBought(itemEntry, Integer.parseInt(AmountEditText.getText().toString()));
+                dialog.dismiss();
+            }
+        });
+        buttonBoughtAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                markItemAsBought(itemEntry);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private void openChangeAmountDialog(final ItemEntry itemEntry) {
+        final Dialog dialog = new Dialog(this);
+
+        dialog.setContentView(R.layout.dialog_enter_item_amount);
+        dialog.setTitle(itemEntry.getEntryName());
+
+        final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtNewItemAmount);
+        AmountEditText.setText("");
+        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortItemAmountChange);
+        Button btConfirm = (Button) dialog.findViewById(R.id.dialog_btConfirmItemAmountChange);
+        btAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeItemAmount(itemEntry, Integer.parseInt(AmountEditText.getText().toString()));
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
     }
 }
 

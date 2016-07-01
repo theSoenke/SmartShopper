@@ -1,0 +1,21 @@
+{
+	"market": {
+		"name": "test market",
+		"products": [{
+			"product": "5773d4c215ea50ac0f242204",
+			"price": 10,
+      "location": {
+        "x": 0,
+        "y": 0
+      }
+		},
+    {
+      "product": "5773d4c215ea50ac0f242205",
+      "price": 15,
+      "location": {
+        "x": 0,
+        "y": 0
+      }
+    }]
+	}
+}

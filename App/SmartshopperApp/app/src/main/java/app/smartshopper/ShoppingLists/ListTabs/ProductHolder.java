@@ -77,4 +77,11 @@ public interface ProductHolder {
      * @return The product or {@code null} when the ID is not in the database.
      */
     Product getProductFromID(String productID);
+
+    /**
+     * Opens a dialog to configure an ItemListEntry
+     *
+     * @param itemEntry The ItemListEntry to configure
+     */
+    void openConfigureItemDialog(final ItemListEntry itemEntry);
 }

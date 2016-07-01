@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.MapViewListener;
 import com.onlylemi.mapview.library.layer.BitmapLayer;
 import com.onlylemi.mapview.library.layer.LocationLayer;
+import com.onlylemi.mapview.library.layer.MapBaseLayer;
 import com.onlylemi.mapview.library.layer.MarkLayer;
 import com.onlylemi.mapview.library.utils.MapUtils;
 
@@ -54,18 +57,23 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private BitmapLayer bitmapLayer;
     private List<PointF> marks;
     private List<String> marksName;
-    private Map<Integer, Set<ItemEntry>> markIndexItemEntryMap;
+    private List<Integer> marksType;
+    private Map<Integer, Set<ItemListEntry>> markIndexItemListEntryMap;
     private ProductHolder _productHolder;
 
     private BeaconManager beaconManager;
     private LocationTool locationTool;
     private LocationLayer locationLayer;
 
+    private static final int UNBOUGHT_ITEM_MARKTYPE = 1;
+    private static final int BOUGHT_ITEM_MARKTYPE = 2;
+
     private int sector = 0;
-    private int width = 480;
-    private int height = 700;
+    private int width;
+    private int height;
 
     private Market _store;
+    private boolean mapAlreadyLoaded = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,7 +106,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         MapUtils.init(0, 0);
         marks = new ArrayList<>();
         marksName = new ArrayList<>();
-        markIndexItemEntryMap = new HashMap<>();
+        marksType = new ArrayList<>();
+        markIndexItemListEntryMap = new HashMap<>();
 
         mapView = (MapView) view.findViewById(R.id.mapview2);
         refreshMap();
@@ -106,41 +115,80 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             @Override
             public void onMapLoadSuccess() {
                 Log.i("Map", "onMapLoadSuccess");
-
+                if (!mapAlreadyLoaded)
+                {
                 mapView.addLayer(locationLayer);
 
                 mapView.addLayer(bitmapLayer);
-                MarkLayer markLayer = new MarkLayer(mapView, marks, marksName);
+                MarkLayer markLayer = new MarkLayer(mapView);
+                markLayer.setMarks(marks);
+                markLayer.setMarksName(marksName);
+                markLayer.setMarksType(marksType);
+                markLayer.highlightMarkTouch(false);
+
+                Bitmap bmpUnboughtMark = null;
+                Bitmap bmpMarkTouch = null;
+                Bitmap bmpBoughtMark = null;
+
+                try {
+                    bmpUnboughtMark = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_unbought.png"));
+                    bmpMarkTouch = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_touch.png"));
+                    bmpBoughtMark = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_bought.png"));
+                }
+                catch(IOException e)
+                {
+                    e.printStackTrace();
+                }
+                markLayer.addMarkType(UNBOUGHT_ITEM_MARKTYPE, bmpUnboughtMark, bmpMarkTouch);
+                markLayer.addMarkType(BOUGHT_ITEM_MARKTYPE, bmpBoughtMark, bmpMarkTouch);
                 markLayer.setMarkIsClickListener(new MarkLayer.MarkIsClickListener() {
                     @Override
-                    public void markIsClick(int num) {
-                        Toast.makeText(getContext(), marksName.get(num), Toast.LENGTH_SHORT).show();
+                    public void markIsClick(int num)
+                    {
                         final Dialog dialog = new Dialog(getContext());
                         dialog.setContentView(R.layout.dialog_items_at_mark);
                         dialog.setTitle("Items at this mark:");
                         ListView list = (ListView) dialog.findViewById(R.id.items_at_mark_list);
 
-                        // Create ArrayAdapter using an empty list
-                        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
+                            // Create ArrayAdapter using an empty list
+                            final ArrayAdapter<ItemListEntry> listAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
 
-                        for (ItemEntry item : markIndexItemEntryMap.get(num)) {
-                            String entryString = item.getAmount() + " " + _productHolder.getProductFromID(item.getProductID()).
-                                    getEntryName();
-                            listAdapter.add(entryString);
-                        }
+                            for (ItemListEntry item : markIndexItemListEntryMap.get(num))
+                            {
+                                listAdapter.add(item);
+                            }
 
-                        // add adapter with items to list (necessary to display items)
-                        list.setAdapter(listAdapter);
+                            // add adapter with items to list (necessary to display items)
+                            list.setAdapter(listAdapter);
+
+                        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
+                            {
+                                final ItemListEntry itemEntry = listAdapter.getItem(position);
+                                _productHolder.openConfigureItemDialog(itemEntry);
+                                dialog.dismiss();
+                            }
+                        });
+
+                        Button closeButton = (Button) dialog.findViewById(R.id.dialog_btClose_items_at_mark_list);
+                        closeButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
                         dialog.show();
                     }
                 });
                 mapView.addLayer(markLayer);
                 locationLayer = new LocationLayer(mapView, new PointF(50, 50));
                 locationLayer.setOpenCompass(false);
+                locationLayer.isVisible = false;
                 mapView.addLayer(locationLayer);
                 productsChanged();
                 mapView.refresh();
-            }
+            }}
 
             @Override
             public void onMapLoadFail() {
@@ -165,81 +213,99 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         for (int i = 0; 0 < marks.size(); ++i) {
             marks.remove(0);
             marksName.remove(0);
-            markIndexItemEntryMap.clear();
+            marksType.remove(0);
+            markIndexItemListEntryMap.clear();
         }
-        for (ItemEntry entry : _productHolder.getItemEntries()) {
-            if (!entry.isBought()) {
-                Product product = _productHolder.getProductFromID(entry.getProductID());
-                PointF position = _store.getPositionOf(product);//new PointF((float) product.getPosX(), (float) product.getPosY());
-                String name = product.getEntryName();
-                boolean foundPosition = false;
-                for (int i = 0; i < marks.size(); ++i) {
-                    if (marks.get(i).equals(position)) {
-                        foundPosition = true;
-                        marksName.set(i, marksName.get(i) + ", " + name);
-                        markIndexItemEntryMap.get(i).add(entry);
+        for (ItemEntry entry : _productHolder.getItemEntries())
+        {
+            //TODO Nur Produkte die dem Store entsprechen laden.
+            Product product = _productHolder.getProductFromID(entry.getProductID());
+            PointF position = _store.getPositionOf(product);
+            String name = product.getEntryName();
+            boolean foundPosition = false;
+            for (int i = 0; i < marks.size(); ++i) {
+                if (marks.get(i).equals(position)) {
+                    foundPosition = true;
+                    marksName.set(i, marksName.get(i) + ", " + name);
+                    markIndexItemListEntryMap.get(i).add(new ItemListEntry(entry));
+                    if(!entry.isBought() && marksType.get(i) == BOUGHT_ITEM_MARKTYPE)
+                    {
+                        marksType.set(i, UNBOUGHT_ITEM_MARKTYPE);
                     }
                 }
-                if (!foundPosition) {
-                    markIndexItemEntryMap.put(marks.size(), new HashSet<ItemEntry>());
-                    markIndexItemEntryMap.get(marks.size()).add(entry);
-                    marks.add(position);
-                    marksName.add(name);
+            }
+            if (!foundPosition) {
+                markIndexItemListEntryMap.put(marks.size(), new HashSet<ItemListEntry>());
+                markIndexItemListEntryMap.get(marks.size()).add(new ItemListEntry(entry));
+                marks.add(position);
+                marksName.add(name);
+                if(entry.isBought()) {
+                    marksType.add(BOUGHT_ITEM_MARKTYPE);
+                }
+                else
+                {
+                    marksType.add(UNBOUGHT_ITEM_MARKTYPE);
                 }
             }
         }
-        mapView.refresh();
+//        mapView.refresh();
     }
 
-    private void updatePosition() {
-        int heightPart = height / 10, widthPart = width / 4;
+    private void updatePosition(int sector)
+    {
+        Log.i("Navigation", "Sector " + sector);
+        float heightPart = height / 10, widthPart = width / 4;
 
-        switch (sector) {
+        switch (sector)
+        {
+            case 0:
+                locationLayer.isVisible = false;
+                break;
             case 1:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 9 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 1 * heightPart);
                 break;
             case 2:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 7 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 3 * heightPart);
                 break;
             case 3:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 5 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 5 * heightPart);
                 break;
             case 4:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 3 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 7 * heightPart);
                 break;
             case 5:
-                locationLayer.getCurrentPosition().set(3 * widthPart, 1 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(3 * widthPart, 9 * heightPart);
                 break;
             case 6:
-                locationLayer.getCurrentPosition().set(2 * widthPart, 1 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(2 * widthPart, 9 * heightPart);
                 break;
             case 7:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 1 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 9 * heightPart);
                 break;
             case 8:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 3 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 7 * heightPart);
                 break;
             case 9:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 5 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 5 * heightPart);
                 break;
             case 10:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 7 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 3 * heightPart);
                 break;
             case 11:
-                locationLayer.getCurrentPosition().set(1 * widthPart, 9 * heightPart);
-                mapView.refresh();
+                updateLocationLayer(1 * widthPart, 1 * heightPart);
+
                 break;
         }
+    }
+
+    public void updateLocationLayer(float width, float height)
+    {
+        Log.i("Navigation", "Layers: " + mapView.getLayers().size());
+
+        locationLayer.setCurrentPosition(new PointF(width, height));
+        locationLayer.isVisible = true;
+        mapView.refresh();
+        Log.i("Navigation", "LocationLayer Position: " + locationLayer.getCurrentPosition());
     }
 
 
@@ -247,10 +313,10 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     public void onBeaconServiceConnect() {
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
-            public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
+            public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region)
+            {
                 Log.i("Navigation", "Beacon noted");
                 locationTool.updateBeacons(beacons);
-                sector = locationTool.computeSector();
                 Log.i("Navigation", "Laden: " + _store.toString() + " (" + _store.getEntryName() + ")");
                 Log.i("Navigation", "Laden Tool: " + locationTool.getLaden().toString());
 
@@ -260,7 +326,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                     refreshMap();
                     Log.i("Navigation", "Map changed");
                 }
-                updatePosition();
+                updatePosition(locationTool.computeSector());
             }
         });
 
@@ -276,10 +342,16 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 Bitmap bitmap;
                 if (_store.getEntryName().equals("default")) {
                     bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+                    width = 480;
+                    height = 700;
                 } else if (_store.getEntryName().equals("penny")) {
                     bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("penny.png"));
+                    width = 440;
+                    height = 1000;
                 } else {
                     bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
+                    width = 480;
+                    height = 700;
                 }
                 mapView.loadMap(bitmap);
             } catch (IOException e) {
@@ -297,12 +369,14 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
 
     @Override
-    public void unbindService(ServiceConnection serviceConnection) {
+    public void unbindService(ServiceConnection serviceConnection)
+    {
         getActivity().unbindService(serviceConnection);
     }
 
     @Override
-    public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
+    public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i)
+    {
         return getActivity().bindService(intent, serviceConnection, i);
     }
 }
