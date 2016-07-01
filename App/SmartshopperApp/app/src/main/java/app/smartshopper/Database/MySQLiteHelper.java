@@ -39,7 +39,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String MARKETENTRY_COLUMN_PRODUCT_ID = "product_id";
     public static final String MARKETENTRY_COLUMN_POSX = "posx";
     public static final String MARKETENTRY_COLUMN_POSY = "posy";
-    public static final String MARKETENTRY_COLUMN_PRICE = "proce";
+    public static final String MARKETENTRY_COLUMN_PRICE = "price";
 
     public static final String DATABASE_NAME = "list.db";
 
@@ -75,7 +75,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String MARKETENTRY_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + MARKETENTRY_TABLE_NAME + "(" +
             MARKETENTRY_COLUMN_MARKET_ID + " VARCHAR(24),"+
-            MARKETENTRY_COLUMN_PRODUCT_ID + "VARCHAR(24),"+
+            MARKETENTRY_COLUMN_PRODUCT_ID + " VARCHAR(24),"+
             MARKETENTRY_COLUMN_POSX + " INTEGER NOT NULL,"+
             MARKETENTRY_COLUMN_POSY + " INTEGER NOT NULL,"+
             MARKETENTRY_COLUMN_PRICE + " INTEGER NOT NULL);";

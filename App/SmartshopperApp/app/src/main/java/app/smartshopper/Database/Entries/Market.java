@@ -1,11 +1,7 @@
 package app.smartshopper.Database.Entries;
 
-import android.graphics.Point;
-
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -15,7 +11,7 @@ public class Market extends DatabaseEntry {
     @SerializedName("products")
     private List<MarketProduct> _listOfMarketProducts;
 
-    private class MarketProduct{
+    private class MarketProduct {
         @SerializedName("product")
         private Product _product;
         @SerializedName("price")

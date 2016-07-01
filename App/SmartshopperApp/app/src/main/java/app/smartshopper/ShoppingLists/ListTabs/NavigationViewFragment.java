@@ -95,26 +95,9 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
 
         mapView = (MapView) view.findViewById(R.id.mapview2);
-        Bitmap bitmap = null;
-        try
-        {
-            if (store == Store.Raum)
-            {
-                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
-            }
-            else if (store == Store.Penny)
-            {
-                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("penny.png"));
-            }
-            else
-            {
-                bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
-            }
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-            Log.e("ERROR: ", e.getMessage());
-        }
+
+        refreshMap();
+
         mapView.setMapViewListener(new MapViewListener() {
             @Override
             public void onMapLoadSuccess()
@@ -164,8 +147,6 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             }
         });
 
-        mapView.loadMap(bitmap);
-
         return view;
     }
 
@@ -195,7 +176,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         {
             if(!entry.isBought()) {
                 Product product = _productHolder.getProductFromID(entry.getProductID());
-                PointF position = new PointF((float) product.getPosX(), (float) product.getPosY());
+                PointF position = _productHolder.getPositionOf(product);//new PointF((float) product.getPosX(), (float) product.getPosY());
                 String name = product.getEntryName();
                 boolean foundPosition = false;
                 for (int i = 0; i < marks.size(); ++i) {

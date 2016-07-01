@@ -1,5 +1,6 @@
 package app.smartshopper.ShoppingLists;
 
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -175,6 +176,11 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public Product getProductFromID(String productID) {
         return _productSource.get(productID);
+    }
+
+    @Override
+    public PointF getPositionOf(Product product) {
+        return new PointF();
     }
 
 }

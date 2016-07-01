@@ -29,9 +29,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
                 MySQLiteHelper.PRODUCT_TABLE_NAME,
                 new String[]{
                         MySQLiteHelper.PRODUCT_COLUMN_ID,
-                        MySQLiteHelper.PRODUCT_COLUMN_NAME,
-                        MySQLiteHelper.PRODUCT_COLUMN_POSITION_X,
-                        MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y
+                        MySQLiteHelper.PRODUCT_COLUMN_NAME
                 });
     }
 
@@ -59,13 +57,9 @@ public class ProductDataSource extends DatabaseTable<Product> {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.PRODUCT_COLUMN_ID, product.getId());
         values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product.getEntryName());
-        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_X, product.getPosX());
-        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y, product.getPosY());
 
         String insertQuery = MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + product.getId() + "'" +
-                " AND " + MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product.getEntryName() + "'" +
-                " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_X + " = " + product.getPosX() +
-                " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y + " = " + product.getPosY();
+                " AND " + MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product.getEntryName() + "'";
 
         super.addEntryToDatabase(
                 product,
@@ -86,8 +80,6 @@ public class ProductDataSource extends DatabaseTable<Product> {
         Product product = new Product();
         product.setId(generateUniqueID());
         product.setEntryName(product_name);
-        product.setPosX(posx);
-        product.setPosY(posy);
 
         add(product);
 
@@ -99,8 +91,6 @@ public class ProductDataSource extends DatabaseTable<Product> {
         Product product = new Product();
         product.setId(cursor.getString(0));
         product.setEntryName(cursor.getString(1));
-        product.setPosX(cursor.getInt(2));
-        product.setPosY(cursor.getInt(3));
         return product;
     }
 

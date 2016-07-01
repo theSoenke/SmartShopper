@@ -1,5 +1,7 @@
 package app.smartshopper.ShoppingLists.ListTabs;
 
+import android.graphics.PointF;
+
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
@@ -76,4 +78,10 @@ public interface ProductHolder {
      */
     Product getProductFromID(String productID);
 
+    /**
+     * Gets the position of the given product in the given market.
+     * @param product
+     * @return
+     */
+    PointF getPositionOf(Product product);
 }
