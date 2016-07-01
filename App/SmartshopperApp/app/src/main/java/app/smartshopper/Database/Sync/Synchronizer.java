@@ -8,11 +8,14 @@ import java.util.List;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.Entries.ItemEntry;
+import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
+import app.smartshopper.Database.Tables.MarketDataSource;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
@@ -25,6 +28,8 @@ import retrofit2.Response;
  * Created by hauke on 11.05.16.
  */
 public class Synchronizer {
+
+    // TODO Rewrite the request methods to use lambdas and to be more generic.
 
     private ApiService restClient;
 
@@ -60,17 +65,9 @@ public class Synchronizer {
                     //TODO find a better solution for this. Beginning in this callback method doesn't feel right :/
 
                     Log.i("Synchronizer", "Sync products ...");
-                    syncProducts(remoteProductList, localProductList, p);
+                    syncLocal(remoteProductList, localProductList, p);
 
-                    Log.i("Synchronizer", "Sync shopping lists ...");
-                    ShoppingListDataSource s = syncShoppingLists(context);
-                    Log.i("Synchronizer", "Sync item entries ...");
-                    syncItemEntries(context, p, s);
-
-                    Log.i("Synchronizer", "Sync user data ...");
-                    UserDataSource u = syncUsers(context);
-                    syncParticipants(context, s, u);
-                    Log.i("Synchronizer", "Finished synchronizing");
+                    syncMarkets(context, p);
 
                 } else {
                     Log.e("Error Code", String.valueOf(response.code()));
@@ -89,31 +86,75 @@ public class Synchronizer {
         Log.i("Synchronizer", "Finished creating the product source and enqueueing the request.");
     }
 
+    private void syncMarkets(final Context context, final ProductDataSource p) {
+        Log.i("Synchronizer", "Create market data source and enqueue request ...");
+        final MarketDataSource m = new MarketDataSource(context);
+        Call<ArrayList<Market>> remoteMarketListCall = restClient.markets();
+
+        remoteMarketListCall.enqueue(new Callback<ArrayList<Market>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Market>> call, Response<ArrayList<Market>> response) {
+                if (response.isSuccessful()) {
+                    List<Market> remoteMarketList = response.body();
+                    Log.i("Markets", remoteMarketList.toString());
+                    List<Market> localMarketList = m.getAllEntries();
+                    Log.d("RestCall", "success");
+
+                    //TODO find a better solution for this. Beginning in this callback method doesn't feel right :/
+
+                    Log.i("Synchronizer", "Sync markets ...");
+                    syncLocal(remoteMarketList, localMarketList, p);
+
+                    Log.i("Synchronizer", "Sync item entries ...");
+                    ShoppingListDataSource s = syncItemEntries(context, p);
+
+                    Log.i("Synchronizer", "Sync user data ...");
+                    syncParticipants(context, s);
+
+                    Log.i("Synchronizer", "Finished synchronizing");
+
+                } else {
+                    Log.e("Error Code", String.valueOf(response.code()));
+                    Log.e("Error Body", response.errorBody().toString());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Market>> call, Throwable t) {
+                Log.d("RESTClient", "Failure");
+                Log.d("RESTClient", t.getMessage());
+            }
+        });
+
+        Log.i("Synchronizer", "Finished creating the market source and enqueueing the request.");
+    }
+
     /**
-     * Removes old entries from the local database and add the new ones that came from the remote one.
+     * Syncs the given local list with the given remote list. Noting is removes from the remote list or server, only the local database and list will be edited..
      *
-     * @param remoteProductList The list of products in the remote database.
-     * @param localProductList  The list of products in the local database.
-     * @param source            The data source for the local products.
+     * @param remoteProductList The list of remote entries.
+     * @param localProductList  The list of local entries.
+     * @param source            The data source for the local entries.
      */
-    private void syncProducts(List<Product> remoteProductList, List<Product> localProductList, ProductDataSource source) {
+    private void syncLocal(List<? extends DatabaseEntry> remoteProductList, List<? extends DatabaseEntry> localProductList, DatabaseTable source) {
         if (remoteProductList.equals(localProductList)) {
             return;
         }
 
         // Add new entries from remote
         source.beginTransaction();
-        for (Product p : remoteProductList) {
-            if (!localProductList.contains(p)) {
-                source.add(p);
+        for (DatabaseEntry entry : remoteProductList) {
+            if (!localProductList.contains(entry)) {
+                source.add(entry);
             }
         }
         source.endTransaction();
 
         // remove old entries that are not in the remote list
-        for (Product p : localProductList) {
-            if (!remoteProductList.contains(p)) {
-                source.removeEntryFromDatabase(p);
+        for (DatabaseEntry entry : localProductList) {
+            if (!remoteProductList.contains(entry)) {
+                source.removeEntryFromDatabase(entry);
             }
         }
     }
@@ -137,7 +178,8 @@ public class Synchronizer {
         return s;
     }
 
-    private void syncItemEntries(Context context, ProductDataSource p, ShoppingListDataSource s) {
+    private ShoppingListDataSource syncItemEntries(Context context, ProductDataSource p) {
+        ShoppingListDataSource s = syncShoppingLists(context);
         ItemEntryDataSource i = new ItemEntryDataSource(context);
 
         ShoppingList Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0);
@@ -185,6 +227,8 @@ public class Synchronizer {
         i.add((Product) getEntryByName(listOfProducts, "Kööm"), OE, 1);
 
         i.endTransaction();
+
+        return s;
     }
 
     private UserDataSource syncUsers(Context context) {
@@ -206,7 +250,9 @@ public class Synchronizer {
         return u;
     }
 
-    private void syncParticipants(Context context, ShoppingListDataSource s, UserDataSource u) {
+    private void syncParticipants(Context context, ShoppingListDataSource s) {
+        UserDataSource u = syncUsers(context);
+
         s.beginTransaction();
         ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
         ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 
+import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import retrofit2.Call;
@@ -45,6 +46,9 @@ public interface ApiService {
 	//    POST http://api.tecfuture.de:3000/user/register
 	@POST("user/register")
 	public Call<JsonElement> register();
+
+	@GET("markets")
+	public Call<ArrayList<Market>> markets();
 
 	@POST("user/token")
 	public Call<JsonElement> registerToken(@Field("token") String token);
