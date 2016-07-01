@@ -74,7 +74,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public boolean addEntry(String product, int amount) {
         Product p = _productSource.getProductFromString(product);
-        if (p.equals(null)) {
+        if (p == null) {
             return false;
         } else {
 
