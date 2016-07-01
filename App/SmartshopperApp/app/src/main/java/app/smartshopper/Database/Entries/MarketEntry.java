@@ -11,6 +11,19 @@ public class MarketEntry extends DatabaseEntry {
     private int _posx;
     private int _posy;
 
+    public MarketEntry(){
+        _marketID = "";
+        _productID = "";
+    }
+
+    public MarketEntry(String marketID, String productID, int price, int posx, int posy){
+        _marketID = marketID;
+        _productID = productID;
+        _price = price;
+        _posx = posx;
+        _posy = posy;
+    }
+
     public String getProductID() {
         return _productID;
     }

@@ -53,17 +53,10 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
                 values);
     }
 
-    public MarketEntry add(Market market, Product product, int price, int posx, int posy) {
-        MarketEntry entry = new MarketEntry();
-        entry.setMarketID(market.getId());
-        entry.setProductID(product.getId());
-        entry.setPrice(price);
-        entry.setPosX(posx);
-        entry.setPosY(posy);
-
-        add(entry);
-
-        return entry;
+    public void addAll(List<MarketEntry> allMarketEntries) {
+        for(MarketEntry entry:allMarketEntries){
+            add(entry);
+        }
     }
 
     /**
