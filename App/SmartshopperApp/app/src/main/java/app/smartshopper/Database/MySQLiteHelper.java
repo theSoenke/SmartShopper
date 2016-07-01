@@ -11,8 +11,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String PRODUCT_TABLE_NAME = "product_table";
     public static final String PRODUCT_COLUMN_ID = "id";
     public static final String PRODUCT_COLUMN_NAME = "product";
-    public static final String PRODUCT_COLUMN_POSITION_X = "posX";
-    public static final String PRODUCT_COLUMN_POSITION_Y = "posY";
 
     public static final String SHOPPINGLIST_TABLE_NAME = "shopping_list_table";
     public static final String SHOPPINGLIST_COLUMN_ID = "id";
@@ -32,16 +30,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String PARTICIPANT_COLUMN_USER_ID = "user_id";
     public static final String PARTICIPANT_COLUMN_SHOPPING_LIST_ID = "shopping_list_id";
 
+    public static final String MARKET_TABLE_NAME = "market_table";
+    public static final String MARKET_COLUMN_ID = "market_id";
+    public static final String MARKET_COLUMN_NAME = "market_name";
+
+    public static final String MARKETENTRY_TABLE_NAME = "market_entry_table";
+    public static final String MARKETENTRY_COLUMN_MARKET_ID = "market_id";
+    public static final String MARKETENTRY_COLUMN_PRODUCT_ID = "product_id";
+    public static final String MARKETENTRY_COLUMN_POSX = "posx";
+    public static final String MARKETENTRY_COLUMN_POSY = "posy";
+    public static final String MARKETENTRY_COLUMN_PRICE = "proce";
+
     public static final String DATABASE_NAME = "list.db";
 
-    public static final int DATABASE_VERSION = 8;
+    public static final int DATABASE_VERSION = 9;
 
     //Database creation statement
     private static final String PRODUCT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PRODUCT_TABLE_NAME + "(" +
             PRODUCT_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL," +
-            PRODUCT_COLUMN_NAME + " TEXT NOT NULL," +
-            PRODUCT_COLUMN_POSITION_X + " INTEGER," +
-            PRODUCT_COLUMN_POSITION_Y + " INTEGER);";
+            PRODUCT_COLUMN_NAME + " TEXT NOT NULL);";
 
     private static final String SHOPPINGLIST_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + SHOPPINGLIST_TABLE_NAME + "(" +
             SHOPPINGLIST_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL," +
@@ -62,6 +69,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             PARTICIPANT_COLUMN_USER_ID + " VARCHAR(24)," +
             PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " VARCHAR(24));";
 
+    private static final String MARKET_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + MARKET_TABLE_NAME + "(" +
+            MARKET_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL,"+
+            MARKET_COLUMN_NAME + "TEXT NOT NULL);";
+
+    private static final String MARKETENTRY_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + MARKETENTRY_TABLE_NAME + "(" +
+            MARKETENTRY_COLUMN_MARKET_ID + " VARCHAR(24),"+
+            MARKETENTRY_COLUMN_PRODUCT_ID + "VARCHAR(24),"+
+            MARKETENTRY_COLUMN_POSX + " INTEGER NOT NULL,"+
+            MARKETENTRY_COLUMN_POSY + " INTEGER NOT NULL,"+
+            MARKETENTRY_COLUMN_PRICE + " INTEGER NOT NULL);";
+
 
     public MySQLiteHelper(Context context, String database_name, int database_version) {
         super(context, database_name, null, database_version);
@@ -75,6 +93,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(ITEMENTRY_DATABASE_CREATE);
         database.execSQL(USER_DATABASE_CREATE);
         database.execSQL(PARTICIPANT_DATABASE_CREATE);
+        database.execSQL(MARKET_DATABASE_CREATE);
+        database.execSQL(MARKETENTRY_DATABASE_CREATE);
     }
 
     @Override
@@ -88,6 +108,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + ITEMENTRY_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PARTICIPANT_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MARKET_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MARKETENTRY_TABLE_NAME);
 //        db.execSQL("DROP DATABASE " + DATABASE_NAME);
     }
 }

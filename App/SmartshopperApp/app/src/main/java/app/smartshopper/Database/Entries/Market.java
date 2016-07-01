@@ -6,15 +6,23 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by hauke on 30.06.16.
  */
 public class Market extends DatabaseEntry {
-    private HashMap<String, Integer> _productIdToPrice;
-    private HashMap<String, Location> _productIdToLocation;
+    @SerializedName("products")
+    private List<MarketProduct> _listOfMarketProducts;
 
-//    private class
+    private class MarketProduct{
+        @SerializedName("product")
+        private Product _product;
+        @SerializedName("price")
+        private int _price;
+        @SerializedName("location")
+        private Location _location;
+    }
 
     /**
      * Implements a simple location with an x and y coordinate. The coordinates have a serialized name for the gson parser.
