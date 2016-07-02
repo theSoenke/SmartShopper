@@ -20,7 +20,7 @@ import app.smartshopper.Database.MySQLiteHelper;
 public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
     public MarketEntryDataSource(Context context) {
         super(context,
-                MySQLiteHelper.ITEMENTRY_TABLE_NAME,
+                MySQLiteHelper.MARKETENTRY_TABLE_NAME,
                 new String[]{
                         MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID,
                         MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID,
@@ -54,7 +54,7 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
     }
 
     public void addAll(List<MarketEntry> allMarketEntries) {
-        for(MarketEntry entry:allMarketEntries){
+        for (MarketEntry entry : allMarketEntries) {
             add(entry);
         }
     }

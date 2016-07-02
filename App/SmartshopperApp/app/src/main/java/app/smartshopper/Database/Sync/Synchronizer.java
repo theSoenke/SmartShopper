@@ -32,349 +32,312 @@ import retrofit2.Response;
 /**
  * Created by hauke on 11.05.16.
  */
-public class Synchronizer
-{
-
-	// TODO Rewrite the request methods to use lambdas and to be more generic.
-
-	private ApiService restClient;
-
-	public void sync(Context context)
-	{
-		Log.i("Synchronizer", "Start synchronizing local database ...");
-		// TODO connect to remote database and sync local database
-
-		restClient = new APIFactory().getInstance();
-		Log.i("Synchronizer", "Got the rest client reference.");
-
-		Log.i("Synchronizer", "Create db helper ...");
-		MySQLiteHelper helper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
-		helper.onCreate(helper.getWritableDatabase());
-		Log.i("Synchronizer", "Created helper");
-
-		String token = FirebaseInstanceId.getInstance().getToken();
-		boolean tokenChanged = Preferences.setFcmToken(token);
-		if (tokenChanged)
-		{
-			syncFcmToken(token);
-		}
-
-		syncProducts(context);
-	}
-
-	private void syncProducts(final Context context)
-	{
-
-		Log.i("Synchronizer", "Create product data source and enqueue request ...");
-		final ProductDataSource p = new ProductDataSource(context);
-		Call<ArrayList<Product>> remoteProductListCall = restClient.products();
-
-		remoteProductListCall.enqueue(new Callback<ArrayList<Product>>()
-		{
-			@Override
-			public void onResponse(Call<ArrayList<Product>> call, Response<ArrayList<Product>> response)
-			{
-				if (response.isSuccessful())
-				{
-					List<Product> remoteProductList = response.body();
-					List<Product> localProductList = p.getAllEntries();
-					Log.d("RestCall", "success");
-
-					//TODO find a better solution for this. Beginning in this callback method doesn't feel right :/
-
-					Log.i("Synchronizer", "Sync products ...");
-					syncLocal(remoteProductList, localProductList, p);
-
-					syncMarkets(context, p);
-
-				}
-				else
-				{
-					Log.e("Error Code", String.valueOf(response.code()));
-					Log.e("Error Body", response.errorBody().toString());
-				}
-
-			}
-
-			@Override
-			public void onFailure(Call<ArrayList<Product>> call, Throwable t)
-			{
-				Log.d("RESTClient", "Failure");
-				Log.d("RESTClient", t.getMessage());
-			}
-		});
-
-		Log.i("Synchronizer", "Finished creating the product source and enqueueing the request.");
-	}
-
-	private void syncMarkets(final Context context, final ProductDataSource p)
-	{
-		Log.i("Synchronizer", "Create market data source and enqueue request ...");
-		final MarketDataSource m = new MarketDataSource(context);
-		Call<ArrayList<Market>> remoteMarketListCall = restClient.markets();
-
-		remoteMarketListCall.enqueue(new Callback<ArrayList<Market>>()
-		{
-			@Override
-			public void onResponse(Call<ArrayList<Market>> call, Response<ArrayList<Market>> response)
-			{
-				if (response.isSuccessful())
-				{
-					List<Market> remoteMarketList = response.body();
-					Log.i("Markets", remoteMarketList.toString());
-					List<Market> localMarketList = m.getAllEntries();
-					Log.d("RestCall", "success");
-
-					//TODO find a better solution for this. Beginning in this callback method doesn't feel right :/
-
-					Log.i("Synchronizer", "Sync markets ...");
-					syncLocal(remoteMarketList, localMarketList, p);
-
-					Log.i("Synchronizer", "Sync item entries ...");
-					ShoppingListDataSource s = syncItemEntries(context, p);
-
-					Log.i("Synchronizer", "Sync user data ...");
-					syncParticipants(context, s);
-
-					Log.i("Synchronizer", "Finished synchronizing");
-
-				}
-				else
-				{
-					Log.e("Error Code", String.valueOf(response.code()));
-					Log.e("Error Body", response.errorBody().toString());
-				}
-
-			}
-
-			@Override
-			public void onFailure(Call<ArrayList<Market>> call, Throwable t)
-			{
-				Log.d("RESTClient", "Failure");
-				Log.d("RESTClient", t.getMessage());
-			}
-		});
-
-		Log.i("Synchronizer", "Finished creating the market source and enqueueing the request.");
-	}
-
-	public void syncFcmToken(String token)
-	{
-		ApiService apiService = new APIFactory().getInstance();
-
-		JsonObject json = new JsonObject();
-		json.addProperty("token", token);
-
-		Call<ResponseBody> call = apiService.registerToken(json);
-
-		call.enqueue(new Callback<ResponseBody>()
-		{
-			@Override
-			public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-			{
-				if (response.isSuccessful())
-				{
-					Log.e("Success", "Sync fcm token");
-				}
-				else
-				{
-					Log.e("Error Code", String.valueOf(response.code()));
-				}
-			}
-
-			@Override
-			public void onFailure(Call<ResponseBody> call, Throwable t)
-			{
-				Log.d("RESTClient", "Failure");
-				Log.d("RESTClient", t.getMessage());
-			}
-		});
-	}
-
-	/**
-	 * Syncs the given local list with the given remote list. Noting is removes from the remote list or server, only the local database and list will be edited..
-	 *
-	 * @param remoteProductList The list of remote entries.
-	 * @param localProductList  The list of local entries.
-	 * @param source            The data source for the local entries.
-	 */
-	private void syncLocal(List<? extends DatabaseEntry> remoteProductList, List<? extends DatabaseEntry> localProductList, DatabaseTable source)
-	{
-		if (remoteProductList.equals(localProductList))
-		{
-			return;
-		}
-
-		// Add new entries from remote
-		source.beginTransaction();
-		for (DatabaseEntry entry : remoteProductList)
-		{
-			if (!localProductList.contains(entry))
-			{
-				source.add(entry);
-			}
-		}
-		source.endTransaction();
-
-		// remove old entries that are not in the remote list
-		for (DatabaseEntry entry : localProductList)
-		{
-			if (!remoteProductList.contains(entry))
-			{
-				source.removeEntryFromDatabase(entry);
-			}
-		}
-	}
-
-	private ShoppingListDataSource syncShoppingLists(Context context)
-	{
-		ShoppingListDataSource s = new ShoppingListDataSource(context);
-
-		s.beginTransaction();
-		// single lists
-		s.add("Baumarkt");
-		s.add("Wocheneinkauf");
-		s.add("Getränkemarkt");
-
-		// group lists
-		s.add("Geburtstag von Max Mustermann");
-		s.add("Vereinstreffen");
-		s.add("OE-Liste");
-
-		s.endTransaction();
-
-		return s;
-	}
-
-	private ShoppingListDataSource syncItemEntries(Context context, ProductDataSource p)
-	{
-		ShoppingListDataSource s = syncShoppingLists(context);
-		ItemEntryDataSource i = new ItemEntryDataSource(context);
-
-		ShoppingList Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0);
-		ShoppingList Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0);
-		ShoppingList Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0);
-		ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
-		ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
-		ShoppingList OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
-
-		List<Product> listOfProducts = p.getAllEntries();
-
-		i.beginTransaction();
-
-		i.add((Product) getEntryByName(listOfProducts, "Bohrmaschine"), Baumarkt, 4);
-		i.add((Product) getEntryByName(listOfProducts, "Farbe"), Baumarkt, 1);
-
-		i.add((Product) getEntryByName(listOfProducts, "Wurst"), Wocheneinkauf, 1);
-		i.add((Product) getEntryByName(listOfProducts, "Käse"), Wocheneinkauf, 5);
-
-		// just to have a already bought item that's in the middle of the list
-		ItemEntry entry = new ItemEntry();
-		entry.setEntryName("Tiefkühlpizza");
-		entry.setAmount(1);
-		entry.setBought(1);
-		entry.setListID(Wocheneinkauf.getId());
-		entry.setProductID(getEntryByName(listOfProducts, "Tiefkühlpizza").getId());
-		i.add(entry);
-
-		i.add((Product) getEntryByName(listOfProducts, "Toast"), Wocheneinkauf, 1);
-		i.add((Product) getEntryByName(listOfProducts, "Bratwurst"), Wocheneinkauf, 7);
-		i.add((Product) getEntryByName(listOfProducts, "Curry-Ketchup"), Wocheneinkauf, 1);
-		i.add((Product) getEntryByName(listOfProducts, "Tomate"), Wocheneinkauf, 1);
-		i.add((Product) getEntryByName(listOfProducts, "Zwiebeln"), Wocheneinkauf, 3);
-
-		i.add((Product) getEntryByName(listOfProducts, "Bier"), Greänkemarkt, 1);
-
-		i.add((Product) getEntryByName(listOfProducts, "Bier"), Geburtstag, 6);
-		i.add((Product) getEntryByName(listOfProducts, "Tomate"), Geburtstag, 1);
-
-		i.add((Product) getEntryByName(listOfProducts, "Kööm"), Vereinstreffen, 1);
-		i.add((Product) getEntryByName(listOfProducts, "Klootkugel"), Vereinstreffen, 1);
-		i.add((Product) getEntryByName(listOfProducts, "Notizblock"), Vereinstreffen, 1);
-
-		i.add((Product) getEntryByName(listOfProducts, "Bier"), OE, 2);
-		i.add((Product) getEntryByName(listOfProducts, "Kööm"), OE, 1);
-
-		i.endTransaction();
-
-		return s;
-	}
-
-	private UserDataSource syncUsers(Context context)
-	{
-		UserDataSource u = new UserDataSource(context);
-
-		u.beginTransaction();
-
-		u.add("Dieter");
-		u.add("Batman");
-		u.add("SpiderMan");
-		u.add("Ronny Schäfer");
-		u.add("Ash Ketchup");
-		u.add("Professor Eich");
-		u.add("Rocko");
-		u.add("Misty");
-
-		u.endTransaction();
-
-		return u;
-	}
-
-	private void syncParticipants(Context context, ShoppingListDataSource s)
-	{
-		UserDataSource u = syncUsers(context);
-
-		s.beginTransaction();
-		ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
-		ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
-		ShoppingList OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
-		s.endTransaction();
-
-		List<User> listOfUsers = u.getAllEntries();
-
-		User Dieter = (User) getEntryByName(listOfUsers, "Dieter");
-		User Batman = (User) getEntryByName(listOfUsers, "Batman");
-		User SpiderMan = (User) getEntryByName(listOfUsers, "SpiderMan");
-		User Ronny = (User) getEntryByName(listOfUsers, "Ronny Schäfer");
-		User AshKetchup = (User) getEntryByName(listOfUsers, "Ash Ketchup");
-		User ProfEich = (User) getEntryByName(listOfUsers, "Professor Eich");
-		User Rocko = (User) getEntryByName(listOfUsers, "Rocko");
-		User Misty = (User) getEntryByName(listOfUsers, "Misty");
-
-		ParticipantDataSource p = new ParticipantDataSource(context);
-		p.beginTransaction();
-
-		p.add(Geburtstag, Dieter);
-		p.add(Geburtstag, Batman);
-
-		p.add(Vereinstreffen, SpiderMan);
-		p.add(Vereinstreffen, Ronny);
-
-		p.add(OE, AshKetchup);
-		p.add(OE, ProfEich);
-		p.add(OE, Rocko);
-		p.add(OE, Misty);
-
-		p.endTransaction();
-	}
-
-	/**
-	 * Gets a database entry with the given name. This is a solution for finding entries without the database.
-	 * Use this to prevent deadlocks in mysql transactions.
-	 *
-	 * @param list The list with database entries.
-	 * @param name The name of the entry you want to know.
-	 * @return The database entry with the given name or {@code null} when the entry doesn't exist.
-	 */
-	private DatabaseEntry getEntryByName(List<? extends DatabaseEntry> list, String name)
-	{
-		for (DatabaseEntry entry : list)
-		{
-			if (entry.getEntryName().equals(name))
-			{
-				return entry;
-			}
-		}
-		return null;
-	}
+public class Synchronizer {
+
+    // TODO Rewrite the request methods to use lambdas and to be more generic.
+
+    private ApiService restClient;
+
+    public void sync(Context context) {
+        Log.i("Synchronizer", "Start synchronizing local database ...");
+        // TODO connect to remote database and sync local database
+
+        restClient = new APIFactory().getInstance();
+        Log.i("Synchronizer", "Got the rest client reference.");
+
+        Log.i("Synchronizer", "Create db helper ...");
+        MySQLiteHelper helper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
+        helper.onCreate(helper.getWritableDatabase());
+        Log.i("Synchronizer", "Created helper");
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+        boolean tokenChanged = Preferences.setFcmToken(token);
+        if (tokenChanged) {
+            syncFcmToken(token);
+        }
+
+        syncProducts(context);
+    }
+
+    private void syncProducts(final Context context) {
+
+        Log.i("Synchronizer", "Create product data source and enqueue request ...");
+        final ProductDataSource p = new ProductDataSource(context);
+        Call<ArrayList<Product>> remoteProductListCall = restClient.products();
+
+        remoteProductListCall.enqueue(new Callback<ArrayList<Product>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Product>> call, Response<ArrayList<Product>> response) {
+                if (response.isSuccessful()) {
+                    List<Product> remoteProductList = response.body();
+                    List<Product> localProductList = p.getAllEntries();
+                    Log.d("RestCall", "success");
+
+                    //TODO find a better solution for this. Beginning in this callback method doesn't feel right :/
+
+                    Log.i("Synchronizer", "Sync products ...");
+                    syncLocal(remoteProductList, localProductList, p);
+
+                    syncMarkets(context, p);
+
+                } else {
+                    Log.e("Error Code", String.valueOf(response.code()));
+                    Log.e("Error Body", response.errorBody().toString());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Product>> call, Throwable t) {
+                Log.d("RESTClient", "Failure");
+                Log.d("RESTClient", t.getMessage());
+            }
+        });
+
+        Log.i("Synchronizer", "Finished creating the product source and enqueueing the request.");
+    }
+
+    private void syncMarkets(final Context context, final ProductDataSource p) {
+        Log.i("Synchronizer", "Create market data source and enqueue request ...");
+        final MarketDataSource m = new MarketDataSource(context);
+        Call<ArrayList<Market>> remoteMarketListCall = restClient.markets();
+
+        remoteMarketListCall.enqueue(new Callback<ArrayList<Market>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Market>> call, Response<ArrayList<Market>> response) {
+                if (response.isSuccessful()) {
+                    List<Market> remoteMarketList = response.body();
+                    Log.i("Markets", remoteMarketList.toString());
+                    List<Market> localMarketList = m.getAllEntries();
+                    Log.d("RestCall", "success");
+
+                    //TODO find a better solution for this. Beginning in this callback method doesn't feel right :/
+
+                    Log.i("Synchronizer", "Sync markets ...");
+                    syncLocal(remoteMarketList, localMarketList, m);
+
+                    Log.i("Synchronizer", "Sync item entries ...");
+                    ShoppingListDataSource s = syncItemEntries(context, p);
+
+                    Log.i("Synchronizer", "Sync user data ...");
+                    syncParticipants(context, s);
+
+                    Log.i("Synchronizer", "Finished synchronizing");
+
+                } else {
+                    Log.e("Error Code", String.valueOf(response.code()));
+                    Log.e("Error Body", response.errorBody().toString());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Market>> call, Throwable t) {
+                Log.d("RESTClient", "Failure");
+                Log.d("RESTClient", t.getMessage());
+            }
+        });
+
+        Log.i("Synchronizer", "Finished creating the market source and enqueueing the request.");
+    }
+
+    public void syncFcmToken(String token) {
+        ApiService apiService = new APIFactory().getInstance();
+
+        JsonObject json = new JsonObject();
+        json.addProperty("token", token);
+
+        Call<ResponseBody> call = apiService.registerToken(json);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.e("Success", "Sync fcm token");
+                } else {
+                    Log.e("Error Code", String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("RESTClient", "Failure");
+                Log.d("RESTClient", t.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Syncs the given local list with the given remote list. Noting is removes from the remote list or server, only the local database and list will be edited..
+     *
+     * @param remoteProductList The list of remote entries.
+     * @param localProductList  The list of local entries.
+     * @param source            The data source for the local entries.
+     */
+    private void syncLocal(List<? extends DatabaseEntry> remoteProductList, List<? extends DatabaseEntry> localProductList, DatabaseTable source) {
+        if (remoteProductList.equals(localProductList)) {
+            return;
+        }
+
+        // Add new entries from remote
+        source.beginTransaction();
+        for (DatabaseEntry entry : remoteProductList) {
+            if (!localProductList.contains(entry)) {
+                source.add(entry);
+            }
+        }
+        source.endTransaction();
+
+        // remove old entries that are not in the remote list
+        for (DatabaseEntry entry : localProductList) {
+            if (!remoteProductList.contains(entry)) {
+                source.removeEntryFromDatabase(entry);
+            }
+        }
+    }
+
+    private ShoppingListDataSource syncShoppingLists(Context context) {
+        ShoppingListDataSource s = new ShoppingListDataSource(context);
+
+        s.beginTransaction();
+        // single lists
+        s.add("Baumarkt");
+        s.add("Wocheneinkauf");
+        s.add("Getränkemarkt");
+
+        // group lists
+        s.add("Geburtstag von Max Mustermann");
+        s.add("Vereinstreffen");
+        s.add("OE-Liste");
+
+        s.endTransaction();
+
+        return s;
+    }
+
+    private ShoppingListDataSource syncItemEntries(Context context, ProductDataSource p) {
+        ShoppingListDataSource s = syncShoppingLists(context);
+        ItemEntryDataSource i = new ItemEntryDataSource(context);
+
+        ShoppingList Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0);
+        ShoppingList Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0);
+        ShoppingList Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0);
+        ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
+        ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
+        ShoppingList OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
+
+        List<Product> listOfProducts = p.getAllEntries();
+
+        i.beginTransaction();
+
+        i.add((Product) getEntryByName(listOfProducts, "Bohrmaschine"), Baumarkt, 4);
+        i.add((Product) getEntryByName(listOfProducts, "Farbe"), Baumarkt, 1);
+
+        i.add((Product) getEntryByName(listOfProducts, "Wurst"), Wocheneinkauf, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Käse"), Wocheneinkauf, 5);
+
+        // just to have a already bought item that's in the middle of the list
+        ItemEntry entry = new ItemEntry();
+        entry.setEntryName("Tiefkühlpizza");
+        entry.setAmount(1);
+        entry.setBought(1);
+        entry.setListID(Wocheneinkauf.getId());
+        entry.setProductID(getEntryByName(listOfProducts, "Tiefkühlpizza").getId());
+        i.add(entry);
+
+        i.add((Product) getEntryByName(listOfProducts, "Toast"), Wocheneinkauf, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Bratwurst"), Wocheneinkauf, 7);
+        i.add((Product) getEntryByName(listOfProducts, "Curry-Ketchup"), Wocheneinkauf, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Tomate"), Wocheneinkauf, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Zwiebeln"), Wocheneinkauf, 3);
+
+        i.add((Product) getEntryByName(listOfProducts, "Bier"), Greänkemarkt, 1);
+
+        i.add((Product) getEntryByName(listOfProducts, "Bier"), Geburtstag, 6);
+        i.add((Product) getEntryByName(listOfProducts, "Tomate"), Geburtstag, 1);
+
+        i.add((Product) getEntryByName(listOfProducts, "Kööm"), Vereinstreffen, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Klootkugel"), Vereinstreffen, 1);
+        i.add((Product) getEntryByName(listOfProducts, "Notizblock"), Vereinstreffen, 1);
+
+        i.add((Product) getEntryByName(listOfProducts, "Bier"), OE, 2);
+        i.add((Product) getEntryByName(listOfProducts, "Kööm"), OE, 1);
+
+        i.endTransaction();
+
+        return s;
+    }
+
+    private UserDataSource syncUsers(Context context) {
+        UserDataSource u = new UserDataSource(context);
+
+        u.beginTransaction();
+
+        u.add("Dieter");
+        u.add("Batman");
+        u.add("SpiderMan");
+        u.add("Ronny Schäfer");
+        u.add("Ash Ketchup");
+        u.add("Professor Eich");
+        u.add("Rocko");
+        u.add("Misty");
+
+        u.endTransaction();
+
+        return u;
+    }
+
+    private void syncParticipants(Context context, ShoppingListDataSource s) {
+        UserDataSource u = syncUsers(context);
+
+        s.beginTransaction();
+        ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
+        ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
+        ShoppingList OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
+        s.endTransaction();
+
+        List<User> listOfUsers = u.getAllEntries();
+
+        User Dieter = (User) getEntryByName(listOfUsers, "Dieter");
+        User Batman = (User) getEntryByName(listOfUsers, "Batman");
+        User SpiderMan = (User) getEntryByName(listOfUsers, "SpiderMan");
+        User Ronny = (User) getEntryByName(listOfUsers, "Ronny Schäfer");
+        User AshKetchup = (User) getEntryByName(listOfUsers, "Ash Ketchup");
+        User ProfEich = (User) getEntryByName(listOfUsers, "Professor Eich");
+        User Rocko = (User) getEntryByName(listOfUsers, "Rocko");
+        User Misty = (User) getEntryByName(listOfUsers, "Misty");
+
+        ParticipantDataSource p = new ParticipantDataSource(context);
+        p.beginTransaction();
+
+        p.add(Geburtstag, Dieter);
+        p.add(Geburtstag, Batman);
+
+        p.add(Vereinstreffen, SpiderMan);
+        p.add(Vereinstreffen, Ronny);
+
+        p.add(OE, AshKetchup);
+        p.add(OE, ProfEich);
+        p.add(OE, Rocko);
+        p.add(OE, Misty);
+
+        p.endTransaction();
+    }
+
+    /**
+     * Gets a database entry with the given name. This is a solution for finding entries without the database.
+     * Use this to prevent deadlocks in mysql transactions.
+     *
+     * @param list The list with database entries.
+     * @param name The name of the entry you want to know.
+     * @return The database entry with the given name or {@code null} when the entry doesn't exist.
+     */
+    private DatabaseEntry getEntryByName(List<? extends DatabaseEntry> list, String name) {
+        for (DatabaseEntry entry : list) {
+            if (entry.getEntryName().equals(name)) {
+                return entry;
+            }
+        }
+        return null;
+    }
 }

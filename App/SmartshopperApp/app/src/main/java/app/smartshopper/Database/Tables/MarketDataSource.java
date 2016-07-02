@@ -15,7 +15,7 @@ public class MarketDataSource extends DatabaseTable<Market> {
 
     public MarketDataSource(Context context) {
         super(context,
-                MySQLiteHelper.ITEMENTRY_TABLE_NAME,
+                MySQLiteHelper.MARKET_TABLE_NAME,
                 new String[]{
                         MySQLiteHelper.MARKET_COLUMN_ID,
                         MySQLiteHelper.MARKET_COLUMN_NAME
@@ -29,8 +29,8 @@ public class MarketDataSource extends DatabaseTable<Market> {
         values.put(MySQLiteHelper.MARKET_COLUMN_ID, entry.getId());
         values.put(MySQLiteHelper.MARKET_COLUMN_NAME, entry.getEntryName());
 
-        String insertQuery = MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + entry.getId() + "'" +
-                " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getEntryName() + "'";
+        String insertQuery = MySQLiteHelper.MARKET_COLUMN_ID + " = '" + entry.getId() + "'" +
+                " AND " + MySQLiteHelper.MARKET_COLUMN_NAME + " = '" + entry.getEntryName() + "'";
 
         _marketEntryDataSource.addAll(entry.getAllMarketEntries());
 

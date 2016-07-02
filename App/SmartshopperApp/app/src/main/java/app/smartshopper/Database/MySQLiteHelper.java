@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String PRODUCT_TABLE_NAME = "product_table";
     public static final String PRODUCT_COLUMN_ID = "id";
-    public static final String PRODUCT_COLUMN_NAME = "product";
+    public static final String PRODUCT_COLUMN_NAME = "name";
 
     public static final String SHOPPINGLIST_TABLE_NAME = "shopping_list_table";
     public static final String SHOPPINGLIST_COLUMN_ID = "id";
@@ -31,8 +31,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String PARTICIPANT_COLUMN_SHOPPING_LIST_ID = "shopping_list_id";
 
     public static final String MARKET_TABLE_NAME = "market_table";
-    public static final String MARKET_COLUMN_ID = "market_id";
-    public static final String MARKET_COLUMN_NAME = "market_name";
+    public static final String MARKET_COLUMN_ID = "id";
+    public static final String MARKET_COLUMN_NAME = "name";
 
     public static final String MARKETENTRY_TABLE_NAME = "market_entry_table";
     public static final String MARKETENTRY_COLUMN_MARKET_ID = "market_id";
@@ -43,7 +43,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "list.db";
 
-    public static final int DATABASE_VERSION = 9;
+    public static final int DATABASE_VERSION = 10;
 
     //Database creation statement
     private static final String PRODUCT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PRODUCT_TABLE_NAME + "(" +
@@ -71,14 +71,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String MARKET_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + MARKET_TABLE_NAME + "(" +
             MARKET_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL,"+
-            MARKET_COLUMN_NAME + "TEXT NOT NULL);";
+            MARKET_COLUMN_NAME + " TEXT NOT NULL);";
 
     private static final String MARKETENTRY_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + MARKETENTRY_TABLE_NAME + "(" +
             MARKETENTRY_COLUMN_MARKET_ID + " VARCHAR(24),"+
             MARKETENTRY_COLUMN_PRODUCT_ID + " VARCHAR(24),"+
             MARKETENTRY_COLUMN_POSX + " INTEGER NOT NULL,"+
             MARKETENTRY_COLUMN_POSY + " INTEGER NOT NULL,"+
-            MARKETENTRY_COLUMN_PRICE + " INTEGER NOT NULL);";
+            MARKETENTRY_COLUMN_PRICE + " INTEGER NOT NULL," +
+            "PRIMARY KEY(" + MARKETENTRY_COLUMN_MARKET_ID + ", " + MARKETENTRY_COLUMN_PRODUCT_ID  + "));";
 
 
     public MySQLiteHelper(Context context, String database_name, int database_version) {

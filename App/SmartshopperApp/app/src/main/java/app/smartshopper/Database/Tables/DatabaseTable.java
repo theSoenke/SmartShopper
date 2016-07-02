@@ -24,7 +24,7 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     private final String tableName;
     protected final String[] allColumns;
     private final MySQLiteHelper dbHelper;
-    protected SQLiteDatabase database;
+    protected static SQLiteDatabase database = null;
 
     public DatabaseTable(Context context, String tableName, String[] columns) {
         this.tableName = tableName;
@@ -58,7 +58,9 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      * @throws SQLException
      */
     public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+        if(database == null) {
+            database = dbHelper.getWritableDatabase();
+        }
     }
 
     /**
@@ -88,6 +90,8 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
             cursor.moveToFirst();
             newEntry.setId(cursor.getString(0));
         }
+
+        cursor.close();
     }
 
     /**
@@ -155,7 +159,7 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     public abstract T cursorToEntry(Cursor cursor);
 
     public void beginTransaction(){
-        database.beginTransaction();
+        database.beginTransactionNonExclusive();
     }
 
     public void endTransaction(){
