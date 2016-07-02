@@ -34,7 +34,6 @@ public class APIFactory // final verhindert Vererbung
 			}
 		}).build();
 
-
 		Retrofit retrofit = new Retrofit.Builder().baseUrl(API_URL).addConverterFactory(GsonConverterFactory.create()).client(client).build();
 		mApiService = retrofit.create(ApiService.class);
 	}

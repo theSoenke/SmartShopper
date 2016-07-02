@@ -21,8 +21,8 @@ import java.util.HashMap;
  * Created by Studium on 28.06.2016.
  */
 public abstract class StoreBeaconTool implements BeaconConsumer {
-    HashMap<Integer, Store> idLadenMap;
-    Store st = Store.Default;
+    HashMap<Integer,String> idLadenMap;
+    String st;
 
     private BeaconManager beaconManager;
 
@@ -40,11 +40,11 @@ public abstract class StoreBeaconTool implements BeaconConsumer {
         beaconID4 = 31883; //esti002
 
 
-        idLadenMap = new HashMap<Integer, Store>();
-        idLadenMap.put(beaconID1, Store.Raum);
-        idLadenMap.put(beaconID2, Store.Penny);
-        idLadenMap.put(beaconID3, Store.Penny);
-        idLadenMap.put(beaconID4, Store.Penny);
+        idLadenMap = new HashMap<Integer, String>();
+        idLadenMap.put(beaconID1, "default");
+        idLadenMap.put(beaconID2, "default");
+        idLadenMap.put(beaconID3, "default");
+        idLadenMap.put(beaconID4, "default");
 
         beaconManager = BeaconManager.getInstanceForApplication(activity);
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
@@ -56,7 +56,7 @@ public abstract class StoreBeaconTool implements BeaconConsumer {
         st = idLadenMap.get(minor);
     }
 
-    public Store getStore()
+    public String getStore()
     {
         return st;
     }

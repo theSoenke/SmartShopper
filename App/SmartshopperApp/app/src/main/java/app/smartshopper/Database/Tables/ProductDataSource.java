@@ -29,9 +29,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
                 MySQLiteHelper.PRODUCT_TABLE_NAME,
                 new String[]{
                         MySQLiteHelper.PRODUCT_COLUMN_ID,
-                        MySQLiteHelper.PRODUCT_COLUMN_NAME,
-                        MySQLiteHelper.PRODUCT_COLUMN_POSITION_X,
-                        MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y
+                        MySQLiteHelper.PRODUCT_COLUMN_NAME
                 });
     }
 
@@ -42,12 +40,13 @@ public class ProductDataSource extends DatabaseTable<Product> {
 
     /**
      * Gets the product with the given ID.
+     *
      * @param id The ID of the product you want.
      * @return A product with the given ID or null if it doesn't exist.
      */
-    public Product get(String id){
+    public Product get(String id) {
         List<Product> listOfProducts = getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + id + "'");
-        if(listOfProducts != null && !listOfProducts.isEmpty()){
+        if (listOfProducts != null && !listOfProducts.isEmpty()) {
             return listOfProducts.get(0);
         }
         return null;
@@ -58,13 +57,9 @@ public class ProductDataSource extends DatabaseTable<Product> {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.PRODUCT_COLUMN_ID, product.getId());
         values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product.getEntryName());
-        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_X, product.getPosX());
-        values.put(MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y, product.getPosY());
 
         String insertQuery = MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + product.getId() + "'" +
-                " AND " + MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product.getEntryName() + "'" +
-                " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_X + " = " + product.getPosX() +
-                " AND " + MySQLiteHelper.PRODUCT_COLUMN_POSITION_Y + " = " + product.getPosY();
+                " AND " + MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product.getEntryName() + "'";
 
         super.addEntryToDatabase(
                 product,
@@ -85,8 +80,6 @@ public class ProductDataSource extends DatabaseTable<Product> {
         Product product = new Product();
         product.setId(generateUniqueID());
         product.setEntryName(product_name);
-        product.setPosX(posx);
-        product.setPosY(posy);
 
         add(product);
 
@@ -98,58 +91,17 @@ public class ProductDataSource extends DatabaseTable<Product> {
         Product product = new Product();
         product.setId(cursor.getString(0));
         product.setEntryName(cursor.getString(1));
-        product.setPosX(cursor.getInt(2));
-        product.setPosY(cursor.getInt(3));
         return product;
     }
 
-    @Override
-    public JSONObject getJSONFromEntry(Product product) {
-        JSONObject jsonObject = super.getJSONFromEntry(product);
-
-        try {
-            JSONArray jsonArray = new JSONArray();
-            new JSONObject().put("x",product.getPosX());
-            new JSONObject().put("y",product.getPosY());
-            jsonObject.put("location", jsonArray);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jsonObject;
-    }
-
-    @Override
-    public Product buildEntryFromJSON(JSONObject jsonObject) {
-        Product product = new Product();
-
-        try {
-            String id = jsonObject.getString("id");
-                product.setId(id);
-
-            String name = jsonObject.getString("name");
-            product.setEntryName(name);
-
-            JSONArray location = (JSONArray)jsonObject.get("location");
-            if(location.length()==2){
-                int xPos = location.getInt(0);
-                int yPos = location.getInt(1);
-                product.setPosX(xPos);
-                product.setPosY(yPos);
-            }
-            else{
-                Log.e("Invalid JSON product", "The product that was given by JSON code has an invalid amount of location values (values.amount!=2))");
-                Log.e("Invalid JSON product", "This is the JSON code: "+jsonObject.toString());
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return new Product();
-    }
-    public Product getProductFromString(String s){
-        List<Product> productList = getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + "'" + s + "'");
+    /**
+     * Gets the product with the given name. If there're more then one product with this name, the first occurrence will be returned.
+     *
+     * @param name The name of the product.
+     * @return The first occurred product or null if there'name no product with the given name.
+     */
+    public Product getProductFromString(String name) {
+        List<Product> productList = getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + "'" + name + "'");
         if (productList.isEmpty()) {
             return null;
         } else {

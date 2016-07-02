@@ -21,11 +21,13 @@ public class LocationTool{
     List<BeaconEntity> beacons;
     List<BeaconEntity> sortedBeacons;
 
-    HashMap<Integer,Store> idLadenMap;
-    Store store = Store.Default;
+    HashMap<Integer,String> idLadenMap;
+    String _store;
 
-    public LocationTool()
+    public LocationTool(String store)
     {
+        _store = store;
+
         p1 = new PointF(0, 0);
         p2 = new PointF(4.8f, 0);
         p3 = new PointF(4.8f, 7);
@@ -42,14 +44,11 @@ public class LocationTool{
         beacons.add(new BeaconEntity(p3, beaconID3, 3));
         beacons.add(new BeaconEntity(p4, beaconID4, 4));
 
-        idLadenMap = new HashMap<Integer, Store>();
-        idLadenMap.put(beaconID1, Store.Raum);
-        idLadenMap.put(beaconID2, Store.Raum);
-        idLadenMap.put(beaconID3, Store.Raum);
-        idLadenMap.put(beaconID4, Store.Raum);
-
-
-
+        idLadenMap = new HashMap<Integer, String>();
+        idLadenMap.put(beaconID1, "default");
+        idLadenMap.put(beaconID2, "default");
+        idLadenMap.put(beaconID3, "default");
+        idLadenMap.put(beaconID4, "default");
     }
 
     public void updateBeacons(Collection<Beacon> beacons)
@@ -73,7 +72,8 @@ public class LocationTool{
 
     public void updateLaden(int minor)
     {
-        store = idLadenMap.get(minor);
+        _store = idLadenMap.get(minor);
+        Log.i("Navigation","Registered minor"+ minor);
     }
 
 
@@ -206,10 +206,8 @@ public class LocationTool{
         }
     }
 
-
-
-    public Store getLaden()
+    public String getLaden()
     {
-        return store;
+        return _store;
     }
 }

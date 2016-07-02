@@ -58,15 +58,15 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      * including a unique ID.
      * There'll be no duplicate entries in the database.
      *
-     * @param productID The ID of the product.
-     * @param listID    The ID of the list.
-     * @param amount    The amount of this particular product in this list.
+     * @param product The product.
+     * @param list    The list.
+     * @param amount  The amount of this particular product in this list.
      * @return A new item entry with a unique ID combination.
      */
-    public ItemEntry add(String productID, String listID, int amount) {
+    public ItemEntry add(Product product, ShoppingList list, int amount) {
         ItemEntry entry = new ItemEntry();
-        entry.setProductID(productID);
-        entry.setListID(listID);
+        entry.setProductID(product.getId());
+        entry.setListID(list.getId());
         entry.setAmount(amount);
         entry.setBought(0);
 
@@ -116,7 +116,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         List<ItemEntry> listOfEntries = getEntry(
 
                 MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "' AND " +
-                MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
+                        MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
 
         );
         if (!listOfEntries.isEmpty()) {
@@ -146,16 +146,6 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         entry.setBought(cursor.getInt(3));
         entry.setEntryName(_productDataSource.get(entry.getProductID()).getEntryName());
         return entry;
-    }
-
-    @Override
-    public JSONObject getJSONFromEntry(ItemEntry entry) {
-        throw new UnsupportedOperationException("There's no JSON representation of an ItemEntry! Use the data sources for the content you want to have as JSON.");
-    }
-
-    @Override
-    public ItemEntry buildEntryFromJSON(JSONObject jsonObject) {
-        throw new UnsupportedOperationException("There's no JSON representation of an ItemEntry! Use the data sources to add entries to the local database.");
     }
 
     /**

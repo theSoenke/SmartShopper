@@ -1,5 +1,7 @@
 package app.smartshopper.ShoppingLists.ListTabs;
 
+import android.graphics.PointF;
+
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;

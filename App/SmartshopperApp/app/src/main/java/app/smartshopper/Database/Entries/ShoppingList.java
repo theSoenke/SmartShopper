@@ -1,21 +1,102 @@
 package app.smartshopper.Database.Entries;
 
-/**
- * Created by hauke on 10.05.16.
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/*
+ * ShoppingList Model
  */
 public class ShoppingList extends DatabaseEntry {
+    @SerializedName("created_at")
+    private String createdAt;
+    @SerializedName("updated_at")
+    private String updatedAt;
+    @SerializedName("owner")
+    private User owner;
+    @SerializedName("__v")
+    private Integer version;
+    @SerializedName("participants")
+    private List<User> participants = new ArrayList<>();
+    @SerializedName("products")
+    private List<Product> products = new ArrayList<>();
+
     /**
-     * Creates a new shopping list which is a single list by default.
+     * @return The createdAt
      */
-    public ShoppingList() {
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    /**
+     * @param createdAt The created_at
+     */
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    /**
+     * @return The updatedAt
+     */
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    /**
+     * @param updatedAt The updated_at
+     */
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    /**
+     * @return The owner
+     */
+    public User getOwner() {
+        return owner;
+    }
+
+    /**
+     * @return The version
+     */
+    public Integer getVersion() {
+        return version;
+    }
+
+    /**
+     * @return The participants
+     */
+    public List<User> getParticipants() {
+        return participants;
+    }
+
+    /**
+     * @param participants The participants
+     */
+    public void setParticipants(List<User> participants) {
+        this.participants = participants;
+    }
+
+    /**
+     * @return The products
+     */
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    /**
+     * @param products The products
+     */
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Object && obj != null) {
-            ShoppingList l = (ShoppingList) obj;
-            return l.getId().equals(getId()) ||
-                    l.getEntryName().equals(getEntryName());
+    public boolean equals(Object otherList) {
+        if (otherList instanceof ShoppingList) {
+            ShoppingList list = (ShoppingList) otherList;
+            return list.getId().equals(getId());
         }
         return false;
     }

@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.Participant;
+import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
 
@@ -44,8 +45,6 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         String insertQuery = MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "'" +
                 " AND " + MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
 
-        Log.i("INSERT PARTICIPANT", insertQuery);
-
         super.addEntryToDatabase(
                 entry,
                 insertQuery,
@@ -78,17 +77,16 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
      * Creates a new participant, adds it to the database and returns it.
      * If the participant is already in the database, nothing happens and the participant will be returned.
      *
-     * @param shoppingListID The ID of the shopping list this participant is connected to.
-     * @param userID         The ID of the user.
+     * @param shoppingList The shopping list this participant is connected to.
+     * @param user         The user to connect with the shopping list.
      * @return The new participant with an unique ID combination.
      */
-    public Participant add(String shoppingListID, String userID) {
+    public Participant add(ShoppingList shoppingList, User user) {
         Participant entry = new Participant();
-        entry.setShoppingListID(shoppingListID);
-        entry.setUserID(userID);
+        entry.setShoppingListID(shoppingList.getId());
+        entry.setUserID(user.getId());
 
-        User user = _userDataSource.get(userID);
-        if(user != null) {
+        if (user != null) {
             entry.setEntryName(user.getEntryName());
         }
 
@@ -107,16 +105,6 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         participant.setEntryName(user.getEntryName());
 
         return participant;
-    }
-
-    @Override
-    public JSONObject getJSONFromEntry(Participant entry) {
-        throw new UnsupportedOperationException("There's no JSON representation of an Participant! Use the data sources for the content you want to have as JSON.");
-    }
-
-    @Override
-    public Participant buildEntryFromJSON(JSONObject jsonObject) {
-        throw new UnsupportedOperationException("There's no JSON representation of an Participant! Use the data sources to add entries to the local database.");
     }
 
     /**

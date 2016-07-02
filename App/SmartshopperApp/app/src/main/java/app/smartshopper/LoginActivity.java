@@ -16,12 +16,12 @@ import android.widget.Button;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 
 import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
-import app.smartshopper.Database.Sync.Retrofit.Model.ProductList;
+import app.smartshopper.Database.Entries.ShoppingList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -140,8 +140,8 @@ public class LoginActivity extends AppCompatActivity
 
 			final String hash = Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
 
-			Preferences.saveSharedSetting(this, "hash", hash);
-			Preferences.saveSharedSetting(this, "userName", userName);
+			Preferences.setBasicAuthHash(hash);
+			Preferences.setUserName(userName);
 
 			if (login)
 			{
@@ -177,13 +177,11 @@ public class LoginActivity extends AppCompatActivity
 	public void startAuthentication()
 	{
 		ApiService restClient = new APIFactory().getInstance();
-		Call<ArrayList<ProductList>> call = restClient.listsLimit(1);
+		Call<List<ShoppingList>> call = restClient.listsLimit(1);
 
-		call.enqueue(new Callback<ArrayList<ProductList>>()
-		{
+		call.enqueue(new Callback<List<ShoppingList>>() {
 			@Override
-			public void onResponse(Call<ArrayList<ProductList>> call, Response<ArrayList<ProductList>> response)
-			{
+			public void onResponse(Call<List<ShoppingList>> call, Response<List<ShoppingList>> response) {
 				if (response.isSuccessful())
 				{
 					Log.e(TAG, "Login successful");
@@ -204,8 +202,7 @@ public class LoginActivity extends AppCompatActivity
 			}
 
 			@Override
-			public void onFailure(Call<ArrayList<ProductList>> call, Throwable t)
-			{
+			public void onFailure(Call<List<ShoppingList>> call, Throwable t) {
 				Log.d(TAG, "login failure");
 				Log.d(TAG, t.getMessage());
 			}

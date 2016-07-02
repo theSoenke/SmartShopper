@@ -24,7 +24,7 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     private final String tableName;
     protected final String[] allColumns;
     private final MySQLiteHelper dbHelper;
-    protected SQLiteDatabase database;
+    protected static SQLiteDatabase database = null;
 
     public DatabaseTable(Context context, String tableName, String[] columns) {
         this.tableName = tableName;
@@ -58,7 +58,9 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      * @throws SQLException
      */
     public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+        if(database == null) {
+            database = dbHelper.getWritableDatabase();
+        }
     }
 
     /**
@@ -88,6 +90,8 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
             cursor.moveToFirst();
             newEntry.setId(cursor.getString(0));
         }
+
+        cursor.close();
     }
 
     /**
@@ -154,32 +158,14 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      */
     public abstract T cursorToEntry(Cursor cursor);
 
-    /**
-     * Turns an entry Object into a json object.
-     *
-     * @param entry The entry that should be converted into a json object.
-     * @return A json object that contains all information about the given entry.
-     */
-    public JSONObject getJSONFromEntry(T entry) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("id", entry.getId());
-            jsonObject.put("name", entry.getEntryName());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject;
+    public void beginTransaction(){
+        database.beginTransactionNonExclusive();
     }
 
-    /**
-     * Creates a new object of the given type T based on the data in the given json object.
-     *
-     * @param jsonObject A json object that contains all data to create an object of T.
-     * @return A new database entry object.
-     */
-    public abstract T buildEntryFromJSON(JSONObject jsonObject);
-
-
+    public void endTransaction(){
+        database.setTransactionSuccessful();
+        database.endTransaction();
+    }
 
 
 

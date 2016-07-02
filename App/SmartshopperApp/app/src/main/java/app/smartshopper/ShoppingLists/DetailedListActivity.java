@@ -21,8 +21,6 @@ import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
-import app.smartshopper.Location.Store;
-import app.smartshopper.Location.StoreBeaconTool;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.ListTabs.ItemListEntry;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
@@ -94,7 +92,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public boolean addEntry(String product, int amount) {
         Product p = _productSource.getProductFromString(product);
-        if (p.equals(null)) {
+        if (p == null) {
             return false;
         } else {
 
@@ -301,9 +299,6 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         dialog.show();
 
     }
-
-
-
 }
 
 
