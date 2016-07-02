@@ -1,13 +1,19 @@
 package app.smartshopper.Database.Sync;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.GET;
@@ -51,5 +57,5 @@ public interface ApiService {
 	public Call<ArrayList<Market>> markets();
 
 	@POST("user/token")
-	public Call<JsonElement> registerToken(@Field("token") String token);
+	public Call<ResponseBody> registerToken(@Body JsonObject token);
 }
