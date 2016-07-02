@@ -79,9 +79,9 @@ exports.registerFcmToken = function (req, res, next) {
     }
 
     doc.fcmToken = token
-    doc.save(function (err, o) {
+    doc.save(function (err, user) {
       if (err) return next(err)
-      res.json(o)
+      res.json(user)
     })
   })
 }
