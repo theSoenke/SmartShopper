@@ -27,6 +27,7 @@ exports.findUser = function (req, res, next) {
     .find({$text: {$search: query}}, {score: {$meta: 'textScore'}})
     .sort({score: {$meta: 'textScore'}})
     .limit(limit)
+    .select('-password')
     .exec(function (err, docs) {
       if (err) return next(err)
       res.json(docs)

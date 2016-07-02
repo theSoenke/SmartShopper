@@ -1,7 +1,7 @@
 'use strict'
 
-var basicAuth = require('basic-auth')
-var User = require('../models/user')
+const basicAuth = require('basic-auth')
+const User = require('../models/user')
 
 /* checks whether basic auth exists
 needs to be called before registering or checking user*/
@@ -70,18 +70,20 @@ exports.registerFcmToken = function (req, res, next) {
     return next(error)
   }
 
-  User.findOne({name: credentials.name}, function (err, doc) {
-    if (err) return next(err)
-
-    if (!doc) {
-      let error = new Error('User does not exist')
-      return next(error)
-    }
-
-    doc.fcmToken = token
-    doc.save(function (err, user) {
+  User
+    .findOne({name: credentials.name}, function (err, doc) {
       if (err) return next(err)
-      res.json(user)
+
+      if (!doc) {
+        let error = new Error('User does not exist')
+        return next(error)
+      }
+
+      doc.fcmToken = token
+      doc.save(function (err, user) {
+        if (err) return next(err)
+        res.json(user)
+      })
     })
-  })
+    .select('-password')
 }
