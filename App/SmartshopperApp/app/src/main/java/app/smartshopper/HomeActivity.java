@@ -204,6 +204,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	 */
 	private void switchToFragment(Class fragmentClass, MenuItem selectedItem)
 	{
+		//TODO add observer for sync event here
+
 		Fragment fragment;
 
 		try

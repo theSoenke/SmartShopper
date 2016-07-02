@@ -16,6 +16,7 @@ import android.widget.Button;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Sync.APIFactory;
@@ -176,11 +177,11 @@ public class LoginActivity extends AppCompatActivity
 	public void startAuthentication()
 	{
 		ApiService restClient = new APIFactory().getInstance();
-		Call<ArrayList<ShoppingList>> call = restClient.listsLimit(1);
+		Call<List<ShoppingList>> call = restClient.listsLimit(1);
 
-		call.enqueue(new Callback<ArrayList<ShoppingList>>() {
+		call.enqueue(new Callback<List<ShoppingList>>() {
 			@Override
-			public void onResponse(Call<ArrayList<ShoppingList>> call, Response<ArrayList<ShoppingList>> response) {
+			public void onResponse(Call<List<ShoppingList>> call, Response<List<ShoppingList>> response) {
 				if (response.isSuccessful())
 				{
 					Log.e(TAG, "Login successful");
@@ -201,7 +202,7 @@ public class LoginActivity extends AppCompatActivity
 			}
 
 			@Override
-			public void onFailure(Call<ArrayList<ShoppingList>> call, Throwable t) {
+			public void onFailure(Call<List<ShoppingList>> call, Throwable t) {
 				Log.d(TAG, "login failure");
 				Log.d(TAG, t.getMessage());
 			}

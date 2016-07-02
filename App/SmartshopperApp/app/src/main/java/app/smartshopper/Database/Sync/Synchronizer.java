@@ -37,10 +37,16 @@ import retrofit2.Response;
  */
 public class Synchronizer {
 
-    interface RemoteCaller {
-        Call<? extends List> call();
+    /**
+     * Returns a call that will give us some data to sync.
+     */
+    interface RemoteCaller<T extends DatabaseEntry> {
+        Call<List<T>> call();
     }
 
+    /**
+     * Calls the next method that should be executed after a successful sync.
+     */
     interface NextSyncMethod {
         void execute();
     }
@@ -84,11 +90,11 @@ public class Synchronizer {
                              final DatabaseTable<? extends DatabaseEntry> source,
                              RemoteCaller caller,
                              final NextSyncMethod nextSyncMethod) {
-        Call<ArrayList<? extends DatabaseEntry>> remoteCall = (Call<ArrayList<? extends DatabaseEntry>>) caller.call();
+        Call<List<? extends DatabaseEntry>> remoteCall = caller.call();
 
-        remoteCall.enqueue(new Callback<ArrayList<? extends DatabaseEntry>>() {
+        remoteCall.enqueue(new Callback<List<? extends DatabaseEntry>>() {
             @Override
-            public void onResponse(Call<ArrayList<? extends DatabaseEntry>> call, Response<ArrayList<? extends DatabaseEntry>> response) {
+            public void onResponse(Call<List<? extends DatabaseEntry>> call, Response<List<? extends DatabaseEntry>> response) {
                 if (response.isSuccessful()) {
                     List<? extends DatabaseEntry> remoteList = response.body();
                     List<? extends DatabaseEntry> localList = source.getAllEntries();
@@ -103,7 +109,7 @@ public class Synchronizer {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<? extends DatabaseEntry>> call, Throwable t) {
+            public void onFailure(Call<List<? extends DatabaseEntry>> call, Throwable t) {
                 Log.d("RESTClient", "Failure");
                 Log.d("RESTClient", t.getMessage());
             }
@@ -118,9 +124,9 @@ public class Synchronizer {
         syncEntries(
                 context,
                 p,
-                new RemoteCaller() {
+                new RemoteCaller<Product>() {
                     @Override
-                    public Call<ArrayList<Product>> call() {
+                    public Call<List<Product>> call() {
                         return restClient.products();
                     }
                 },
@@ -142,9 +148,9 @@ public class Synchronizer {
         syncEntries(
                 context,
                 m,
-                new RemoteCaller() {
+                new RemoteCaller<Market>() {
                     @Override
-                    public Call<ArrayList<Market>> call() {
+                    public Call<List<Market>> call() {
                         return restClient.markets();
                     }
                 },
@@ -210,7 +216,6 @@ public class Synchronizer {
                 source.add(entry);
             }
         }
-        source.endTransaction();
 
         // remove old entries that are not in the remote list
         for (DatabaseEntry entry : localProductList) {
@@ -218,6 +223,7 @@ public class Synchronizer {
                 source.removeEntryFromDatabase(entry);
             }
         }
+        source.endTransaction();
     }
 
     private ShoppingListDataSource syncShoppingLists(Context context) {

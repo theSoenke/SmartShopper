@@ -3,6 +3,7 @@ package app.smartshopper.Database.Sync;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.smartshopper.Database.Entries.ShoppingList;
 import retrofit2.Call;
@@ -24,15 +25,15 @@ public class RetrofitTest {
     public void testRestClient()
     {
 
-        Call<ArrayList<ShoppingList>> call = restClient.listsLimit(2);
+        Call<List<ShoppingList>> call = restClient.listsLimit(2);
 
-        call.enqueue(new Callback<ArrayList<ShoppingList>>() {
+        call.enqueue(new Callback<List<ShoppingList>>() {
             @Override
-            public void onResponse(Call<ArrayList<ShoppingList>> call, Response<ArrayList<ShoppingList>> response)
+            public void onResponse(Call<List<ShoppingList>> call, Response<List<ShoppingList>> response)
             {
                 if (response.isSuccessful())
                 {
-                    ArrayList<ShoppingList> shoppingListArray = response.body();
+                    List<ShoppingList> shoppingListArray = response.body();
                     Log.d("RestCall", "success");
                 } else
                 {
@@ -43,7 +44,7 @@ public class RetrofitTest {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<ShoppingList>> call, Throwable t)
+            public void onFailure(Call<List<ShoppingList>> call, Throwable t)
             {
                 Log.d("RESTClient", "Failure");
                 Log.d("RESTClient", t.getMessage());

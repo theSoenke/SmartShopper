@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.Entries.Market;
@@ -29,10 +30,10 @@ import retrofit2.http.Query;
 public interface ApiService {
 
 	@GET("lists")
-	public Call<ArrayList<ShoppingList>> listsLimit(@Query("limit") int limit);
+	public Call<List<ShoppingList>> listsLimit(@Query("limit") int limit);
 
 	@POST("lists")
-	public Call<ArrayList<ShoppingList>> lists();
+	public Call<List<ShoppingList>> lists();
 
 	//    DELETE http://api.tecfuture.de:3000/lists/id
 	@DELETE("lists/{id}")
@@ -40,22 +41,22 @@ public interface ApiService {
 
 	//    GET http://api.tecfuture.de:3000/search/query
 	@GET("search/{query}")
-	public Call<ArrayList<Product>> search(@Path("query") String query);
+	public Call<List<Product>> search(@Path("query") String query);
 
 	//    POST http://api.tecfuture.de:3000/products/import
 	@POST("products/import")
-	public Call<ArrayList<Product>> importNew();
+	public Call<List<Product>> importNew();
 
 	//    GET http://api.tecfuture.de:3000/products
 	@GET("products")
-	public Call<ArrayList<Product>> products();
+	public Call<List<Product>> products();
 
 	//    POST http://api.tecfuture.de:3000/user/register
 	@POST("user/register")
 	public Call<JsonElement> register();
 
 	@GET("markets")
-	public Call<ArrayList<Market>> markets();
+	public Call<List<Market>> markets();
 
 	@POST("user/token")
 	public Call<ResponseBody> registerToken(@Body JsonObject token);
