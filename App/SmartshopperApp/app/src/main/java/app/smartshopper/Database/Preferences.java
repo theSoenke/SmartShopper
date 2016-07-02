@@ -9,52 +9,92 @@ import android.util.Log;
  * <p/>
  * Created by hauke on 01.06.16.
  */
-public class Preferences {
-	public static final String HASH = "hash";
+public class Preferences
+{
 	private static final String PREFERENCES_FILE = "prefs";
+	private static final String HASH = "hash";
+	private static final String USERNAME = "userName";
+	private static final String TOKEN = "token";
+
 	private static Preferences INSTANCE;
 	private static Context mContext;
-	private static String mUsername;
 
-	public Preferences(Context context) {
+	public Preferences(Context context)
+	{
 		INSTANCE = this;
 		mContext = context;
-		mUsername = "Max Mustermann";
 	}
 
-	public static Preferences getInstance() {
-		if(INSTANCE == null){
+	public static Preferences getInstance()
+	{
+		if (INSTANCE == null)
+		{
 			Log.e("Preferences null", "Create preference object first");
 		}
 		return INSTANCE;
 	}
 
-	public String getUserName() {
-		return mUsername;
+	public static void setUserName(String username)
+	{
+		saveSharedSetting(mContext, USERNAME, username);
 	}
 
-	public String getBasicAuthHeader() {
-		return "Basic " + readSharedSetting(mContext, Preferences.HASH, "");
+	public static String getUserName()
+	{
+		return readSharedSetting(mContext, USERNAME);
 	}
 
-	public static void saveSharedSetting(Context context, String settingName, String settingValue) {
+	public static void setBasicAuthHash(String hash)
+	{
+		saveSharedSetting(mContext, HASH, hash);
+	}
+
+	public static String getBasicAuthHeader()
+	{
+		return "Basic " + readSharedSetting(mContext, HASH);
+	}
+
+	/***
+	 * Stores fcm token. Returns true when token changed
+	 * @return
+	 */
+	public static boolean setFcmToken(String token)
+	{
+		String oldToken = readSharedSetting(mContext, TOKEN);
+		if(oldToken.equals(token)){
+			return false;
+		}
+		saveSharedSetting(mContext, TOKEN, token);
+		return true;
+	}
+
+	public static String getFcmToken()
+	{
+		return readSharedSetting(mContext, TOKEN);
+	}
+
+	private static void saveSharedSetting(Context context, String settingName, String settingValue)
+	{
 		SharedPreferences sharedPref = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = sharedPref.edit();
 		editor.putString(settingName, settingValue);
 		editor.apply();
 	}
 
-	public static String readSharedSetting(Context context, String settingName, String defaultValue) {
+	private static String readSharedSetting(Context context, String settingName)
+	{
 		SharedPreferences sharedPref = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-		return sharedPref.getString(settingName, defaultValue);
+		return sharedPref.getString(settingName, "");
 	}
 
-	public static void clearPreferences(Context context) {
+	public static void clearPreferences(Context context)
+	{
 		context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE).edit().clear().commit();
 	}
 
-	public static boolean preferencesExist(Context context) {
+	public static boolean preferencesExist(Context context)
+	{
 		SharedPreferences sharedPref = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-		return (sharedPref != null && sharedPref.contains(HASH));
+		return (sharedPref != null && sharedPref.contains(HASH) && sharedPref.contains(USERNAME));
 	}
 }

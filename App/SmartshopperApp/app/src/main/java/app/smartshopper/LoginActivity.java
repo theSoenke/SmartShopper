@@ -16,7 +16,6 @@ import android.widget.Button;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Sync.APIFactory;
@@ -140,8 +139,8 @@ public class LoginActivity extends AppCompatActivity
 
 			final String hash = Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
 
-			Preferences.saveSharedSetting(this, "hash", hash);
-			Preferences.saveSharedSetting(this, "userName", userName);
+			Preferences.setBasicAuthHash(hash);
+			Preferences.setUserName(userName);
 
 			if (login)
 			{
