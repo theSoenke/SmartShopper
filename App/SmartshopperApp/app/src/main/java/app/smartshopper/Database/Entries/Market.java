@@ -14,15 +14,15 @@ import java.util.Map;
  */
 public class Market extends DatabaseEntry {
     @SerializedName("products")
-    private Map<String, SyncableMarketProduct> _marketProducts;
+    private List<SyncableMarketProduct> _marketProducts;
 
     public Market() {
-        _marketProducts = new HashMap<String, SyncableMarketProduct>();
+        _marketProducts = new ArrayList<SyncableMarketProduct>();
     }
 
     public List<MarketEntry> getAllMarketEntries() {
         List<MarketEntry> list = new ArrayList<MarketEntry>(_marketProducts.size());
-        for (SyncableMarketProduct product : _marketProducts.values()) {
+        for (SyncableMarketProduct product : _marketProducts) {
             list.add(new MarketEntry(getId(),
                     product._product.getId(),
                     product._price,
@@ -91,7 +91,20 @@ public class Market extends DatabaseEntry {
     }
 
     public PointF getPositionOf(Product product) {
-        SyncableMarketProduct marketProduct = _marketProducts.get(product.getEntryName());
+        if(product == null){
+            return new PointF();
+        }
+
+        SyncableMarketProduct marketProduct = null;// = _marketProducts.get(product.getEntryName());
+
+        // get the market product which is identical with the given product
+        for(SyncableMarketProduct syncableMarketProduct : _marketProducts){
+            if(product.equals(syncableMarketProduct)){
+                marketProduct = syncableMarketProduct;
+                break;
+            }
+        }
+
         PointF position = new PointF();
         if (marketProduct != null) {
             position = new PointF(marketProduct._location.x, marketProduct._location.y);
