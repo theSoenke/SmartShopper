@@ -6,7 +6,9 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
@@ -24,6 +26,7 @@ import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
+import okhttp3.Request;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,13 +37,23 @@ import retrofit2.Response;
  */
 public class Synchronizer {
 
-    // TODO Rewrite the request methods to use lambdas and to be more generic.
+    interface RemoteCaller {
+        Call<? extends List> call();
+    }
+
+    interface NextSyncMethod {
+        void execute();
+    }
 
     private ApiService restClient;
 
+    /**
+     * Starts syncing all data sources.
+     *
+     * @param context The context of the application.
+     */
     public void sync(Context context) {
         Log.i("Synchronizer", "Start synchronizing local database ...");
-        // TODO connect to remote database and sync local database
 
         restClient = new APIFactory().getInstance();
         Log.i("Synchronizer", "Got the rest client reference.");
@@ -59,40 +72,65 @@ public class Synchronizer {
         syncProducts(context);
     }
 
-    private void syncProducts(final Context context) {
+    /**
+     * Synchronizes all entries of the given data source with the list returned by the {@code caller}.
+     *
+     * @param context        The context of the application.
+     * @param source         The source that should be synced.
+     * @param caller         The caller that gives us a list of data.
+     * @param nextSyncMethod The next method that should be called after a successfull sync.
+     */
+    private void syncEntries(final Context context,
+                             final DatabaseTable<? extends DatabaseEntry> source,
+                             RemoteCaller caller,
+                             final NextSyncMethod nextSyncMethod) {
+        Call<ArrayList<? extends DatabaseEntry>> remoteCall = (Call<ArrayList<? extends DatabaseEntry>>) caller.call();
 
-        Log.i("Synchronizer", "Create product data source and enqueue request ...");
-        final ProductDataSource p = new ProductDataSource(context);
-        Call<ArrayList<Product>> remoteProductListCall = restClient.products();
-
-        remoteProductListCall.enqueue(new Callback<ArrayList<Product>>() {
+        remoteCall.enqueue(new Callback<ArrayList<? extends DatabaseEntry>>() {
             @Override
-            public void onResponse(Call<ArrayList<Product>> call, Response<ArrayList<Product>> response) {
+            public void onResponse(Call<ArrayList<? extends DatabaseEntry>> call, Response<ArrayList<? extends DatabaseEntry>> response) {
                 if (response.isSuccessful()) {
-                    List<Product> remoteProductList = response.body();
-                    List<Product> localProductList = p.getAllEntries();
-                    Log.d("RestCall", "success");
+                    List<? extends DatabaseEntry> remoteList = response.body();
+                    List<? extends DatabaseEntry> localList = source.getAllEntries();
 
-                    //TODO find a better solution for this. Beginning in this callback method doesn't feel right :/
+                    syncLocal(remoteList, localList, source);
 
-                    Log.i("Synchronizer", "Sync products ...");
-                    syncLocal(remoteProductList, localProductList, p);
-
-                    syncMarkets(context, p);
-
+                    nextSyncMethod.execute();
                 } else {
                     Log.e("Error Code", String.valueOf(response.code()));
                     Log.e("Error Body", response.errorBody().toString());
                 }
-
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Product>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<? extends DatabaseEntry>> call, Throwable t) {
                 Log.d("RESTClient", "Failure");
                 Log.d("RESTClient", t.getMessage());
             }
         });
+    }
+
+    private void syncProducts(final Context context) {
+
+        Log.i("Synchronizer", "Create product data source and enqueue request ...");
+        final ProductDataSource p = new ProductDataSource(context);
+
+        syncEntries(
+                context,
+                p,
+                new RemoteCaller() {
+                    @Override
+                    public Call<ArrayList<Product>> call() {
+                        return restClient.products();
+                    }
+                },
+                new NextSyncMethod() {
+                    @Override
+                    public void execute() {
+                        syncMarkets(context, p);
+                    }
+                }
+        );
 
         Log.i("Synchronizer", "Finished creating the product source and enqueueing the request.");
     }
@@ -100,43 +138,29 @@ public class Synchronizer {
     private void syncMarkets(final Context context, final ProductDataSource p) {
         Log.i("Synchronizer", "Create market data source and enqueue request ...");
         final MarketDataSource m = new MarketDataSource(context);
-        Call<ArrayList<Market>> remoteMarketListCall = restClient.markets();
 
-        remoteMarketListCall.enqueue(new Callback<ArrayList<Market>>() {
-            @Override
-            public void onResponse(Call<ArrayList<Market>> call, Response<ArrayList<Market>> response) {
-                if (response.isSuccessful()) {
-                    List<Market> remoteMarketList = response.body();
-                    Log.i("Markets", remoteMarketList.toString());
-                    List<Market> localMarketList = m.getAllEntries();
-                    Log.d("RestCall", "success");
+        syncEntries(
+                context,
+                m,
+                new RemoteCaller() {
+                    @Override
+                    public Call<ArrayList<Market>> call() {
+                        return restClient.markets();
+                    }
+                },
+                new NextSyncMethod() {
+                    @Override
+                    public void execute() {
+                        Log.i("Synchronizer", "Sync item entries ...");
+                        ShoppingListDataSource s = syncItemEntries(context, p);
 
-                    //TODO find a better solution for this. Beginning in this callback method doesn't feel right :/
+                        Log.i("Synchronizer", "Sync user data ...");
+                        syncParticipants(context, s);
 
-                    Log.i("Synchronizer", "Sync markets ...");
-                    syncLocal(remoteMarketList, localMarketList, m);
-
-                    Log.i("Synchronizer", "Sync item entries ...");
-                    ShoppingListDataSource s = syncItemEntries(context, p);
-
-                    Log.i("Synchronizer", "Sync user data ...");
-                    syncParticipants(context, s);
-
-                    Log.i("Synchronizer", "Finished synchronizing");
-
-                } else {
-                    Log.e("Error Code", String.valueOf(response.code()));
-                    Log.e("Error Body", response.errorBody().toString());
+                        Log.i("Synchronizer", "Finished synchronizing");
+                    }
                 }
-
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<Market>> call, Throwable t) {
-                Log.d("RESTClient", "Failure");
-                Log.d("RESTClient", t.getMessage());
-            }
-        });
+        );
 
         Log.i("Synchronizer", "Finished creating the market source and enqueueing the request.");
     }

@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
