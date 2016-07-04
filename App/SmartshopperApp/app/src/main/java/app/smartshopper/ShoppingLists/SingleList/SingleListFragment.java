@@ -101,7 +101,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
             @Override
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
-                ShoppingList list = s.add(listName.getText().toString());
+                final ShoppingList list = s.add(listName.getText().toString());
                 Log.i("AddListDialog","list added locally (name:" + list.getEntryName() + ")" );
                 Call<JsonElement> xc = service.addList(list);
                 xc.enqueue(new Callback<JsonElement>()
@@ -112,11 +112,11 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
 
                         if (response.isSuccessful())
                         {
-                            Log.e("AddList", "List Added Succesfully");
+                            Log.d("AddList", "List " + list.getEntryName() + " Added Succesfully");
                         }
                         else
                         {
-                            Log.e("AddList", "List Not Added Succesfully");
+                            Log.d("AddList", "List " + list.getEntryName() + " Not Added Succesfully");
 
                         }
                     }
@@ -124,7 +124,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
                     @Override
                     public void onFailure(Call<JsonElement> call, Throwable t)
                     {
-                        Log.e("AddList", "Failure");
+                        Log.e("AddList", "Failure with adding List: "  + list.getEntryName());
 
                     }
                 });

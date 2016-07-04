@@ -43,6 +43,10 @@ public interface ApiService {
 	@DELETE("lists/{id}")
 	public void deleteList(@Path("id") int id);
 
+	// PUT http://api.tecfuture.de:3000/lists
+	@PUT
+	public void updateList(@Path("id") String id, @Body ShoppingList list);
+
 	//    GET http://api.tecfuture.de:3000/search/query
 	@GET("search/{query}")
 	public Call<List<Product>> search(@Path("query") String query);

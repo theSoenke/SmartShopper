@@ -18,10 +18,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
+import app.smartshopper.Database.Sync.APIFactory;
+import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
+import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 
@@ -33,6 +37,7 @@ import app.smartshopper.ShoppingLists.DetailedListActivity;
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     int expandedParent = -1;
+    ApiService service;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        service = new APIFactory().getInstance();
         Bundle extras = getArguments();
         String newList = "";
         String newParticipants = "";
@@ -150,7 +156,8 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
-                s.add(listName.getText().toString());
+                ShoppingList l = s.add(listName.getText().toString());
+                service.addList(l);
                 dialog.dismiss();
             }
         });

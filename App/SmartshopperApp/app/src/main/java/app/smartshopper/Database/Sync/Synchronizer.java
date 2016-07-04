@@ -158,7 +158,9 @@ public class Synchronizer {
                     @Override
                     public void execute() {
                         Log.i("Synchronizer", "Sync item entries ...");
-                        ShoppingListDataSource s = syncItemEntries(context, p);
+                        ShoppingListDataSource s = syncShoppingLists(context);
+
+                        syncItemEntries(context, p, s);
 
                         Log.i("Synchronizer", "Sync user data ...");
                         syncParticipants(context, s);
@@ -254,16 +256,16 @@ public class Synchronizer {
                          @Override
                          public void onResponse(Call<List<ShoppingList>> call, Response<List<ShoppingList>> response) {
                              if(response.isSuccessful()){
-                                 Log.i("ShoppingListSync", "gotem");
+                                 Log.d("ShoppingListSync", "gotem");
 
                              }else{
-                                 Log.i("ShoppingListSync", "didnt getem");
+                                 Log.e("ShoppingListSync", "didnt getem");
                              }
                          }
 
                          @Override
                          public void onFailure(Call<List<ShoppingList>> call, Throwable t) {
-                                Log.i("ShoppingListSync", "we lost");
+                                Log.e("ShoppingListSync", "we lost");
                          }
                      });
 
@@ -272,38 +274,27 @@ public class Synchronizer {
         return s;
     }
 
-    private ShoppingListDataSource syncItemEntries(Context context, ProductDataSource p) {
-        ShoppingListDataSource s = syncShoppingLists(context);
+    private ItemEntryDataSource syncItemEntries(Context context, ProductDataSource p, ShoppingListDataSource s) {
         ItemEntryDataSource i = new ItemEntryDataSource(context);
-        Log.i("Synchronizer", "Create shopping list data source...");
+        Log.i("Synchronizer", "Create item entry data source...");
+        //WHERE IS THE PRODUCT AMOUNT / MARK AS BOUGHT INFO
 
-
-        return s;
+        return i;
     }
 
-    private UserDataSource syncUsers(Context context) {
+    private UserDataSource syncUsers(Context context, ShoppingListDataSource s) {
         UserDataSource u = new UserDataSource(context);
-
-        u.beginTransaction();
-
-        u.add("Dieter");
-        u.add("Batman");
-        u.add("SpiderMan");
-        u.add("Ronny Schäfer");
-        u.add("Ash Ketchup");
-        u.add("Professor Eich");
-        u.add("Rocko");
-        u.add("Misty");
-
-        u.endTransaction();
-
+        Log.i("Synchronizer", "Create User data source...");
+        for(ShoppingList l : s.getAllGroupLists()){
+            for(User usr : l.getParticipants()){
+                u.add(usr);
+            }
+        }
         return u;
     }
 
     private void syncParticipants(Context context, ShoppingListDataSource s) {
-        UserDataSource u = syncUsers(context);
-
-
+        UserDataSource u = syncUsers(context, s);
     }
 
     /**

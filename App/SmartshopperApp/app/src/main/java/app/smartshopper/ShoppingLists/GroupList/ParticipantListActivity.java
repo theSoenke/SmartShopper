@@ -23,6 +23,8 @@ import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
+import app.smartshopper.Database.Sync.APIFactory;
+import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
@@ -33,12 +35,13 @@ import app.smartshopper.R;
  */
 public class ParticipantListActivity extends AppCompatActivity {
     private String listName;
+    private ApiService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutInflater().inflate(R.layout.participant_list, null));
-
+        service = new APIFactory().getInstance();
         // Set tag for the item fragment so that it knows that items to show
         listName = "";
         Bundle extras = getIntent().getExtras();
@@ -101,18 +104,15 @@ public class ParticipantListActivity extends AppCompatActivity {
 
                 UserDataSource userDataSource = new UserDataSource(context);
                 User user = userDataSource.add(participantName.getText().toString());
-
                 ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(context);
                 ShoppingList list = shoppingListDataSource.add(listName);
-
                 ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
-
                 Participant participant = participantDataSource.add(list, user);
                 Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
-
                 listAdapter.add(participant);
                 listAdapter.notifyDataSetChanged();
-
+                service.updateList(list.getId(), list);
+                Log.i("ListParticipants","List Participants upadated");
                 dialog.dismiss();
             }
         });
@@ -153,7 +153,6 @@ public class ParticipantListActivity extends AppCompatActivity {
 
                 listAdapter.remove(participant);
                 listAdapter.notifyDataSetChanged();
-
                 dialog.dismiss();
             }
         });
