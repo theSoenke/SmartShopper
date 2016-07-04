@@ -20,6 +20,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -32,8 +33,10 @@ public interface ApiService {
 	@GET("lists")
 	public Call<List<ShoppingList>> listsLimit(@Query("limit") int limit);
 
+	@GET("lists")
+	public Call<List<ShoppingList>> listforUser();
+
 	@POST("lists")
-	public Call<List<ShoppingList>> lists();
 
 	//    DELETE http://api.tecfuture.de:3000/lists/id
 	@DELETE("lists/{id}")

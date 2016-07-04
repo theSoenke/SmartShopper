@@ -229,18 +229,45 @@ public class Synchronizer {
     private ShoppingListDataSource syncShoppingLists(Context context) {
         ShoppingListDataSource s = new ShoppingListDataSource(context);
 
-        s.beginTransaction();
-        // single lists
-        s.add("Baumarkt");
-        s.add("Wocheneinkauf");
-        s.add("Getränkemarkt");
+        Log.i("Synchronizer", "Create shopping list data source...");
+        final ProductDataSource p = new ProductDataSource(context);
 
-        // group lists
-        s.add("Geburtstag von Max Mustermann");
-        s.add("Vereinstreffen");
-        s.add("OE-Liste");
+        syncEntries(
+                context,
+                s,
+                new RemoteCaller<ShoppingList>() {
+                    @Override
+                    public Call<List<ShoppingList>> call() {
+                        return restClient.listforUser();
+                    }
+                },
+                new NextSyncMethod() {
+                    @Override
+                    public void execute() {
+                    }
+                }
+        );
 
-        s.endTransaction();
+        Call<List<ShoppingList>> call = restClient.listforUser();
+
+        call.enqueue(new Callback<List<ShoppingList>>() {
+                         @Override
+                         public void onResponse(Call<List<ShoppingList>> call, Response<List<ShoppingList>> response) {
+                             if(response.isSuccessful()){
+                                 Log.i("ShoppingListSync", "gotem");
+
+                             }else{
+                                 Log.i("ShoppingListSync", "didnt getem");
+                             }
+                         }
+
+                         @Override
+                         public void onFailure(Call<List<ShoppingList>> call, Throwable t) {
+                                Log.i("ShoppingListSync", "we lost");
+                         }
+                     });
+
+                Log.i("Synchronizer", "shopping list data source synced");
 
         return s;
     }
@@ -248,52 +275,8 @@ public class Synchronizer {
     private ShoppingListDataSource syncItemEntries(Context context, ProductDataSource p) {
         ShoppingListDataSource s = syncShoppingLists(context);
         ItemEntryDataSource i = new ItemEntryDataSource(context);
+        Log.i("Synchronizer", "Create shopping list data source...");
 
-        ShoppingList Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0);
-        ShoppingList Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0);
-        ShoppingList Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0);
-        ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
-        ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
-        ShoppingList OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
-
-        List<Product> listOfProducts = p.getAllEntries();
-
-        i.beginTransaction();
-
-        i.add((Product) getEntryByName(listOfProducts, "Bohrmaschine"), Baumarkt, 4);
-        i.add((Product) getEntryByName(listOfProducts, "Farbe"), Baumarkt, 1);
-
-        i.add((Product) getEntryByName(listOfProducts, "Wurst"), Wocheneinkauf, 1);
-        i.add((Product) getEntryByName(listOfProducts, "Käse"), Wocheneinkauf, 5);
-
-        // just to have a already bought item that's in the middle of the list
-        ItemEntry entry = new ItemEntry();
-        entry.setEntryName("Tiefkühlpizza");
-        entry.setAmount(1);
-        entry.setBought(1);
-        entry.setListID(Wocheneinkauf.getId());
-        entry.setProductID(getEntryByName(listOfProducts, "Tiefkühlpizza").getId());
-        i.add(entry);
-
-        i.add((Product) getEntryByName(listOfProducts, "Toast"), Wocheneinkauf, 1);
-        i.add((Product) getEntryByName(listOfProducts, "Bratwurst"), Wocheneinkauf, 7);
-        i.add((Product) getEntryByName(listOfProducts, "Curry-Ketchup"), Wocheneinkauf, 1);
-        i.add((Product) getEntryByName(listOfProducts, "Tomate"), Wocheneinkauf, 1);
-        i.add((Product) getEntryByName(listOfProducts, "Zwiebeln"), Wocheneinkauf, 3);
-
-        i.add((Product) getEntryByName(listOfProducts, "Bier"), Greänkemarkt, 1);
-
-        i.add((Product) getEntryByName(listOfProducts, "Bier"), Geburtstag, 6);
-        i.add((Product) getEntryByName(listOfProducts, "Tomate"), Geburtstag, 1);
-
-        i.add((Product) getEntryByName(listOfProducts, "Kööm"), Vereinstreffen, 1);
-        i.add((Product) getEntryByName(listOfProducts, "Klootkugel"), Vereinstreffen, 1);
-        i.add((Product) getEntryByName(listOfProducts, "Notizblock"), Vereinstreffen, 1);
-
-        i.add((Product) getEntryByName(listOfProducts, "Bier"), OE, 2);
-        i.add((Product) getEntryByName(listOfProducts, "Kööm"), OE, 1);
-
-        i.endTransaction();
 
         return s;
     }
@@ -320,38 +303,7 @@ public class Synchronizer {
     private void syncParticipants(Context context, ShoppingListDataSource s) {
         UserDataSource u = syncUsers(context);
 
-        s.beginTransaction();
-        ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
-        ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
-        ShoppingList OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
-        s.endTransaction();
 
-        List<User> listOfUsers = u.getAllEntries();
-
-        User Dieter = (User) getEntryByName(listOfUsers, "Dieter");
-        User Batman = (User) getEntryByName(listOfUsers, "Batman");
-        User SpiderMan = (User) getEntryByName(listOfUsers, "SpiderMan");
-        User Ronny = (User) getEntryByName(listOfUsers, "Ronny Schäfer");
-        User AshKetchup = (User) getEntryByName(listOfUsers, "Ash Ketchup");
-        User ProfEich = (User) getEntryByName(listOfUsers, "Professor Eich");
-        User Rocko = (User) getEntryByName(listOfUsers, "Rocko");
-        User Misty = (User) getEntryByName(listOfUsers, "Misty");
-
-        ParticipantDataSource p = new ParticipantDataSource(context);
-        p.beginTransaction();
-
-        p.add(Geburtstag, Dieter);
-        p.add(Geburtstag, Batman);
-
-        p.add(Vereinstreffen, SpiderMan);
-        p.add(Vereinstreffen, Ronny);
-
-        p.add(OE, AshKetchup);
-        p.add(OE, ProfEich);
-        p.add(OE, Rocko);
-        p.add(OE, Misty);
-
-        p.endTransaction();
     }
 
     /**

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +15,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.gson.JsonElement;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ShoppingList;
+import app.smartshopper.Database.Preferences;
+import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import app.smartshopper.R;
+import app.smartshopper.Database.Sync.ApiService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * The SingleListFragment contains a list with all single lists (list that's not shared to other participants).
@@ -29,9 +38,12 @@ import app.smartshopper.R;
 // TODO Maybe Extract the communication and the dialog into extra classes?
 public class SingleListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    private ApiService service;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
         Bundle extras = getArguments();
+        service = new APIFactory().getInstance();
         String newList = "";
         if (extras != null) {
             newList = extras.getString("newList");
@@ -89,7 +101,35 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
             @Override
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
-                s.add(listName.getText().toString());
+                ShoppingList list = s.add(listName.getText().toString());
+                Log.i("AddListDialog","list added locally (name:" + list.getEntryName() + ")" );
+                Call<JsonElement> xc = service.addList(list);
+                xc.enqueue(new Callback<JsonElement>()
+                {
+                    @Override
+                    public void onResponse(Call<JsonElement> call, Response<JsonElement> response)
+                    {
+
+                        if (response.isSuccessful())
+                        {
+                            Log.e("AddList", "List Added Succesfully");
+                        }
+                        else
+                        {
+                            Log.e("AddList", "List Not Added Succesfully");
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<JsonElement> call, Throwable t)
+                    {
+                        Log.e("AddList", "Failure");
+
+                    }
+                });
+                Log.i("AddListDialog", "uploading List");
+
                 dialog.dismiss();
             }
         });

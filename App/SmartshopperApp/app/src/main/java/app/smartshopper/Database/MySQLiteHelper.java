@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String PRODUCT_TABLE_NAME = "product_table";
-    public static final String PRODUCT_COLUMN_ID = "id";
+    public static final String PRODUCT_COLUMN_ID = "product_id";
     public static final String PRODUCT_COLUMN_NAME = "name";
 
     public static final String SHOPPINGLIST_TABLE_NAME = "shopping_list_table";
@@ -43,7 +43,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "list.db";
 
-    public static final int DATABASE_VERSION = 10;
+    public static final int DATABASE_VERSION = 11;
 
     //Database creation statement
     private static final String PRODUCT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PRODUCT_TABLE_NAME + "(" +
