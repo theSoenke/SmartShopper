@@ -11,7 +11,10 @@ let listSchema = new Schema({
   products: [{
     _id: false,
     product: {type: ObjectId, ref: 'Product'},
-    amount: Number
+    amount: {
+      total: Number,
+      bought: Number
+    }
   }],
   participants: [{type: ObjectId, ref: 'User'}],
   created_at: Date,
