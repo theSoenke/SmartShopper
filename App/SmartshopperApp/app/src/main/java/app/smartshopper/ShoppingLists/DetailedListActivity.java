@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import app.smartshopper.Database.Entries.Entries;
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Entries.Product;
@@ -108,6 +109,10 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                 e.setBought(0);
             }
             _itemSource.add(e);
+            Entries en = new Entries();
+            en.setProduct(p);
+            en.setBought(0);
+            en.setAmount(amount);
             updateFragments();
             return true;
         }

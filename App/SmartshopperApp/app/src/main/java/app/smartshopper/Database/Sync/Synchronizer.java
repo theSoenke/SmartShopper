@@ -14,6 +14,7 @@ import java.util.List;
 import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Market;
+import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
@@ -76,6 +77,7 @@ public class Synchronizer {
         }
 
         syncProducts(context);
+        syncShoppingLists(context);
     }
 
     /**
@@ -157,15 +159,6 @@ public class Synchronizer {
                 new NextSyncMethod() {
                     @Override
                     public void execute() {
-                        Log.i("Synchronizer", "Sync item entries ...");
-                        ShoppingListDataSource s = syncShoppingLists(context);
-
-                        syncItemEntries(context, p, s);
-
-                        Log.i("Synchronizer", "Sync user data ...");
-                        syncParticipants(context, s);
-
-                        Log.i("Synchronizer", "Finished synchronizing");
                     }
                 }
         );
@@ -228,11 +221,10 @@ public class Synchronizer {
         source.endTransaction();
     }
 
-    private ShoppingListDataSource syncShoppingLists(Context context) {
-        ShoppingListDataSource s = new ShoppingListDataSource(context);
+    private void syncShoppingLists(final Context context) {
+        final ShoppingListDataSource s = new ShoppingListDataSource(context);
 
         Log.i("Synchronizer", "Create shopping list data source...");
-        final ProductDataSource p = new ProductDataSource(context);
 
         syncEntries(
                 context,
@@ -246,6 +238,8 @@ public class Synchronizer {
                 new NextSyncMethod() {
                     @Override
                     public void execute() {
+                        Log.i("Synchronizer", "Sync shopping lists ...");
+                        syncItemEntries(context, s);
                     }
                 }
         );
@@ -271,25 +265,26 @@ public class Synchronizer {
 
                 Log.i("Synchronizer", "shopping list data source synced");
 
-        return s;
     }
 
-    private ItemEntryDataSource syncItemEntries(Context context, ProductDataSource p, ShoppingListDataSource s) {
+    private void syncItemEntries(Context context, ShoppingListDataSource s) {
         ItemEntryDataSource i = new ItemEntryDataSource(context);
         Log.i("Synchronizer", "Create item entry data source...");
-        //WHERE IS THE PRODUCT AMOUNT / MARK AS BOUGHT INFO
+        for(ShoppingList l : s.getAllEntries()){
+            Log.i("Sychnronizer", "entrylist size (list:" + l.getEntryName() + ") " + l.getEntries().size());
+          //  Log.i("SynchroOwner", l.getOwner().name);
 
-        return i;
+            Log.i("SynchroName" , l.getId());
+            if(l.getEntries().size()>0){
+                Log.i("Synchronizer", "first Entry: " + l.getEntries().get(0).getProduct() + " (" +  l.getEntries().get(0).getAmount() + ")");
+            }
+        }
     }
 
     private UserDataSource syncUsers(Context context, ShoppingListDataSource s) {
         UserDataSource u = new UserDataSource(context);
         Log.i("Synchronizer", "Create User data source...");
-        for(ShoppingList l : s.getAllGroupLists()){
-            for(User usr : l.getParticipants()){
-                u.add(usr);
-            }
-        }
+
         return u;
     }
 

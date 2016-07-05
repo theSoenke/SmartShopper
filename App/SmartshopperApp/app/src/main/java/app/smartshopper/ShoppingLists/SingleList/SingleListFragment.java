@@ -17,12 +17,16 @@ import android.widget.ListView;
 
 import com.google.gson.JsonElement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.smartshopper.Database.Entries.Entries;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Sync.APIFactory;
+import app.smartshopper.Database.Sync.Synchronizer;
+import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import app.smartshopper.R;
@@ -101,8 +105,19 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
             @Override
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
+                ProductDataSource p = new ProductDataSource(getContext());
                 final ShoppingList list = s.add(listName.getText().toString());
-                Log.i("AddListDialog","list added locally (name:" + list.getEntryName() + ")" );
+                Entries entries = new Entries();
+                entries.setProduct(p.getProductFromString("Bier"));
+                entries.setAmount(7);
+                entries.setBought(0);
+                List<Entries> entriesList = new ArrayList<Entries>();
+                entriesList.add(entries);
+                list.setEntries(entriesList);
+                s.add(list);
+               Log.i("AddListDialog","list added locally (name:" + list.getEntryName() + ")" );
+                Log.i("AddListDialog", "EntryList size : " + list.getEntries().size());
+                Log.i("s", p.getProductFromString("Bier").getId());
                 Call<JsonElement> xc = service.addList(list);
                 xc.enqueue(new Callback<JsonElement>()
                 {
@@ -116,7 +131,13 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
                         }
                         else
                         {
-                            Log.d("AddList", "List " + list.getEntryName() + " Not Added Succesfully");
+                            Log.e("AddList", "List " + list.getEntryName() + " Not Added Succesfully");
+                            Log.e("AddList message", response.message());
+                            try {
+                                Log.e("AddList message", response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
                         }
                     }
@@ -129,7 +150,6 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
                     }
                 });
                 Log.i("AddListDialog", "uploading List");
-
                 dialog.dismiss();
             }
         });

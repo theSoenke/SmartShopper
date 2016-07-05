@@ -9,6 +9,7 @@ import java.util.List;
  * ShoppingList Model
  */
 public class ShoppingList extends DatabaseEntry {
+
     @SerializedName("created_at")
     private String createdAt;
     @SerializedName("updated_at")
@@ -18,9 +19,9 @@ public class ShoppingList extends DatabaseEntry {
     @SerializedName("__v")
     private Integer version;
     @SerializedName("participants")
-    private List<User> participants = new ArrayList<>();
+    private List<String> participants = new ArrayList<>();
     @SerializedName("products")
-    private List<Product> products = new ArrayList<>();
+    private List<Entries> entries = new ArrayList<Entries>();
 
     /**
      * @return The createdAt
@@ -67,29 +68,29 @@ public class ShoppingList extends DatabaseEntry {
     /**
      * @return The participants
      */
-    public List<User> getParticipants() {
+    public List<String> getParticipants() {
         return participants;
     }
 
     /**
      * @param participants The participants
      */
-    public void setParticipants(List<User> participants) {
+    public void setParticipants(List<String> participants) {
         this.participants = participants;
     }
 
     /**
-     * @return The products
+     * @return The entries
      */
-    public List<Product> getProducts() {
-        return products;
+    public List<Entries> getEntries() {
+        return entries;
     }
 
     /**
-     * @param products The products
+     * @param entries The entries
      */
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setEntries(List<Entries> entries) {
+        this.entries = entries;
     }
 
     @Override
