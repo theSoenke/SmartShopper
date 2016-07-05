@@ -3,17 +3,13 @@
   "products": [
     {
       "product": "574b4b086da6fd3e127ce0ea",
-      "amount": {
-        "total": 5,
-        "bought": 4
-      }
+      "total": 5,
+      "bought": 4
     },
     {
       "product": "574b4b086da6fd3e127ce0ea",
-      "amount": {
-        "total": 10,
-        "bought": 7
-      }
+      "total": 10,
+      "bought": 7
     }
   ],
   "participants": [
