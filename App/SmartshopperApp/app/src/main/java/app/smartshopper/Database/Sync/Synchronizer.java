@@ -6,9 +6,6 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
@@ -26,7 +23,6 @@ import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
-import okhttp3.Request;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,19 +32,26 @@ import retrofit2.Response;
  * Created by hauke on 11.05.16.
  */
 public class Synchronizer {
-
     /**
-     * Returns a call that will give us some data to sync.
+     * Defines operations that are responsible for a correct synchronization of the given data.
+     *
+     * @param <T> The Type of the local data (e.g. {@link Market}).
      */
-    interface RemoteCaller<T extends DatabaseEntry> {
-        Call<List<T>> call();
-    }
+    interface SyncProcessor<T extends DatabaseEntry> {
+        /**
+         * Does something when a local table (specified by the given source) has been updated.
+         */
+        void processUpdatedLocalData(List<T> remoteList, List<T> localList, DatabaseTable source);
 
-    /**
-     * Calls the next method that should be executed after a successful sync.
-     */
-    interface NextSyncMethod {
+        /**
+         * Calls the next method that should be executed after a successful sync.
+         */
         void execute();
+
+        /**
+         * Returns a call that will give us some data to sync.
+         */
+        Call<List<T>> call();
     }
 
     private ApiService restClient;
@@ -81,16 +84,12 @@ public class Synchronizer {
     /**
      * Synchronizes all entries of the given data source with the list returned by the {@code caller}.
      *
-     * @param context        The context of the application.
-     * @param source         The source that should be synced.
-     * @param caller         The caller that gives us a list of data.
-     * @param nextSyncMethod The next method that should be called after a successfull sync.
+     * @param source    The source that should be synced.
+     * @param processor The processor defines the operations that should be done to sync correctly.
      */
-    private void syncEntries(final Context context,
-                             final DatabaseTable<? extends DatabaseEntry> source,
-                             RemoteCaller caller,
-                             final NextSyncMethod nextSyncMethod) {
-        Call<List<? extends DatabaseEntry>> remoteCall = caller.call();
+    private void syncEntries(final DatabaseTable<? extends DatabaseEntry> source,
+                             final SyncProcessor processor) {
+        Call<List<? extends DatabaseEntry>> remoteCall = processor.call();
 
         remoteCall.enqueue(new Callback<List<? extends DatabaseEntry>>() {
             @Override
@@ -99,9 +98,13 @@ public class Synchronizer {
                     List<? extends DatabaseEntry> remoteList = response.body();
                     List<? extends DatabaseEntry> localList = source.getAllEntries();
 
-                    syncLocal(remoteList, localList, source);
+                    // The real sync method: synchronizes the local database and performs another operation defined in the processor
+                    updateLocalFromRemote(remoteList,
+                            localList,
+                            source,
+                            processor);
 
-                    nextSyncMethod.execute();
+                    processor.execute();
                 } else {
                     Log.e("Error Code", String.valueOf(response.code()));
                     Log.e("Error Body", response.errorBody().toString());
@@ -122,15 +125,19 @@ public class Synchronizer {
         final ProductDataSource p = new ProductDataSource(context);
 
         syncEntries(
-                context,
                 p,
-                new RemoteCaller<Product>() {
+                new SyncProcessor<Product>() {
+                    @Override
+                    public void processUpdatedLocalData(List<Product> remoteList, List<Product> localList, DatabaseTable source) {
+                        // remove old entries that are not in the remote list
+                        removeOldLocalEntries(remoteList, localList, source);
+                    }
+
                     @Override
                     public Call<List<Product>> call() {
                         return restClient.products();
                     }
-                },
-                new NextSyncMethod() {
+
                     @Override
                     public void execute() {
                         syncMarkets(context, p);
@@ -146,15 +153,19 @@ public class Synchronizer {
         final MarketDataSource m = new MarketDataSource(context);
 
         syncEntries(
-                context,
                 m,
-                new RemoteCaller<Market>() {
+                new SyncProcessor<Market>() {
+                    @Override
+                    public void processUpdatedLocalData(List<Market> remoteList, List<Market> localList, DatabaseTable source) {
+                        // remove old entries that are not in the remote list
+                        removeOldLocalEntries(remoteList, localList, source);
+                    }
+
                     @Override
                     public Call<List<Market>> call() {
                         return restClient.markets();
                     }
-                },
-                new NextSyncMethod() {
+
                     @Override
                     public void execute() {
                         Log.i("Synchronizer", "Sync item entries ...");
@@ -171,7 +182,7 @@ public class Synchronizer {
         Log.i("Synchronizer", "Finished creating the market source and enqueueing the request.");
     }
 
-    public void syncFcmToken(String token) {
+    private void syncFcmToken(String token) {
         ApiService apiService = new APIFactory().getInstance();
 
         JsonObject json = new JsonObject();
@@ -200,34 +211,33 @@ public class Synchronizer {
     /**
      * Syncs the given local list with the given remote list. Noting is removes from the remote list or server, only the local database and list will be edited..
      *
-     * @param remoteProductList The list of remote entries.
-     * @param localProductList  The list of local entries.
-     * @param source            The data source for the local entries.
+     * @param remoteList The list of remote entries.
+     * @param localList  The list of local entries.
+     * @param source     The data source for the local entries.
+     * @param processor  A processor that works on the updated local database.
      */
-    private void syncLocal(List<? extends DatabaseEntry> remoteProductList, List<? extends DatabaseEntry> localProductList, DatabaseTable source) {
-        if (remoteProductList.equals(localProductList)) {
+    private void updateLocalFromRemote(List<? extends DatabaseEntry> remoteList, List<? extends DatabaseEntry> localList, DatabaseTable source, SyncProcessor processor) {
+        if (remoteList.equals(localList)) {
             return;
         }
 
-        // Add new entries from remote
         source.beginTransaction();
-        for (DatabaseEntry entry : remoteProductList) {
-            if (!localProductList.contains(entry)) {
+
+        // Add new entries from remote
+        for (DatabaseEntry entry : remoteList) {
+            if (!localList.contains(entry)) {
                 source.add(entry);
             }
         }
 
-        // remove old entries that are not in the remote list
-        for (DatabaseEntry entry : localProductList) {
-            if (!remoteProductList.contains(entry)) {
-                source.removeEntryFromDatabase(entry);
-            }
-        }
+        processor.processUpdatedLocalData(remoteList, localList, source);
+
         source.endTransaction();
     }
 
     private ShoppingListDataSource syncShoppingLists(Context context) {
         ShoppingListDataSource s = new ShoppingListDataSource(context);
+
 
         s.beginTransaction();
         // single lists
@@ -352,6 +362,21 @@ public class Synchronizer {
         p.add(OE, Misty);
 
         p.endTransaction();
+    }
+
+    /**
+     * Removes all entries from the local database that are in the list of remote entries but not in the list of local entries.
+     *
+     * @param remoteList A list with remote entries ("new" ones)
+     * @param localList  A list with "old" local entries.
+     * @param source     The source to the database to actually remove entries from the database.
+     */
+    private void removeOldLocalEntries(List<? extends DatabaseEntry> remoteList, List<? extends DatabaseEntry> localList, DatabaseTable source) {
+        for (DatabaseEntry entry : localList) {
+            if (!remoteList.contains(entry)) {
+                source.removeEntryFromDatabase(entry);
+            }
+        }
     }
 
     /**
