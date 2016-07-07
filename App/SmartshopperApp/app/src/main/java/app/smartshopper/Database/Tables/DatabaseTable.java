@@ -25,12 +25,21 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     protected final String[] allColumns;
     private final MySQLiteHelper dbHelper;
     protected static SQLiteDatabase database = null;
+    private final Context context;
 
     public DatabaseTable(Context context, String tableName, String[] columns) {
         this.tableName = tableName;
         this.allColumns = columns;
+        this.context = context;
         this.dbHelper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
         open();
+    }
+
+    /**
+     * @return The context passed at creation.
+     */
+    protected Context getContext() {
+        return context;
     }
 
     /**
@@ -58,7 +67,7 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      * @throws SQLException
      */
     public void open() throws SQLException {
-        if(database == null) {
+        if (database == null) {
             database = dbHelper.getWritableDatabase();
         }
     }
@@ -158,28 +167,14 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      */
     public abstract T cursorToEntry(Cursor cursor);
 
-    public void beginTransaction(){
+    public void beginTransaction() {
         database.beginTransactionNonExclusive();
     }
 
-    public void endTransaction(){
+    public void endTransaction() {
         database.setTransactionSuccessful();
         database.endTransaction();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     // FIXME Remove all this when the API gives us the ID by adding or downloading

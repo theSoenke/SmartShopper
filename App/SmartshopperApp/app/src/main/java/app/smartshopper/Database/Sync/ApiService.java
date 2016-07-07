@@ -33,7 +33,7 @@ public interface ApiService {
 	public Call<List<ShoppingList>> listsLimit(@Query("limit") int limit);
 
 	@POST("lists")
-	public Call<List<ShoppingList>> lists();
+	public Call<ShoppingList> lists(@Body ShoppingList shoppingList);
 
 	//    DELETE http://api.tecfuture.de:3000/lists/id
 	@DELETE("lists/{id}")
