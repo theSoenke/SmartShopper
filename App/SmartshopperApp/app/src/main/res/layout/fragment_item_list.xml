@@ -1,29 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+<RelativeLayout android:id="@id/itemlist_layout"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+    >
+
 
     <ListView
         android:id="@+id/itemlist_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:id="@+id/noItemsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No items in this list, add some!"
+        android:layout_centerHorizontal="true"
+        android:fontFamily=""
+        android:layout_marginTop="150dp"
+        android:visibility="gone"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:tint="@android:color/white"
-        android:src="@android:drawable/ic_input_add"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:clickable="true"
-        android:layout_marginEnd="15dp"
+        android:layout_gravity="bottom|end"
         android:layout_marginBottom="15dp"
-        app:backgroundTint = "@color/colorPrimary"
+        android:layout_marginEnd="15dp"
+        android:clickable="true"
+        android:src="@android:drawable/ic_input_add"
+        android:tint="@android:color/white"
+        app:backgroundTint="@color/colorPrimary"
         />
 </RelativeLayout>

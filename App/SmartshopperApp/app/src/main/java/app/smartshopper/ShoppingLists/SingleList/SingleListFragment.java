@@ -2,6 +2,7 @@ package app.smartshopper.ShoppingLists.SingleList;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.google.gson.JsonElement;
 
@@ -162,4 +164,6 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         });
         dialog.show();
     }
+
+
 }

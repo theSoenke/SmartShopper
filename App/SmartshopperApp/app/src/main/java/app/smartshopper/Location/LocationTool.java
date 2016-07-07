@@ -40,8 +40,8 @@ public class LocationTool{
 
         beacons = new ArrayList<>();
         beacons.add(new BeaconEntity(p1, beaconID1, 1));
-        beacons.add(new BeaconEntity(p2, beaconID2, 2));
         beacons.add(new BeaconEntity(p3, beaconID3, 3));
+        beacons.add(new BeaconEntity(p2, beaconID2, 2));
         beacons.add(new BeaconEntity(p4, beaconID4, 4));
 
         idLadenMap = new HashMap<Integer, String>();

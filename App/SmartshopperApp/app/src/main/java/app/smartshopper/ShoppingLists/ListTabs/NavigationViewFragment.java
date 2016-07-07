@@ -68,7 +68,6 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private static final int UNBOUGHT_ITEM_MARKTYPE = 1;
     private static final int BOUGHT_ITEM_MARKTYPE = 2;
 
-    private int sector = 0;
     private int width;
     private int height;
 
@@ -76,7 +75,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private boolean mapAlreadyLoaded = false;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         String storeName = getArguments().get("market").toString();
@@ -93,10 +93,12 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState)
+    {
         Log.i("Navigation", "OnCreateView");
         String storeName = "";
-        if (_store != null) {
+        if (_store != null)
+        {
             storeName = _store.getEntryName();
         }
         locationTool = new LocationTool(storeName);
@@ -113,42 +115,43 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         refreshMap();
         mapView.setMapViewListener(new MapViewListener() {
             @Override
-            public void onMapLoadSuccess() {
+            public void onMapLoadSuccess()
+            {
                 Log.i("Map", "onMapLoadSuccess");
                 if (!mapAlreadyLoaded)
                 {
-                mapView.addLayer(locationLayer);
+                    mapView.addLayer(locationLayer);
 
-                mapView.addLayer(bitmapLayer);
-                MarkLayer markLayer = new MarkLayer(mapView);
-                markLayer.setMarks(marks);
-                markLayer.setMarksName(marksName);
-                markLayer.setMarksType(marksType);
-                markLayer.highlightMarkTouch(false);
+                    mapView.addLayer(bitmapLayer);
+                    MarkLayer markLayer = new MarkLayer(mapView);
+                    markLayer.setMarks(marks);
+                    markLayer.setMarksName(marksName);
+                    markLayer.setMarksType(marksType);
+                    markLayer.highlightMarkTouch(false);
 
-                Bitmap bmpUnboughtMark = null;
-                Bitmap bmpMarkTouch = null;
-                Bitmap bmpBoughtMark = null;
+                    Bitmap bmpUnboughtMark = null;
+                    Bitmap bmpMarkTouch = null;
+                    Bitmap bmpBoughtMark = null;
 
-                try {
-                    bmpUnboughtMark = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_unbought.png"));
-                    bmpMarkTouch = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_touch.png"));
-                    bmpBoughtMark = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_bought.png"));
-                }
-                catch(IOException e)
-                {
-                    e.printStackTrace();
-                }
-                markLayer.addMarkType(UNBOUGHT_ITEM_MARKTYPE, bmpUnboughtMark, bmpMarkTouch);
-                markLayer.addMarkType(BOUGHT_ITEM_MARKTYPE, bmpBoughtMark, bmpMarkTouch);
-                markLayer.setMarkIsClickListener(new MarkLayer.MarkIsClickListener() {
-                    @Override
-                    public void markIsClick(int num)
+                    try
                     {
-                        final Dialog dialog = new Dialog(getContext());
-                        dialog.setContentView(R.layout.dialog_items_at_mark);
-                        dialog.setTitle("Items at this mark:");
-                        ListView list = (ListView) dialog.findViewById(R.id.items_at_mark_list);
+                        bmpUnboughtMark = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_unbought.png"));
+                        bmpMarkTouch = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_touch.png"));
+                        bmpBoughtMark = BitmapFactory.decodeStream(getActivity().getAssets().open("mark_bought.png"));
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    markLayer.addMarkType(UNBOUGHT_ITEM_MARKTYPE, bmpUnboughtMark, bmpMarkTouch);
+                    markLayer.addMarkType(BOUGHT_ITEM_MARKTYPE, bmpBoughtMark, bmpMarkTouch);
+                    markLayer.setMarkIsClickListener(new MarkLayer.MarkIsClickListener() {
+                        @Override
+                        public void markIsClick(int num)
+                        {
+                            final Dialog dialog = new Dialog(getContext());
+                            dialog.setContentView(R.layout.dialog_items_at_mark);
+                            dialog.setTitle("Items at this mark:");
+                            ListView list = (ListView) dialog.findViewById(R.id.items_at_mark_list);
 
                             // Create ArrayAdapter using an empty list
                             final ArrayAdapter<ItemListEntry> listAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
@@ -161,37 +164,40 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                             // add adapter with items to list (necessary to display items)
                             list.setAdapter(listAdapter);
 
-                        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
-                            {
-                                final ItemListEntry itemEntry = listAdapter.getItem(position);
-                                _productHolder.openConfigureItemDialog(itemEntry);
-                                dialog.dismiss();
-                            }
-                        });
+                            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
+                                {
+                                    final ItemListEntry itemEntry = listAdapter.getItem(position);
+                                    _productHolder.openConfigureItemDialog(itemEntry);
+                                    dialog.dismiss();
+                                }
+                            });
 
-                        Button closeButton = (Button) dialog.findViewById(R.id.dialog_btClose_items_at_mark_list);
-                        closeButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.show();
-                    }
-                });
-                mapView.addLayer(markLayer);
-                locationLayer = new LocationLayer(mapView, new PointF(50, 50));
-                locationLayer.setOpenCompass(false);
-                locationLayer.isVisible = false;
-                mapView.addLayer(locationLayer);
-                productsChanged();
-                mapView.refresh();
-            }}
+                            Button closeButton = (Button) dialog.findViewById(R.id.dialog_btClose_items_at_mark_list);
+                            closeButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v)
+                                {
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.show();
+                        }
+                    });
+                    mapView.addLayer(markLayer);
+                    locationLayer = new LocationLayer(mapView, new PointF(50, 50));
+                    locationLayer.setOpenCompass(false);
+                    locationLayer.isVisible = false;
+                    mapView.addLayer(locationLayer);
+                    productsChanged();
+                    mapView.refresh();
+                }
+            }
 
             @Override
-            public void onMapLoadFail() {
+            public void onMapLoadFail()
+            {
                 Log.i("Map", "onMapLoadFail");
             }
         });
@@ -200,17 +206,22 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context)
+    {
         super.onAttach(context);
-        if (context instanceof ProductHolder) {
+        if (context instanceof ProductHolder)
+        {
             _productHolder = (ProductHolder) context;
-        } else {
+        } else
+        {
             throw new ClassCastException(context.toString() + " has to implement ProductHolder!");
         }
     }
 
-    public void productsChanged() {
-        for (int i = 0; 0 < marks.size(); ++i) {
+    public void productsChanged()
+    {
+        for (int i = 0; 0 < marks.size(); ++i)
+        {
             marks.remove(0);
             marksName.remove(0);
             marksType.remove(0);
@@ -218,31 +229,33 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         }
         for (ItemEntry entry : _productHolder.getItemEntries())
         {
-            //TODO Nur Produkte die dem Store entsprechen laden.
             Product product = _productHolder.getProductFromID(entry.getProductID());
             PointF position = _store.getPositionOf(product);
             String name = product.getEntryName();
             boolean foundPosition = false;
-            for (int i = 0; i < marks.size(); ++i) {
-                if (marks.get(i).equals(position)) {
+            for (int i = 0; i < marks.size(); ++i)
+            {
+                if (marks.get(i).equals(position))
+                {
                     foundPosition = true;
                     marksName.set(i, marksName.get(i) + ", " + name);
                     markIndexItemListEntryMap.get(i).add(new ItemListEntry(entry));
-                    if(!entry.isBought() && marksType.get(i) == BOUGHT_ITEM_MARKTYPE)
+                    if (!entry.isBought() && marksType.get(i) == BOUGHT_ITEM_MARKTYPE)
                     {
                         marksType.set(i, UNBOUGHT_ITEM_MARKTYPE);
                     }
                 }
             }
-            if (!foundPosition) {
+            if (!foundPosition)
+            {
                 markIndexItemListEntryMap.put(marks.size(), new HashSet<ItemListEntry>());
                 markIndexItemListEntryMap.get(marks.size()).add(new ItemListEntry(entry));
                 marks.add(position);
                 marksName.add(name);
-                if(entry.isBought()) {
+                if (entry.isBought())
+                {
                     marksType.add(BOUGHT_ITEM_MARKTYPE);
-                }
-                else
+                } else
                 {
                     marksType.add(UNBOUGHT_ITEM_MARKTYPE);
                 }
@@ -310,7 +323,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
 
     @Override
-    public void onBeaconServiceConnect() {
+    public void onBeaconServiceConnect()
+    {
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region)
@@ -320,7 +334,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 Log.i("Navigation", "Laden: " + _store.toString() + " (" + _store.getEntryName() + ")");
                 Log.i("Navigation", "Laden Tool: " + locationTool.getLaden().toString());
 
-                if (!_store.getEntryName().equals(locationTool.getLaden())) {
+                if (!_store.getEntryName().equals(locationTool.getLaden()))
+                {
                     // get store from data source
 //                    _store = locationTool.getLaden();
                     refreshMap();
@@ -330,31 +345,40 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
             }
         });
 
-        try {
+        try
+        {
             beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
-        } catch (RemoteException e) {
+        } catch (RemoteException e)
+        {
         }
     }
 
-    private void refreshMap() {
-        if (_store != null) {
-            try {
+    private void refreshMap()
+    {
+        if (_store != null)
+        {
+            try
+            {
                 Bitmap bitmap;
-                if (_store.getEntryName().equals("default")) {
+                if (_store.getEntryName().equals("default"))
+                {
                     bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
                     width = 480;
                     height = 700;
-                } else if (_store.getEntryName().equals("penny")) {
+                } else if (_store.getEntryName().equals("penny"))
+                {
                     bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("penny.png"));
                     width = 440;
                     height = 1000;
-                } else {
+                } else
+                {
                     bitmap = BitmapFactory.decodeStream(getActivity().getAssets().open("room2.png"));
                     width = 480;
                     height = 700;
                 }
                 mapView.loadMap(bitmap);
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 e.printStackTrace();
                 Log.e("ERROR: ", e.getMessage());
             }
@@ -363,7 +387,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
 
     @Override
-    public Context getApplicationContext() {
+    public Context getApplicationContext()
+    {
         return getActivity().getApplicationContext();
     }
 
