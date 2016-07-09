@@ -53,10 +53,16 @@ exports.uploadList = function (req, res, next) {
 // Update existing list
 exports.updateList = function (req, res, next) {
   let properties = {upsert: true, runValidators: true, new: true}
-  List.findByIdAndUpdate(req.params.id, req.body, properties, function (err, doc) {
-    if (err) return next(err)
-    return res.json(doc)
-  })
+
+  List
+    .findByIdAndUpdate(req.params.id, properties)
+    .populate('owner', 'name')
+    .populate('participants', 'name fcmToken')
+    .populate('products.product', 'name')
+    .exec(function (err, doc) {
+      if (err) return next(err)
+      return res.json(doc)
+    })
 }
 
 // Delete a list
