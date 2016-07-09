@@ -1,6 +1,7 @@
 package app.smartshopper.ShoppingLists;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -12,14 +13,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.Entries;
 import app.smartshopper.Database.Entries.ItemEntry;
+import app.smartshopper.Database.Entries.MarketEntry;
+import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
+import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
+import app.smartshopper.Database.Tables.MarketEntryDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.R;
@@ -40,6 +48,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     ItemEntryDataSource _itemSource;
     ShoppingList _shoppingList;
     ListPagerAdapter listPagerAdapter;
+    MarketEntryDataSource _marketEntries;
     //Get Store from BeaconID
 //    StoreBeaconTool storeBeaconTool;
 //    Store store = Store.Default;
@@ -303,6 +312,77 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         });
         dialog.show();
 
+    }
+
+    public List<List<ItemEntry>> GroupListSetup(){
+        List<List<ItemEntry>> out = new ArrayList<>();
+        List<MarketEntry> interm = new ArrayList<>();
+        List<ItemEntry> in = _itemSource.getEntriesForList(_shoppingList)
+        for(int i = 0;i<in.size();i++){
+            interm.add(_marketEntries.getCheapestMarketforProduct(in.get(i).getProductID()));
+        }
+        List<List<MarketEntry>> list = splitGroupList(interm);
+        for(int j = 0;j<list.size();j++){
+            List<ItemEntry> midout= new ArrayList<>();
+            for(int k = 0;k<list.get(j).size();k++){
+                midout.add(_itemSource.getItemEntry(_shoppingList,_productSource.get(list.get(j).get(k).getProductID())));
+            }
+            out.add(midout);
+        }
+        return out;
+
+    }
+
+    //TODO: Particpants -> User
+
+    public List<List<MarketEntry>> splitGroupList(List<MarketEntry> input){
+        List<List<MarketEntry>> output = new ArrayList<>();
+        Collections.sort(input);
+        Collections.reverse(input);
+        for(int i=0;i<_shoppingList.getParticipants().size();i++){
+            List<MarketEntry> buf = new ArrayList<>();
+            output.add(buf);
+        }
+        while (!input.isEmpty()){
+            output.get(0).add(input.get(0));
+            Collections.sort(output, new Comparator<List<MarketEntry>>() {
+                @Override
+                public int compare(List<MarketEntry> lhs, List<MarketEntry> rhs) {
+                    int sum_lhs=0;
+                    int sum_rhs=0;
+                    for(int i = 0; i<lhs.size();i++){
+                        sum_lhs += lhs.get(i).getPrice();
+                    }
+                    for(int j = 0; j<rhs.size();j++){
+                        sum_rhs += rhs.get(j).getPrice();
+                    }
+                    if(sum_lhs > sum_rhs){
+                        return 1;
+                    }
+                    if(sum_rhs > sum_lhs){
+                        return -1;
+                    }
+                    return 0;
+                }
+            });
+            input.remove(0);
+        }
+
+
+
+
+
+
+        return output;
+    }
+
+    //TODO: Particpants -> User
+
+    public int getPositionInList(List<User> users){
+        Collections.sort(users);
+        Preferences.getUserName();
+        int mypos=0;
+        return mypos;
     }
 }
 

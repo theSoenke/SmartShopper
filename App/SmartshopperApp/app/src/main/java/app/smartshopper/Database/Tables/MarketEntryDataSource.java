@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 
+import java.util.Collections;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
@@ -91,5 +92,14 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
         List<MarketEntry> list = getEntry(MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + MarketID + "'"
                 + " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'");
         return !list.isEmpty();
+    }
+
+    public MarketEntry getCheapestMarketforProduct(String productID){
+        List<MarketEntry> list = getEntry(MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + productID + "'" );
+        if(!list.isEmpty()){
+            Collections.sort(list);
+            return list.get(0);
+        }
+        return null;
     }
 }

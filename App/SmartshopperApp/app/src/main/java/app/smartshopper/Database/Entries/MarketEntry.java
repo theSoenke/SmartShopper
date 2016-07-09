@@ -3,7 +3,7 @@ package app.smartshopper.Database.Entries;
 /**
  * Created by hauke on 10.05.16.
  */
-public class MarketEntry extends DatabaseEntry {
+public class MarketEntry extends DatabaseEntry implements Comparable{
 
     private String _marketID;
     private String _productID;
@@ -72,5 +72,26 @@ public class MarketEntry extends DatabaseEntry {
                     e.getMarketID().equals(getMarketID());
         }
         return false;
+    }
+
+    /**
+     * Compares this object to the specified object to determine their relative
+     * order.
+     *
+     * @param another the object to compare to this instance.
+     * @return a negative integer if this instance is less than {@code another};
+     * a positive integer if this instance is greater than
+     * {@code another}; 0 if this instance has the same order as
+     * {@code another}.
+     * @throws ClassCastException if {@code another} cannot be converted into something
+     *                            comparable to {@code this} instance.
+     */
+    @Override
+    public int compareTo(Object obj) {
+        if (obj instanceof Object && obj != null) {
+            MarketEntry e = (MarketEntry) obj;
+            return e.getPrice();
+        }
+        return 0;
     }
 }
