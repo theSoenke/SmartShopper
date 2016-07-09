@@ -15,7 +15,7 @@ exports.getLists = function (req, res, next) {
     List
       .find(query)
       .populate('owner', 'name')
-      .populate('participants')
+      .populate('participants', '-password')
       .populate('products.product', 'name')
       .exec(function (err, docs) {
         if (err) return next(err)
@@ -40,7 +40,7 @@ exports.uploadList = function (req, res, next) {
       // return and poulate new list
       List.findById(docs._id)
         .populate('owner', 'name')
-        .populate('participants', 'name')
+        .populate('participants', '-password')
         .populate('products.product', 'name')
         .exec(function (err, doc) {
           if (err) return next(err)
