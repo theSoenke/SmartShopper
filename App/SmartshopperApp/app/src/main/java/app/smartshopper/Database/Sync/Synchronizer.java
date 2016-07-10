@@ -104,6 +104,8 @@ public class Synchronizer {
                             source,
                             processor);
 
+                    Log.i("Next", source.toString());
+
                     processor.execute();
                 } else {
                     Log.e("Error Code", String.valueOf(response.code()));
@@ -238,6 +240,20 @@ public class Synchronizer {
     private ShoppingListDataSource syncShoppingLists(Context context) {
         ShoppingListDataSource s = new ShoppingListDataSource(context);
 
+        syncEntries(s, new SyncProcessor() {
+            @Override
+            public void processUpdatedLocalData(List remoteList, List localList, DatabaseTable source) {
+            }
+
+            @Override
+            public void execute() {
+            }
+
+            @Override
+            public Call<List<ShoppingList>> call() {
+                return restClient.listsLimit(10);
+            }
+        });
 
         s.beginTransaction();
         // single lists

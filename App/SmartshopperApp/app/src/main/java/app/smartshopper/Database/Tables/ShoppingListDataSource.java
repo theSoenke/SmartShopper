@@ -3,12 +3,19 @@ package app.smartshopper.Database.Tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -24,6 +31,11 @@ import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
+import okio.Buffer;
+import okio.BufferedSink;
+import okio.ByteString;
+import okio.Source;
+import okio.Timeout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,7 +70,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     }
 
     @Override
-    public void add(ShoppingList list) {
+    public void add(final ShoppingList list) {
         list.setId(generateUniqueID());
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
@@ -67,18 +79,34 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = '" + list.getId() + "'" +
                 " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
 
-        Call<ShoppingList> call = _apiService.lists(list);
-        call.enqueue(new Callback<ShoppingList>() {
+//        final List<ShoppingList> apiList = new ArrayList<>();
+//        apiList.add(list);
+        Call call = _apiService.lists(list);
+        call.enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
-                if(!response.isSuccessful()){
+                if (!response.isSuccessful()) {
                     Toast.makeText(getContext(), "Could not send list to server :(", Toast.LENGTH_SHORT).show();
+
+Log.i("response", "Request: " + new Gson().toJson(list));
+
+                    try {
+                        Log.i("response", response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.i("response", response.code() + "");
+                    Log.i("response", response.headers().toString());
+
+                }
+                else{
+                    Toast.makeText(getContext(), "List sent", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call call, Throwable throwable) {
-                Toast.makeText(getContext(), "Failed to send list: "+throwable.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Failed to send list: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -154,26 +182,6 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     @Override
     public String getWhereClause(ShoppingList entry) {
         return MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = " + entry.getId();
-    }
-
-    /**
-     * Gets all products of the given shopping list.
-     *
-     * @param list The shopping list which products you want to know.
-     * @return A list with products.
-     */
-    private List<Product> getProductsOf(ShoppingList list) {
-        List<Product> listOfProducts = new LinkedList<Product>();
-        List<ItemEntry> listOfItemEntries = _itemEntrySource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "'");
-
-        for (ItemEntry itemEntry : listOfItemEntries) {
-            Product product = _productDataSource.get(itemEntry.getProductID());
-            if (product != null) {
-                listOfProducts.add(product);
-            }
-        }
-
-        return listOfProducts;
     }
 
     /**

@@ -39,7 +39,7 @@ public class UserDataSource extends DatabaseTable<User> {
 
     public User get(String id){
         List<User> listOfUser = getEntry(MySQLiteHelper.USER_COLUMN_ID + " = '" + id + "'");
-        if(listOfUser != null){
+        if(listOfUser != null && !listOfUser.isEmpty()){
             return listOfUser.get(0);
         }
         return null;
@@ -84,5 +84,13 @@ public class UserDataSource extends DatabaseTable<User> {
         user.setId(cursor.getString(0));
         user.setEntryName(cursor.getString(1));
         return user;
+    }
+
+    public User getUserByName(String userName) {
+        List<User> listOfUser = getEntry(MySQLiteHelper.USER_COLUMN_NAME+ " = '" + userName + "'");
+        if(listOfUser != null && !listOfUser.isEmpty()){
+            return listOfUser.get(0);
+        }
+        return null;
     }
 }

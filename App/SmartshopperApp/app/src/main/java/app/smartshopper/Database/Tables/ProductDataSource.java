@@ -3,16 +3,10 @@ package app.smartshopper.Database.Tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.MySQLiteHelper;
 
 /**
@@ -65,25 +59,6 @@ public class ProductDataSource extends DatabaseTable<Product> {
                 product,
                 insertQuery,
                 values);
-    }
-
-    /**
-     * Creates a new product, adds it to the database and returns the new product.
-     * If the product is already in the database, nothing happens and the product will be returned.
-     *
-     * @param product_name The name of the product
-     * @param posx         The x coordinate in the supermarket.
-     * @param posy         The y coordinate in the supermarket.
-     * @return The new product list with unique ID.
-     */
-    public Product add(String product_name, int posx, int posy) {
-        Product product = new Product();
-        product.setId(generateUniqueID());
-        product.setEntryName(product_name);
-
-        add(product);
-
-        return product;
     }
 
     @Override

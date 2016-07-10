@@ -1,26 +1,32 @@
 package app.smartshopper.Database.Entries;
 
+import android.content.Context;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import app.smartshopper.Database.Preferences;
+import app.smartshopper.Database.Tables.UserDataSource;
 
 /*
  * ShoppingList Model
  */
 public class ShoppingList extends DatabaseEntry {
-    @SerializedName("created_at")
+//    @SerializedName("created_at")
     private String createdAt;
-    @SerializedName("updated_at")
+//    @SerializedName("updated_at")
     private String updatedAt;
-    @SerializedName("owner")
+//    @SerializedName("owner")
     private User owner;
     @SerializedName("__v")
     private Integer version;
-    @SerializedName("participants")
-    private List<User> participants = new ArrayList<>();
+//    @SerializedName("participants")
+    private transient List<User> participants = new ArrayList<>();
     @SerializedName("products")
-    private List<Product> products = new ArrayList<>();
+    private List<SyncableMarketProduct> products = new ArrayList<>();
 
     /**
      * @return The createdAt
@@ -81,14 +87,14 @@ public class ShoppingList extends DatabaseEntry {
     /**
      * @return The products
      */
-    public List<Product> getProducts() {
+    public List<SyncableMarketProduct> getProducts() {
         return products;
     }
 
     /**
      * @param products The products
      */
-    public void setProducts(List<Product> products) {
+    public void setProducts(List<SyncableMarketProduct> products) {
         this.products = products;
     }
 

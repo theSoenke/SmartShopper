@@ -3,21 +3,15 @@ package app.smartshopper.Database.Sync;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -33,7 +27,7 @@ public interface ApiService {
 	public Call<List<ShoppingList>> listsLimit(@Query("limit") int limit);
 
 	@POST("lists")
-	public Call<ShoppingList> lists(@Body ShoppingList shoppingList);
+	public Call<ShoppingList> lists(@Body ShoppingList shoppingLists);
 
 	//    DELETE http://api.tecfuture.de:3000/lists/id
 	@DELETE("lists/{id}")
