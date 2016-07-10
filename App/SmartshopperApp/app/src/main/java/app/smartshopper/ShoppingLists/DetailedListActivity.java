@@ -317,7 +317,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     public List<List<ItemEntry>> GroupListSetup(){
         List<List<ItemEntry>> out = new ArrayList<>();
         List<MarketEntry> interm = new ArrayList<>();
-        List<ItemEntry> in = _itemSource.getEntriesForList(_shoppingList)
+        List<ItemEntry> in = _itemSource.getEntriesForList(_shoppingList);
         for(int i = 0;i<in.size();i++){
             interm.add(_marketEntries.getCheapestMarketforProduct(in.get(i).getProductID()));
         }

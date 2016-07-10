@@ -74,6 +74,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
     private Market _store;
     private boolean mapAlreadyLoaded = false;
 
+    private boolean fragmentExists = false;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -83,7 +85,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 //        MarketDataSource = new MarketDataSource();
         //TODO remove after using market data source
         _store = new Market();
-        _store.setEntryName("default");
+        _store.setEntryName("Arbeitsraum");
 
         beaconManager = BeaconManager.getInstanceForApplication(this.getActivity());
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
@@ -201,7 +203,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 Log.i("Map", "onMapLoadFail");
             }
         });
-
+        fragmentExists = true;
         return view;
     }
 
@@ -266,48 +268,49 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
     private void updatePosition(int sector)
     {
-        Log.i("Navigation", "Sector " + sector);
-        float heightPart = height / 10, widthPart = width / 4;
+        if(fragmentExists) {
+            Log.i("Navigation", "Sector " + sector);
+            float heightPart = height / 10, widthPart = width / 4;
 
-        switch (sector)
-        {
-            case 0:
-                locationLayer.isVisible = false;
-                break;
-            case 1:
-                updateLocationLayer(3 * widthPart, 1 * heightPart);
-                break;
-            case 2:
-                updateLocationLayer(3 * widthPart, 3 * heightPart);
-                break;
-            case 3:
-                updateLocationLayer(3 * widthPart, 5 * heightPart);
-                break;
-            case 4:
-                updateLocationLayer(3 * widthPart, 7 * heightPart);
-                break;
-            case 5:
-                updateLocationLayer(3 * widthPart, 9 * heightPart);
-                break;
-            case 6:
-                updateLocationLayer(2 * widthPart, 9 * heightPart);
-                break;
-            case 7:
-                updateLocationLayer(1 * widthPart, 9 * heightPart);
-                break;
-            case 8:
-                updateLocationLayer(1 * widthPart, 7 * heightPart);
-                break;
-            case 9:
-                updateLocationLayer(1 * widthPart, 5 * heightPart);
-                break;
-            case 10:
-                updateLocationLayer(1 * widthPart, 3 * heightPart);
-                break;
-            case 11:
-                updateLocationLayer(1 * widthPart, 1 * heightPart);
+            switch (sector) {
+                case 0:
+                    locationLayer.isVisible = false;
+                    break;
+                case 1:
+                    updateLocationLayer(3 * widthPart, 1 * heightPart);
+                    break;
+                case 2:
+                    updateLocationLayer(3 * widthPart, 3 * heightPart);
+                    break;
+                case 3:
+                    updateLocationLayer(3 * widthPart, 5 * heightPart);
+                    break;
+                case 4:
+                    updateLocationLayer(3 * widthPart, 7 * heightPart);
+                    break;
+                case 5:
+                    updateLocationLayer(3 * widthPart, 9 * heightPart);
+                    break;
+                case 6:
+                    updateLocationLayer(2 * widthPart, 9 * heightPart);
+                    break;
+                case 7:
+                    updateLocationLayer(1 * widthPart, 9 * heightPart);
+                    break;
+                case 8:
+                    updateLocationLayer(1 * widthPart, 7 * heightPart);
+                    break;
+                case 9:
+                    updateLocationLayer(1 * widthPart, 5 * heightPart);
+                    break;
+                case 10:
+                    updateLocationLayer(1 * widthPart, 3 * heightPart);
+                    break;
+                case 11:
+                    updateLocationLayer(1 * widthPart, 1 * heightPart);
 
-                break;
+                    break;
+            }
         }
     }
 
