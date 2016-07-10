@@ -2,7 +2,9 @@ package app.smartshopper.ShoppingLists.SingleList;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,22 +17,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.google.gson.JsonElement;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ShoppingList;
+import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Sync.APIFactory;
-import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import app.smartshopper.R;
 import app.smartshopper.Database.Sync.ApiService;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * The SingleListFragment contains a list with all single lists (list that's not shared to other participants).
@@ -40,6 +36,8 @@ import retrofit2.Response;
 public class SingleListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private ApiService service;
+    private ArrayAdapter<String> listAdapter;
+	private ShoppingListDataSource dataSource;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
@@ -54,17 +52,13 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         ListView list = (ListView) view.findViewById(R.id.singleList_list);
 
         // Create ArrayAdapter using an empty list
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_row, new ArrayList<String>());
+        listAdapter = new ArrayAdapter<>(getContext(), R.layout.simple_row, new ArrayList<String>());
 
         // Get all entries and add all single-list entries to the list adapter.
-        ShoppingListDataSource source = new ShoppingListDataSource(getContext());
+        dataSource = new ShoppingListDataSource(getContext());
 
         if (newList != "") {
-            source.add(newList);
-        }
-        List<ShoppingList> listOfEntries = source.getAllSingleLists();
-        for (ShoppingList entry : listOfEntries) {
-            listAdapter.add(entry.getEntryName());
+            dataSource.add(newList);
         }
 
         // add adapter with items to list (necessary to display items)
@@ -80,7 +74,27 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
             }
         });
 
+	    getActivity().getContentResolver().registerContentObserver(
+			    MySQLiteHelper.LIST_CONTENT_URI, true, new ContentObserver(new Handler(getActivity().getMainLooper()))
+			    {
+				    @Override
+				    public void onChange(boolean selfChange)
+				    {
+					    updateList();
+				    }
+			    });
+
+        updateList();
+
         return view;
+    }
+
+    private void updateList()
+    {
+        List<ShoppingList> listOfEntries = dataSource.getAllSingleLists();
+        for (ShoppingList entry : listOfEntries) {
+            listAdapter.add(entry.getEntryName());
+        }
     }
 
     @Override

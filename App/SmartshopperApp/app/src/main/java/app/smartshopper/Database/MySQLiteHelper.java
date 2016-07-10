@@ -3,11 +3,17 @@ package app.smartshopper.Database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 /**
  * Created by Felix on 02.05.2016.
  */
 public class MySQLiteHelper extends SQLiteOpenHelper {
+    private static final String CONTENT_AUTHORITY = "app.smartshopper";
+	private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+	private static final String PATH_LISTS = "lists";
+	public static final Uri LIST_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_LISTS).build();
+
     public static final String PRODUCT_TABLE_NAME = "product_table";
     public static final String PRODUCT_COLUMN_ID = "product_id";
     public static final String PRODUCT_COLUMN_NAME = "name";
