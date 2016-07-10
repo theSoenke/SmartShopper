@@ -73,4 +73,14 @@ public class MarketEntry extends DatabaseEntry {
         }
         return false;
     }
+
+    @Override
+    public String getId() {
+        throw new UnsupportedOperationException("Market entries do not have one ID but two IDs for the product and the market this entry is in.");
+    }
+
+    @Override
+    public void setId(String id) {
+        throw new UnsupportedOperationException("Market entries do not have one ID but two IDs for the product and the market this entry is in.");
+    }
 }

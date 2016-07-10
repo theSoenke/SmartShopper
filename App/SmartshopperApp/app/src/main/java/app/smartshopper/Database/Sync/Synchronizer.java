@@ -207,7 +207,7 @@ public class Synchronizer {
         entry.setAmount(1);
         entry.setBought(1);
         entry.setListID(Wocheneinkauf.getId());
-        entry.setProductID(getEntryByName(listOfProducts, "Tiefkühlpizza").getId());
+        entry.setProductName(getEntryByName(listOfProducts, "Tiefkühlpizza").getId());
         i.add(entry);
 
         i.add((Product) getEntryByName(listOfProducts, "Toast"), Wocheneinkauf, 1);

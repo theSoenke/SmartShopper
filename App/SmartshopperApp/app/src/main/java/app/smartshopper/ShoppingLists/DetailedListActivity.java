@@ -97,12 +97,12 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         } else {
 
             ItemEntry e = new ItemEntry();
-            if (_itemSource.EntryExists(_shoppingList.getId(), p.getId())) {
+            if (_itemSource.EntryExists(_shoppingList.getId(), p.getEntryName())) {
                 e = _itemSource.getItemEntry(_shoppingList,p);
                 _itemSource.removeEntryFromDatabase(e);
                 e.setAmount(amount + e.getAmount());
             } else {
-                e.setProductID(p.getId());
+                e.setProductName(p.getEntryName());
                 e.setListID(_shoppingList.getId());
                 e.setAmount(amount);
                 e.setBought(0);

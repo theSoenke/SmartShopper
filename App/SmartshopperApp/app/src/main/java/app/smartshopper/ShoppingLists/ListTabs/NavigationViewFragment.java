@@ -19,13 +19,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.MapViewListener;
 import com.onlylemi.mapview.library.layer.BitmapLayer;
 import com.onlylemi.mapview.library.layer.LocationLayer;
-import com.onlylemi.mapview.library.layer.MapBaseLayer;
 import com.onlylemi.mapview.library.layer.MarkLayer;
 import com.onlylemi.mapview.library.utils.MapUtils;
 
@@ -219,7 +217,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         for (ItemEntry entry : _productHolder.getItemEntries())
         {
             //TODO Nur Produkte die dem Store entsprechen laden.
-            Product product = _productHolder.getProductFromID(entry.getProductID());
+            Product product = _productHolder.getProductFromID(entry.getProductName());
             PointF position = _store.getPositionOf(product);
             String name = product.getEntryName();
             boolean foundPosition = false;

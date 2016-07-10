@@ -15,6 +15,8 @@ import app.smartshopper.Database.Tables.UserDataSource;
  * ShoppingList Model
  */
 public class ShoppingList extends DatabaseEntry {
+    @SerializedName("_id")
+    protected String id;
 //    @SerializedName("created_at")
     private String createdAt;
 //    @SerializedName("updated_at")
@@ -105,5 +107,15 @@ public class ShoppingList extends DatabaseEntry {
             return list.getId().equals(getId());
         }
         return false;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 }

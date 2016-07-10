@@ -5,19 +5,13 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by hauke on 10.05.16.
  */
-public class DatabaseEntry {
-//    @SerializedName("_id")
-    private transient String id;
+public abstract class DatabaseEntry {
     @SerializedName("name")
     private String entryName;
 
-    public String getId() {
-        return id;
-    }
+    public abstract String getId();
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public abstract void setId(String id);
 
     public String getEntryName() {
         return entryName;

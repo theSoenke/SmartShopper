@@ -28,8 +28,8 @@ public class SyncableMarketProduct {
         return false;
     }
 
-    public String getProductID() {
-        return _product.getId();
+    public String getProductName() {
+        return _product.getEntryName();
     }
 
     public int getPrice() {

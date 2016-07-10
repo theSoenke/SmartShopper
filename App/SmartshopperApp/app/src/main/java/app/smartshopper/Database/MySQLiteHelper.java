@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String PRODUCT_TABLE_NAME = "product_table";
-    public static final String PRODUCT_COLUMN_ID = "id";
     public static final String PRODUCT_COLUMN_NAME = "name";
 
     public static final String SHOPPINGLIST_TABLE_NAME = "shopping_list_table";
@@ -17,7 +16,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String SHOPPINGLIST_COLUMN_NAME = "name";
 
     public static final String ITEMENTRY_TABLE_NAME = "item_entry_table";
-    public static final String ITEMENTRY_COLUMN_PRODUCT_ID = "product_id";
+    public static final String ITEMENTRY_COLUMN_PRODUCT_NAME = "product_id";
     public static final String ITEMENTRY_COLUMN_LIST_ID = "list_id";
     public static final String ITEMENTRY_COLUMN_AMOUNT = "amount";
     public static final String ITEMENTRY_COLUMN_BOUGHT = "bought";
@@ -47,19 +46,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     //Database creation statement
     private static final String PRODUCT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PRODUCT_TABLE_NAME + "(" +
-            PRODUCT_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL," +
-            PRODUCT_COLUMN_NAME + " TEXT NOT NULL);";
+            PRODUCT_COLUMN_NAME + " TEXT PRIMARY KEY NOT NULL);";
 
     private static final String SHOPPINGLIST_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + SHOPPINGLIST_TABLE_NAME + "(" +
             SHOPPINGLIST_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL," +
             SHOPPINGLIST_COLUMN_NAME + " TEXT NOT NULL);";
 
     private static final String ITEMENTRY_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + ITEMENTRY_TABLE_NAME + "(" +
-            ITEMENTRY_COLUMN_PRODUCT_ID + " VARCHAR(24)," +
+            ITEMENTRY_COLUMN_PRODUCT_NAME + " VARCHAR(24)," +
             ITEMENTRY_COLUMN_LIST_ID + " VARCHAR(24)," +
             ITEMENTRY_COLUMN_AMOUNT + " INTEGER NOT NULL," +
             ITEMENTRY_COLUMN_BOUGHT + " INTEGER NOT NULL," +
-            "PRIMARY KEY(" + ITEMENTRY_COLUMN_PRODUCT_ID + ", " + ITEMENTRY_COLUMN_LIST_ID  + "));";
+            "PRIMARY KEY(" + ITEMENTRY_COLUMN_PRODUCT_NAME + ", " + ITEMENTRY_COLUMN_LIST_ID  + "));";
 
     private static final String USER_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + USER_TABLE_NAME + "(" +
             USER_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL," +

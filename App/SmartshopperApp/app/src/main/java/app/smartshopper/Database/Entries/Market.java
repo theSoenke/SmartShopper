@@ -11,6 +11,8 @@ import java.util.List;
  * Created by hauke on 30.06.16.
  */
 public class Market extends DatabaseEntry {
+    @SerializedName("_id")
+    protected String id;
     @SerializedName("products")
     private List<SyncableMarketProduct> _marketProducts;
 
@@ -22,7 +24,7 @@ public class Market extends DatabaseEntry {
         List<MarketEntry> list = new ArrayList<MarketEntry>(_marketProducts.size());
         for (SyncableMarketProduct product : _marketProducts) {
             list.add(new MarketEntry(getId(),
-                    product.getProductID(),
+                    product.getProductName(),
                     product.getPrice(),
                     product.getLocation().getX(),
                     product.getLocation().getY()));
@@ -50,5 +52,15 @@ public class Market extends DatabaseEntry {
             position = marketProduct.getLocation().toPointF();
         }
         return position;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 }

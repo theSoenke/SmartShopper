@@ -11,4 +11,14 @@ public class Product extends DatabaseEntry {
     public String toString() {
         return getEntryName();
     }
+
+    @Override
+    public String getId() {
+        throw new UnsupportedOperationException("A product just has a unique name but no ID.");
+    }
+
+    @Override
+    public void setId(String id) {
+        throw new UnsupportedOperationException("A product just has a unique name but no ID.");
+    }
 }

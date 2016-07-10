@@ -5,17 +5,17 @@ package app.smartshopper.Database.Entries;
  */
 public class ItemEntry extends DatabaseEntry {
 
-    private String productID;
+    private String productName;
     private String listID;
     private int amount;
     private int amountBought;
 
-    public String getProductID() {
-        return productID;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProductID(String productID) {
-        this.productID = productID;
+    public void setProductName(String productID) {
+        this.productName = productID;
     }
 
     public String getListID() {
@@ -50,11 +50,21 @@ public class ItemEntry extends DatabaseEntry {
     public boolean equals(Object obj) {
         if (obj instanceof Object && obj != null) {
             ItemEntry e = (ItemEntry) obj;
-            return e.getProductID().equals(getProductID()) &&
+            return e.getProductName().equals(getProductName()) &&
                     e.getListID().equals(getListID()) &&
                     e.getAmount() == getAmount() &&
                     e.amountBought() == amountBought();
         }
         return false;
+    }
+
+    @Override
+    public String getId() {
+        throw new UnsupportedOperationException("Item entries do not have one ID but two IDs for the product and the list this entry is in.");
+    }
+
+    @Override
+    public void setId(String id) {
+        throw new UnsupportedOperationException("Item entries do not have one ID but two IDs for the product and the list this entry is in.");
     }
 }

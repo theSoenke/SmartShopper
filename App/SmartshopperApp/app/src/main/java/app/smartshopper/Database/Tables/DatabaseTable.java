@@ -97,7 +97,7 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
             database.insert(tableName, null, values);
         } else {
             cursor.moveToFirst();
-            newEntry.setId(cursor.getString(0));
+//            newEntry.setId(cursor.getString(0));
         }
 
         cursor.close();
