@@ -7,7 +7,7 @@ public class MarketEntry extends DatabaseEntry implements Comparable{
 
     private String _marketID;
     private String _productID;
-    private int _price;
+    private float _price;
     private int _posx;
     private int _posy;
 
@@ -16,7 +16,7 @@ public class MarketEntry extends DatabaseEntry implements Comparable{
         _productID = "";
     }
 
-    public MarketEntry(String marketID, String productID, int price, int posx, int posy){
+    public MarketEntry(String marketID, String productID, float price, int posx, int posy){
         _marketID = marketID;
         _productID = productID;
         _price = price;
@@ -40,11 +40,11 @@ public class MarketEntry extends DatabaseEntry implements Comparable{
         this._marketID = _marketID;
     }
 
-    public int getPrice() {
+    public float getPrice() {
         return _price;
     }
 
-    public void setPrice(int _price) {
+    public void setPrice(float _price) {
         this._price = _price;
     }
 
@@ -78,7 +78,7 @@ public class MarketEntry extends DatabaseEntry implements Comparable{
      * Compares this object to the specified object to determine their relative
      * order.
      *
-     * @param another the object to compare to this instance.
+     * @param obj the object to compare to this instance.
      * @return a negative integer if this instance is less than {@code another};
      * a positive integer if this instance is greater than
      * {@code another}; 0 if this instance has the same order as
@@ -90,8 +90,12 @@ public class MarketEntry extends DatabaseEntry implements Comparable{
     public int compareTo(Object obj) {
         if (obj instanceof Object && obj != null) {
             MarketEntry e = (MarketEntry) obj;
-            return e.getPrice();
+            return (int)e._price; // TODO check if this works, because this might not fulfill the result described in the doc
         }
         return 0;
+    }
+
+    public SyncableLocation getLocation() {
+        return new SyncableLocation(getPosX(), getPosY());
     }
 }

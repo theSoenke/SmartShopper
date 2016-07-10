@@ -1,7 +1,6 @@
 package app.smartshopper.ShoppingLists;
 
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -16,9 +15,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.List;
 
-import app.smartshopper.Database.Entries.Entries;
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.User;
@@ -27,6 +28,10 @@ import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
+import app.smartshopper.Database.Entries.Market;
+import app.smartshopper.Database.Sync.APIFactory;
+import app.smartshopper.Database.Sync.ApiService;
+import app.smartshopper.Database.Tables.MarketDataSource;
 import app.smartshopper.Database.Tables.MarketEntryDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
@@ -35,6 +40,9 @@ import app.smartshopper.ShoppingLists.ListTabs.ItemListEntry;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
 import app.smartshopper.ShoppingLists.ListTabs.ProductHolder;
 import app.smartshopper.ShoppingLists.ListTabs.ProductPresenter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * The DetailedListActivity is the activity that's visible after clicking on a single- or group-list.
@@ -49,6 +57,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     ShoppingList _shoppingList;
     ListPagerAdapter listPagerAdapter;
     MarketEntryDataSource _marketEntries;
+    private ApiService _apiService;
     //Get Store from BeaconID
 //    StoreBeaconTool storeBeaconTool;
 //    Store store = Store.Default;
@@ -91,6 +100,8 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
         listPagerAdapter = new ListPagerAdapter(getSupportFragmentManager(), 2);
         viewPager.setAdapter(listPagerAdapter);
+
+        _apiService = new APIFactory().getInstance();
     }
 
     @Override
@@ -106,23 +117,57 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             return false;
         } else {
 
-            ItemEntry e = new ItemEntry();
+            ItemEntry e = new ItemEntry(p, _shoppingList.getId(), amount, 0);
             if (_itemSource.EntryExists(_shoppingList.getId(), p.getId())) {
-                e = _itemSource.getItemEntry(_shoppingList,p);
+                e = _itemSource.getItemEntry(_shoppingList, p);
                 _itemSource.removeEntryFromDatabase(e);
                 e.setAmount(amount + e.getAmount());
-            } else {
-                e.setProductID(p.getId());
-                e.setListID(_shoppingList.getId());
-                e.setAmount(amount);
-                e.setBought(0);
             }
-            _itemSource.add(e);
-            Entries en = new Entries();
-            en.setProduct(p);
-            en.setBought(0);
-            en.setAmount(amount);
-            updateFragments();
+
+            MarketDataSource marketDataSource = new MarketDataSource(getApplicationContext());
+            Market m = marketDataSource.getByName("Penny");
+
+            if (m != null) {
+                MarketEntryDataSource marketEntryDataSource = new MarketEntryDataSource(getApplicationContext());
+                List<MarketEntry> entries = marketEntryDataSource.getMarketEntryTo(m, p);
+                if (!entries.isEmpty()) {
+                    _itemSource.add(e);
+
+                    _shoppingList.addMarketProduct(e);
+
+                    Call call = _apiService.updateList(_shoppingList.getId(), _shoppingList);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            if (response.isSuccessful()) {
+                                Log.i("Update ShoppingList", "The update of the shopping list " + _shoppingList + " was successful!");
+                                Log.i("Update ShoppingList", new Gson().toJson(_shoppingList));
+                            } else {
+                                Log.i("Update ShoppingList", "The update of the shopping list " + _shoppingList + "failed!");
+                                Log.i("Update ShoppingList", response.message());
+                                try {
+                                    Log.i("Update ShoppingList", response.errorBody().string());
+                                } catch (IOException e1) {
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call call, Throwable t) {
+                            Log.e("Update ShoppingList", "The update of the shopping list " + _shoppingList + " failed!");
+                            Log.e("Update ShoppingList", t.getMessage());
+                            Log.e("Update ShoppingList", call.toString());
+                        }
+                    });
+
+                    updateFragments();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Not in this market!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
             return true;
         }
     }
@@ -143,20 +188,18 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         return _productSource.getAllEntries();
     }
 
-    private void updateFragments()
-    {
-        for(Fragment fragment : listPagerAdapter.getPages())
-        {
+    private void updateFragments() {
+        for (Fragment fragment : listPagerAdapter.getPages()) {
             ((ProductPresenter) fragment).productsChanged();
         }
     }
 
-    public ItemEntry getItemEntryFromString(String entryName){
+    public ItemEntry getItemEntryFromString(String entryName) {
 
         int bought = 0;
         String[] split = entryName.split("\\s+");
-        if(split.length > 2){
-            if(split[2].equalsIgnoreCase("(gekauft)")){
+        if (split.length > 2) {
+            if (split[2].equalsIgnoreCase("(gekauft)")) {
                 bought = 1;
             }
         }
@@ -210,8 +253,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void openConfigureItemDialog(final ItemListEntry itemEntry)
-    {
+    public void openConfigureItemDialog(final ItemListEntry itemEntry) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_configure_item);
         dialog.setTitle("Configure '" + itemEntry.getItemEntry().getEntryName() + "'");
@@ -319,7 +361,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         List<MarketEntry> interm = new ArrayList<>();
         List<ItemEntry> in = _itemSource.getEntriesForList(_shoppingList);
         for(int i = 0;i<in.size();i++){
-            interm.add(_marketEntries.getCheapestMarketforProduct(in.get(i).getProductID()));
+            interm.add(_marketEntries.getCheapestMarketForProduct(in.get(i).getProduct().getId()));
         }
         List<List<MarketEntry>> list = splitGroupList(interm);
         for(int j = 0;j<list.size();j++){

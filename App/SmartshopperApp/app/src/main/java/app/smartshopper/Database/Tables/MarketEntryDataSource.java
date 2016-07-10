@@ -8,11 +8,9 @@ import android.database.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.MySQLiteHelper;
 
 /**
@@ -54,6 +52,11 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
                 values);
     }
 
+    @Override
+    public void addLocally(MarketEntry entry) {
+        add(entry);
+    }
+
     public void addAll(List<MarketEntry> allMarketEntries) {
         for (MarketEntry entry : allMarketEntries) {
             add(entry);
@@ -67,6 +70,10 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
      */
     public void open() throws SQLException {
         super.open();
+    }
+
+    @Override
+    protected void setIDForEntry(MarketEntry newEntry, String id) {
     }
 
     @Override
@@ -94,12 +101,31 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
         return !list.isEmpty();
     }
 
-    public MarketEntry getCheapestMarketforProduct(String productID){
-        List<MarketEntry> list = getEntry(MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + productID + "'" );
-        if(!list.isEmpty()){
+    /**
+     * Gets the market which has the lowest price for the given product.
+     *
+     * @param productID The ID of the product the user wants to buy.
+     * @return The market where the product has the lowest price.
+     */
+    public MarketEntry getCheapestMarketForProduct(String productID) {
+        List<MarketEntry> list = getEntry(MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + productID + "'");
+        if (!list.isEmpty()) {
             Collections.sort(list);
             return list.get(0);
         }
         return null;
+    }
+
+    /**
+     * Gets the market entry to the given market-product combination.
+     *
+     * @param m The market
+     * @param p The product
+     * @return A list of market entries that match to this combination.
+     */
+    public List<MarketEntry> getMarketEntryTo(Market m, Product p) {
+        String query = MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + m.getId() + "'"
+                + " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + p.getId() + "'";
+        return getEntry(query);
     }
 }

@@ -3,16 +3,10 @@ package app.smartshopper.Database.Tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.MySQLiteHelper;
 
 /**
@@ -53,13 +47,17 @@ public class ProductDataSource extends DatabaseTable<Product> {
     }
 
     @Override
+    protected void setIDForEntry(Product newEntry, String id) {
+    }
+
+    @Override
     public void add(Product product) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.PRODUCT_COLUMN_ID, product.getId());
         values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product.getEntryName());
 
         String insertQuery = MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + product.getId() + "'" +
-                " AND " + MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product.getEntryName() + "'";
+                " AND " + MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '"+product.getEntryName() + "'";
 
         super.addEntryToDatabase(
                 product,
@@ -67,23 +65,9 @@ public class ProductDataSource extends DatabaseTable<Product> {
                 values);
     }
 
-    /**
-     * Creates a new product, adds it to the database and returns the new product.
-     * If the product is already in the database, nothing happens and the product will be returned.
-     *
-     * @param product_name The name of the product
-     * @param posx         The x coordinate in the supermarket.
-     * @param posy         The y coordinate in the supermarket.
-     * @return The new product list with unique ID.
-     */
-    public Product add(String product_name, int posx, int posy) {
-        Product product = new Product();
-        product.setId(generateUniqueID());
-        product.setEntryName(product_name);
-
+    @Override
+    public void addLocally(Product product){
         add(product);
-
-        return product;
     }
 
     @Override

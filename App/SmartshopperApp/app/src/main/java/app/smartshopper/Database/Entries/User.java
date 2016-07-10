@@ -1,5 +1,7 @@
 package app.smartshopper.Database.Entries;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Hauke on 25.05.2016.
  */

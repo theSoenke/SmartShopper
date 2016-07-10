@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.List;
+
 import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.MySQLiteHelper;
 
@@ -41,6 +43,11 @@ public class MarketDataSource extends DatabaseTable<Market> {
     }
 
     @Override
+    public void addLocally(Market market) {
+        add(market);
+    }
+
+    @Override
     public String getWhereClause(Market entry) {
         return MySQLiteHelper.MARKET_COLUMN_ID + " = '" + entry.getId() + "'" +
                 " AND " + MySQLiteHelper.MARKET_COLUMN_NAME + " = '" + entry.getEntryName() + "'";
@@ -52,5 +59,19 @@ public class MarketDataSource extends DatabaseTable<Market> {
         market.setId(cursor.getString(0));
         market.setEntryName(cursor.getString(1));
         return market;
+    }
+
+    public Market getByName(String name) {
+        String query = MySQLiteHelper.MARKET_COLUMN_NAME + " = '" + name + "'";
+        List<Market> marketList = getEntry(query);
+        if (!marketList.isEmpty()) {
+            return marketList.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    protected void setIDForEntry(Market newEntry, String id) {
+        newEntry.setId(id);
     }
 }

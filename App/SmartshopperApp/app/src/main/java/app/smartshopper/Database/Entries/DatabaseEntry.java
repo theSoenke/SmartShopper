@@ -11,19 +11,19 @@ public class DatabaseEntry {
     @SerializedName("name")
     private String entryName;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getEntryName() {
         return entryName;
     }
 
     public void setEntryName(String name) {
         this.entryName = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

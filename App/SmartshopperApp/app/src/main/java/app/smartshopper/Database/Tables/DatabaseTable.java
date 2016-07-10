@@ -25,12 +25,21 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     protected final String[] allColumns;
     private final MySQLiteHelper dbHelper;
     protected static SQLiteDatabase database = null;
+    private final Context context;
 
     public DatabaseTable(Context context, String tableName, String[] columns) {
         this.tableName = tableName;
         this.allColumns = columns;
+        this.context = context;
         this.dbHelper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
         open();
+    }
+
+    /**
+     * @return The context passed at creation.
+     */
+    protected Context getContext() {
+        return context;
     }
 
     /**
@@ -58,7 +67,7 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      * @throws SQLException
      */
     public void open() throws SQLException {
-        if(database == null) {
+        if (database == null) {
             database = dbHelper.getWritableDatabase();
         }
     }
@@ -88,11 +97,19 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
             database.insert(tableName, null, values);
         } else {
             cursor.moveToFirst();
-            newEntry.setId(cursor.getString(0));
+            setIDForEntry(newEntry, cursor.getString(0));
+//            newEntry.setId(cursor.getString(0));
         }
 
         cursor.close();
     }
+
+    /**
+     * Sets the ID for those items that have an ID.
+     * @param newEntry The entry which ID should be set.
+     * @param id The ID of the entry.
+     */
+    protected abstract void setIDForEntry(T newEntry, String id);
 
     /**
      * Gets all entries that matches the given query (=WHERE clause).
@@ -136,11 +153,20 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     }
 
     /**
-     * Adds the given entry to the database. There'll be no duplicates in the database.
+     * Adds the given entry to the database and uploads it to the remote server.
+     * There'll be no duplicates in the database.
      *
      * @param entry The new entry to add.
      */
     public abstract void add(T entry);
+
+    /**
+     * Adds the given entry to the database but does not upload it to the remote server.
+     * There'll be no duplicates in the database.
+     *
+     * @param entry The new entry to add.
+     */
+    public abstract void addLocally(T entry);
 
     /**
      * Gives a where clause for the given item that will return one entry with this item in it.
@@ -158,28 +184,14 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      */
     public abstract T cursorToEntry(Cursor cursor);
 
-    public void beginTransaction(){
+    public void beginTransaction() {
         database.beginTransactionNonExclusive();
     }
 
-    public void endTransaction(){
+    public void endTransaction() {
         database.setTransactionSuccessful();
         database.endTransaction();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     // FIXME Remove all this when the API gives us the ID by adding or downloading

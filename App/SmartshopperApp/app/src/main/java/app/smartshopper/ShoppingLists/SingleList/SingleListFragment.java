@@ -2,7 +2,6 @@ package app.smartshopper.ShoppingLists.SingleList;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -15,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.google.gson.JsonElement;
 
@@ -23,11 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.smartshopper.Database.Entries.Entries;
 import app.smartshopper.Database.Entries.ShoppingList;
-import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Sync.APIFactory;
-import app.smartshopper.Database.Sync.Synchronizer;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
@@ -107,51 +102,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
             @Override
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
-                ProductDataSource p = new ProductDataSource(getContext());
-                final ShoppingList list = s.add(listName.getText().toString());
-                Entries entries = new Entries();
-                entries.setProduct(p.getProductFromString("Bier"));
-                entries.setAmount(7);
-                entries.setBought(0);
-                List<Entries> entriesList = new ArrayList<Entries>();
-                entriesList.add(entries);
-                list.setEntries(entriesList);
-                s.add(list);
-               Log.i("AddListDialog","list added locally (name:" + list.getEntryName() + ")" );
-                Log.i("AddListDialog", "EntryList size : " + list.getEntries().size());
-                Log.i("s", p.getProductFromString("Bier").getId());
-                Call<JsonElement> xc = service.addList(list);
-                xc.enqueue(new Callback<JsonElement>()
-                {
-                    @Override
-                    public void onResponse(Call<JsonElement> call, Response<JsonElement> response)
-                    {
-
-                        if (response.isSuccessful())
-                        {
-                            Log.d("AddList", "List " + list.getEntryName() + " Added Succesfully");
-                        }
-                        else
-                        {
-                            Log.e("AddList", "List " + list.getEntryName() + " Not Added Succesfully");
-                            Log.e("AddList message", response.message());
-                            try {
-                                Log.e("AddList message", response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<JsonElement> call, Throwable t)
-                    {
-                        Log.e("AddList", "Failure with adding List: "  + list.getEntryName());
-
-                    }
-                });
-                Log.i("AddListDialog", "uploading List");
+                s.add(listName.getText().toString());
                 dialog.dismiss();
             }
         });

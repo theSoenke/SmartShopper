@@ -39,10 +39,15 @@ public class UserDataSource extends DatabaseTable<User> {
 
     public User get(String id){
         List<User> listOfUser = getEntry(MySQLiteHelper.USER_COLUMN_ID + " = '" + id + "'");
-        if(listOfUser != null){
+        if(listOfUser != null && !listOfUser.isEmpty()){
             return listOfUser.get(0);
         }
         return null;
+    }
+
+    @Override
+    protected void setIDForEntry(User newEntry, String id) {
+        newEntry.setId(id);
     }
 
     @Override
@@ -59,6 +64,11 @@ public class UserDataSource extends DatabaseTable<User> {
                 user,
                 insertQuery,
                 values);
+    }
+
+    @Override
+    public void addLocally(User user){
+        add(user);
     }
 
     /**
@@ -84,5 +94,13 @@ public class UserDataSource extends DatabaseTable<User> {
         user.setId(cursor.getString(0));
         user.setEntryName(cursor.getString(1));
         return user;
+    }
+
+    public User getUserByName(String userName) {
+        List<User> listOfUser = getEntry(MySQLiteHelper.USER_COLUMN_NAME+ " = '" + userName + "'");
+        if(listOfUser != null && !listOfUser.isEmpty()){
+            return listOfUser.get(0);
+        }
+        return null;
     }
 }

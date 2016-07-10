@@ -1,27 +1,32 @@
 package app.smartshopper.Database.Entries;
 
+import android.content.Context;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import app.smartshopper.Database.Preferences;
+import app.smartshopper.Database.Tables.UserDataSource;
 
 /*
  * ShoppingList Model
  */
 public class ShoppingList extends DatabaseEntry {
-
-    @SerializedName("created_at")
-    private String createdAt;
-    @SerializedName("updated_at")
-    private String updatedAt;
-    @SerializedName("owner")
-    private User owner;
+//    @SerializedName("created_at")
+    private transient String createdAt;
+//    @SerializedName("updated_at")
+    private transient String updatedAt;
+//    @SerializedName("owner")
+    private transient User owner;
     @SerializedName("__v")
     private Integer version;
-    @SerializedName("participants")
-    private List<String> participants = new ArrayList<>();
+//    @SerializedName("participants")
+    private transient List<User> participants = new ArrayList<>();
     @SerializedName("products")
-    private List<Entries> entries = new ArrayList<Entries>();
+    private List<ItemEntry> products = new ArrayList<>();
 
     /**
      * @return The createdAt
@@ -68,29 +73,23 @@ public class ShoppingList extends DatabaseEntry {
     /**
      * @return The participants
      */
-    public List<String> getParticipants() {
+    public List<User> getParticipants() {
         return participants;
     }
 
     /**
      * @param participants The participants
      */
-    public void setParticipants(List<String> participants) {
+    public void setParticipants(List<User> participants) {
         this.participants = participants;
     }
 
-    /**
-     * @return The entries
-     */
-    public List<Entries> getEntries() {
-        return entries;
+    public List<ItemEntry> getProducts() {
+        return products;
     }
 
-    /**
-     * @param entries The entries
-     */
-    public void setEntries(List<Entries> entries) {
-        this.entries = entries;
+    public void setProducts(List<ItemEntry> products) {
+        this.products = products;
     }
 
     @Override
@@ -100,5 +99,9 @@ public class ShoppingList extends DatabaseEntry {
             return list.getId().equals(getId());
         }
         return false;
+    }
+
+    public void addMarketProduct(ItemEntry newMarketProduct) {
+        products.add(newMarketProduct);
     }
 }

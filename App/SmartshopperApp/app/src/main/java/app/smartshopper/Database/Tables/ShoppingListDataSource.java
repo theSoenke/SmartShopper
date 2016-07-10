@@ -3,11 +3,12 @@ package app.smartshopper.Database.Tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
+import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -15,22 +16,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Participant;
-import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Sync.ApiService;
+import app.smartshopper.Database.Sync.APIFactory;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Felix on 02.05.2016.
  */
 public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     private ParticipantDataSource _participantSource;
-    private ItemEntryDataSource _itemEntrySource;
-    private ProductDataSource _productDataSource;
     private UserDataSource _userDataSource;
+    private ApiService _apiService;
 
     /**
      * Creates a new data source for the shopping list table and initializes it with the columns from the helper.
@@ -45,25 +47,48 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                         MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME
                 });
         _participantSource = new ParticipantDataSource(context);
-        _itemEntrySource = new ItemEntryDataSource(context);
-        _productDataSource = new ProductDataSource(context);
         _userDataSource = new UserDataSource(context);
+        _apiService = new APIFactory().getInstance();
     }
 
     @Override
-    public void add(ShoppingList list) {
-        list.setId(generateUniqueID());
-        ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
-        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
+    protected void setIDForEntry(ShoppingList newEntry, String id) {
+        newEntry.setId(id);
+    }
 
-        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = '" + list.getId() + "'" +
-                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
+    @Override
+    public void add(final ShoppingList list) {
+        addLocally(list);
 
-        super.addEntryToDatabase(
-                list,
-                insertQuery,
-                values);
+        Call call = _apiService.updateList(list.getId(), list);
+        Log.d("Send", "Send list to server...");
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Could not send list to server :(", Toast.LENGTH_SHORT).show();
+
+Log.i("response", "Request: " + new Gson().toJson(list));
+
+                    try {
+                        Log.i("response", response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.i("response", response.code() + "");
+                    Log.i("response", response.headers().toString());
+
+                }
+                else{
+                    Toast.makeText(getContext(), "List sent", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable throwable) {
+                Toast.makeText(getContext(), "Failed to send list: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /**
@@ -78,10 +103,28 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         list.setId(generateUniqueID());
         list.setEntryName(listName);
 
-
         add(list);
 
         return list;
+    }
+
+    public void addLocally(ShoppingList list){
+//        list.setId(generateUniqueID());
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
+        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
+
+        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = '" + list.getId() + "'" +
+                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
+
+        //TODO go through all item entries in the shopping list and write them into the database
+
+        super.addEntryToDatabase(
+                list,
+                insertQuery,
+                values);
+
+        List<ShoppingList> l = getAllEntries();
     }
 
     /**
@@ -133,26 +176,6 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     @Override
     public String getWhereClause(ShoppingList entry) {
         return MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = " + entry.getId();
-    }
-
-    /**
-     * Gets all products of the given shopping list.
-     *
-     * @param list The shopping list which products you want to know.
-     * @return A list with products.
-     */
-    private List<Product> getProductsOf(ShoppingList list) {
-        List<Product> listOfProducts = new LinkedList<Product>();
-        List<ItemEntry> listOfItemEntries = _itemEntrySource.getEntry(MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "'");
-
-        for (ItemEntry itemEntry : listOfItemEntries) {
-            Product product = _productDataSource.get(itemEntry.getProductID());
-            if (product != null) {
-                listOfProducts.add(product);
-            }
-        }
-
-        return listOfProducts;
     }
 
     /**

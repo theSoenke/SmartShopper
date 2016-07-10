@@ -1,21 +1,33 @@
 package app.smartshopper.Database.Entries;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by hauke on 10.05.16.
  */
 public class ItemEntry extends DatabaseEntry {
-
-    private String productID;
-    private String listID;
+    @SerializedName("product")
+    private Product product;
+    private transient String listID;
+    @SerializedName("total")
     private int amount;
+    @SerializedName("bought")
     private int amountBought;
 
-    public String getProductID() {
-        return productID;
+    public ItemEntry(Product product, String list, int amount, int bought){
+        this.product = product;
+        listID = list;
+        this.amount = amount;
+        this.amountBought = bought;
+
     }
 
-    public void setProductID(String productID) {
-        this.productID = productID;
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product productID) {
+        this.product = productID;
     }
 
     public String getListID() {
@@ -50,7 +62,7 @@ public class ItemEntry extends DatabaseEntry {
     public boolean equals(Object obj) {
         if (obj instanceof Object && obj != null) {
             ItemEntry e = (ItemEntry) obj;
-            return e.getProductID().equals(getProductID()) &&
+            return e.getProduct().equals(getProduct()) &&
                     e.getListID().equals(getListID()) &&
                     e.getAmount() == getAmount() &&
                     e.amountBought() == amountBought();
