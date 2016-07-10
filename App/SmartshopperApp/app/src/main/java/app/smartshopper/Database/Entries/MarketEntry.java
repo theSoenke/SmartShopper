@@ -90,7 +90,12 @@ public class MarketEntry extends DatabaseEntry implements Comparable{
     public int compareTo(Object obj) {
         if (obj instanceof Object && obj != null) {
             MarketEntry e = (MarketEntry) obj;
-            return (int)e._price; // TODO check if this works, because this might not fulfill the result described in the doc
+            if(e.getPrice()<getPrice()){
+                return 1;
+            }
+            if(e.getPrice()> getPrice()){
+                return -1;
+            }
         }
         return 0;
     }

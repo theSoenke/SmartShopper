@@ -35,6 +35,7 @@ import app.smartshopper.Database.Tables.MarketDataSource;
 import app.smartshopper.Database.Tables.MarketEntryDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
+import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.ListTabs.ItemListEntry;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
@@ -57,6 +58,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     ShoppingList _shoppingList;
     ListPagerAdapter listPagerAdapter;
     MarketEntryDataSource _marketEntries;
+    UserDataSource _userSource;
     private ApiService _apiService;
     //Get Store from BeaconID
 //    StoreBeaconTool storeBeaconTool;
@@ -372,10 +374,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             out.add(midout);
         }
         return out;
-
     }
-
-    //TODO: Particpants -> User
 
     public List<List<MarketEntry>> splitGroupList(List<MarketEntry> input){
         List<List<MarketEntry>> output = new ArrayList<>();
@@ -409,22 +408,19 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             });
             input.remove(0);
         }
-
-
-
-
-
-
         return output;
     }
 
-    //TODO: Particpants -> User
 
-    public int getPositionInList(List<User> users){
-        Collections.sort(users);
-        Preferences.getUserName();
-        int mypos=0;
-        return mypos;
+    public int getPositionInList(User user){
+        List<User> userList = _shoppingList.getParticipants();
+        userList.add(_shoppingList.getOwner());
+        for(int i = 0;i<userList.size();i++){
+            if(userList.get(0).getId() == user.getId()){
+                return i;
+            }
+        }
+        return -1;
     }
 }
 

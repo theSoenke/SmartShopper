@@ -32,7 +32,12 @@ public class User extends DatabaseEntry implements Comparable {
     public int compareTo(Object obj) {
         if (obj instanceof User && obj != null) {
             User u = (User) obj;
-            return u.getId().hashCode();
+            if(u.getId().hashCode()<getId().hashCode()){
+                return 1;
+            }
+            if(u.getId().hashCode()>getId().hashCode()){
+                return -1;
+            }
         }
         return 0;
     }
