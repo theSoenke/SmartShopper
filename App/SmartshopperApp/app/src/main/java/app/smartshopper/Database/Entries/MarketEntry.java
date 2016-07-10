@@ -7,17 +7,16 @@ public class MarketEntry extends DatabaseEntry {
 
     private String _marketID;
     private String _productID;
-    private int _price;
+    private float _price;
     private int _posx;
     private int _posy;
-    private SyncableLocation _location;
 
     public MarketEntry(){
         _marketID = "";
         _productID = "";
     }
 
-    public MarketEntry(String marketID, String productID, int price, int posx, int posy){
+    public MarketEntry(String marketID, String productID, float price, int posx, int posy){
         _marketID = marketID;
         _productID = productID;
         _price = price;
@@ -41,11 +40,11 @@ public class MarketEntry extends DatabaseEntry {
         this._marketID = _marketID;
     }
 
-    public int getPrice() {
+    public float getPrice() {
         return _price;
     }
 
-    public void setPrice(int _price) {
+    public void setPrice(float _price) {
         this._price = _price;
     }
 
@@ -73,16 +72,6 @@ public class MarketEntry extends DatabaseEntry {
                     e.getMarketID().equals(getMarketID());
         }
         return false;
-    }
-
-    @Override
-    public String getId() {
-        throw new UnsupportedOperationException("Market entries do not have one ID but two IDs for the product and the market this entry is in.");
-    }
-
-    @Override
-    public void setId(String id) {
-        throw new UnsupportedOperationException("Market entries do not have one ID but two IDs for the product and the market this entry is in.");
     }
 
     public SyncableLocation getLocation() {

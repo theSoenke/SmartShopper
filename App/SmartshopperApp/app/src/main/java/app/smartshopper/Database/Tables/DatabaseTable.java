@@ -97,11 +97,19 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
             database.insert(tableName, null, values);
         } else {
             cursor.moveToFirst();
+            setIDForEntry(newEntry, cursor.getString(0));
 //            newEntry.setId(cursor.getString(0));
         }
 
         cursor.close();
     }
+
+    /**
+     * Sets the ID for those items that have an ID.
+     * @param newEntry The entry which ID should be set.
+     * @param id The ID of the entry.
+     */
+    protected abstract void setIDForEntry(T newEntry, String id);
 
     /**
      * Gets all entries that matches the given query (=WHERE clause).

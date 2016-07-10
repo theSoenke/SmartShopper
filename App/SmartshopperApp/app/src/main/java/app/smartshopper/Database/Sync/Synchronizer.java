@@ -3,6 +3,7 @@ package app.smartshopper.Database.Sync;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
@@ -132,11 +133,13 @@ public class Synchronizer {
 
                     @Override
                     public void executeNextSync() {
-                        Log.i("Synchronizer", "Sync user data ...");
-                        ShoppingListDataSource s = new ShoppingListDataSource(context);
-                        syncParticipants(context, s);
+//                        Log.i("Synchronizer", "Sync user data ...");
+                        //TODO sync participants?
+//                        ShoppingListDataSource s = new ShoppingListDataSource(context);
+//                        syncParticipants(context, s);
 
-                        Log.i("Synchronizer", "Finished synchronizing");
+//                        Log.i("Synchronizer", "Finished synchronizing");
+                        Toast.makeText(context, "Finished Market Sync", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -159,6 +162,7 @@ public class Synchronizer {
                     public void executeNextSync() {
                         // TODO sync item entries from remote
 //                        syncItemEntries(new ItemEntryDataSource(context), s, p);
+                        Toast.makeText(context, "Finished ShoppingList Sync", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -207,7 +211,7 @@ public class Synchronizer {
         entry.setAmount(1);
         entry.setBought(1);
         entry.setListID(Wocheneinkauf.getId());
-        entry.setProductName(getEntryByName(listOfProducts, "Tiefkühlpizza").getId());
+        entry.setProductName(getEntryByName(listOfProducts, "Tiefkühlpizza").getEntryName());
         i.add(entry);
 
         i.add((Product) getEntryByName(listOfProducts, "Toast"), Wocheneinkauf, 1);

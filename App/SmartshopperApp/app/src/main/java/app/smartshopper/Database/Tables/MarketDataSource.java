@@ -69,4 +69,9 @@ public class MarketDataSource extends DatabaseTable<Market> {
         }
         return null;
     }
+
+    @Override
+    protected void setIDForEntry(Market newEntry, String id) {
+        newEntry.setId(id);
+    }
 }

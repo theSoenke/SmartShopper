@@ -9,10 +9,6 @@ public abstract class DatabaseEntry {
     @SerializedName("name")
     private String entryName;
 
-    public abstract String getId();
-
-    public abstract void setId(String id);
-
     public String getEntryName() {
         return entryName;
     }

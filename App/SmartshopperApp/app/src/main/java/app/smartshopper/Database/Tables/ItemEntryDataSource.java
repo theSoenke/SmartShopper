@@ -68,7 +68,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      */
     public ItemEntry add(Product product, ShoppingList list, int amount) {
         ItemEntry entry = new ItemEntry();
-        entry.setProductName(product.getId());
+        entry.setProductName(product.getEntryName());
         entry.setListID(list.getId());
         entry.setAmount(amount);
         entry.setBought(0);
@@ -85,6 +85,10 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
      */
     public void open() throws SQLException {
         super.open();
+    }
+
+    @Override
+    protected void setIDForEntry(ItemEntry newEntry, String string) {
     }
 
     @Override
@@ -119,7 +123,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         List<ItemEntry> listOfEntries = getEntry(
 
                 MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "' AND " +
-                        MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_NAME + " = '" + product.getId() + "'"
+                        MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_NAME + " = '" + product.getEntryName() + "'"
 
         );
         if (!listOfEntries.isEmpty()) {
@@ -130,7 +134,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
 
     public ItemEntry getItemEntry(ShoppingList l, Product p, int amount, int bought) {
         List<ItemEntry> listOfEntries = getEntry(
-                MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_NAME + " = '" + p.getId() + "'"
+                MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_NAME + " = '" + p.getEntryName() + "'"
                         + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + l.getId() + "'"
                         + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + amount
                         + " AND " + MySQLiteHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);

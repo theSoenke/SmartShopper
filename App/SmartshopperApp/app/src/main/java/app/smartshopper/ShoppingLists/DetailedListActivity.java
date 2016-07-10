@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
@@ -33,6 +36,9 @@ import app.smartshopper.ShoppingLists.ListTabs.ItemListEntry;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
 import app.smartshopper.ShoppingLists.ListTabs.ProductHolder;
 import app.smartshopper.ShoppingLists.ListTabs.ProductPresenter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * The DetailedListActivity is the activity that's visible after clicking on a single- or group-list.
@@ -135,11 +141,34 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                     marketProduct.setLocation(entry.getLocation());
                     _shoppingList.addMarketProduct(marketProduct);
 
-                    _apiService.updateList(_shoppingList);
+                    Call call = _apiService.updateList(_shoppingList.getId(), _shoppingList);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            if (response.isSuccessful()) {
+                                Log.i("Update ShoppingList", "The update of the shopping list " + _shoppingList + " was successful!");
+                                Log.i("Update ShoppingList", new Gson().toJson(_shoppingList));
+                            } else {
+                                Log.i("Update ShoppingList", "The update of the shopping list " + _shoppingList + "failed!");
+                                Log.i("Update ShoppingList", response.message());
+                                try {
+                                    Log.i("Update ShoppingList", response.errorBody().string());
+                                } catch (IOException e1) {
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call call, Throwable t) {
+                            Log.e("Update ShoppingList", "The update of the shopping list " + _shoppingList + " failed!");
+                            Log.e("Update ShoppingList", t.getMessage());
+                            Log.e("Update ShoppingList", call.toString());
+                        }
+                    });
+
                     updateFragments();
                 }
             }
-
             return true;
         }
     }

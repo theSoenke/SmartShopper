@@ -18,11 +18,11 @@ public class ShoppingList extends DatabaseEntry {
     @SerializedName("_id")
     protected String id;
 //    @SerializedName("created_at")
-    private String createdAt;
+    private transient String createdAt;
 //    @SerializedName("updated_at")
-    private String updatedAt;
+    private transient String updatedAt;
 //    @SerializedName("owner")
-    private User owner;
+    private transient User owner;
     @SerializedName("__v")
     private Integer version;
 //    @SerializedName("participants")
@@ -109,12 +109,10 @@ public class ShoppingList extends DatabaseEntry {
         return false;
     }
 
-    @Override
     public String getId() {
         return id;
     }
 
-    @Override
     public void setId(String id) {
         this.id = id;
     }

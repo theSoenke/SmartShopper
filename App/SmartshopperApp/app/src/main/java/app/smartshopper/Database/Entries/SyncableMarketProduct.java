@@ -10,11 +10,12 @@ import app.smartshopper.Database.Entries.Product;
  * <p>
  * Created by Hauke on 01.07.2016.
  */
+//TODO check if this class the the MarketEntry could be merged together
 public class SyncableMarketProduct {
     @SerializedName("product")
     private Product _product;
     @SerializedName("price")
-    private int _price;
+    private float _price;
     @SerializedName("location")
     private SyncableLocation _location;
 
@@ -36,11 +37,11 @@ public class SyncableMarketProduct {
         _product = product;
     }
 
-    public int getPrice() {
+    public float getPrice() {
         return _price;
     }
 
-    public void setPrice(int price){
+    public void setPrice(float price){
         _price = price;
     }
 

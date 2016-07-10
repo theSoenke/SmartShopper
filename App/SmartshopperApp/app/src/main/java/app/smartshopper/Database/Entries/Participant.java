@@ -37,14 +37,4 @@ public class Participant extends DatabaseEntry {
     public String toString(){
         return getEntryName();
     }
-
-    @Override
-    public String getId() {
-        throw new UnsupportedOperationException("Participants entries do not have one ID but two IDs for the list and the User.");
-    }
-
-    @Override
-    public void setId(String id) {
-        throw new UnsupportedOperationException("Participants entries do not have one ID but two IDs for the list and the User.");
-    }
 }

@@ -70,6 +70,11 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     }
 
     @Override
+    protected void setIDForEntry(ShoppingList newEntry, String id) {
+        newEntry.setId(id);
+    }
+
+    @Override
     public void add(final ShoppingList list) {
         addLocally(list);
 
@@ -122,7 +127,7 @@ Log.i("response", "Request: " + new Gson().toJson(list));
     }
 
     public void addLocally(ShoppingList list){
-        list.setId(generateUniqueID());
+//        list.setId(generateUniqueID());
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
         values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
@@ -134,6 +139,8 @@ Log.i("response", "Request: " + new Gson().toJson(list));
                 list,
                 insertQuery,
                 values);
+
+        List<ShoppingList> l = getAllEntries();
     }
 
     /**

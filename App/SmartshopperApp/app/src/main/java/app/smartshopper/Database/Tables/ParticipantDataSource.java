@@ -37,6 +37,10 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     }
 
     @Override
+    protected void setIDForEntry(Participant newEntry, String id) {
+    }
+
+    @Override
     public void add(Participant entry) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID, entry.getShoppingListID());

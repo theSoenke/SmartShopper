@@ -57,14 +57,4 @@ public class ItemEntry extends DatabaseEntry {
         }
         return false;
     }
-
-    @Override
-    public String getId() {
-        throw new UnsupportedOperationException("Item entries do not have one ID but two IDs for the product and the list this entry is in.");
-    }
-
-    @Override
-    public void setId(String id) {
-        throw new UnsupportedOperationException("Item entries do not have one ID but two IDs for the product and the list this entry is in.");
-    }
 }

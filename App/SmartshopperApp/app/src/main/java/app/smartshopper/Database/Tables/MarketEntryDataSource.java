@@ -72,6 +72,10 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
     }
 
     @Override
+    protected void setIDForEntry(MarketEntry newEntry, String id) {
+    }
+
+    @Override
     public String getWhereClause(MarketEntry entry) {
         return MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + entry.getMarketID() + "'" +
                 " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_NAME + " = '" + entry.getProductID() + "'";

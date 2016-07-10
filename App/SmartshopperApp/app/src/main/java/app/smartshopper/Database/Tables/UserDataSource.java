@@ -46,6 +46,11 @@ public class UserDataSource extends DatabaseTable<User> {
     }
 
     @Override
+    protected void setIDForEntry(User newEntry, String id) {
+        newEntry.setId(id);
+    }
+
+    @Override
     public void add(User user) {
         ContentValues values = new ContentValues();
         user.setId(generateUniqueID());
