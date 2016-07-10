@@ -112,16 +112,11 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             return false;
         } else {
 
-            ItemEntry e = new ItemEntry();
-            if (_itemSource.EntryExists(_shoppingList.getId(), p.getEntryName())) {
+            ItemEntry e = new ItemEntry(p, _shoppingList.getId(), amount, 0);
+            if (_itemSource.EntryExists(_shoppingList.getId(), p.getId())) {
                 e = _itemSource.getItemEntry(_shoppingList, p);
                 _itemSource.removeEntryFromDatabase(e);
                 e.setAmount(amount + e.getAmount());
-            } else {
-                e.setProductName(p.getEntryName());
-                e.setListID(_shoppingList.getId());
-                e.setAmount(amount);
-                e.setBought(0);
             }
 
             MarketDataSource marketDataSource = new MarketDataSource(getApplicationContext());
@@ -133,13 +128,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                 if (!entries.isEmpty()) {
                     _itemSource.add(e);
 
-                    MarketEntry entry = entries.get(0);
-
-                    SyncableMarketProduct marketProduct = new SyncableMarketProduct();
-                    marketProduct.setProduct(p);
-                    marketProduct.setPrice(entry.getPrice());
-                    marketProduct.setLocation(entry.getLocation());
-                    _shoppingList.addMarketProduct(marketProduct);
+                    _shoppingList.addMarketProduct(e);
 
                     Call call = _apiService.updateList(_shoppingList.getId(), _shoppingList);
                     call.enqueue(new Callback() {
@@ -167,6 +156,11 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                     });
 
                     updateFragments();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Not in this market!", Toast.LENGTH_SHORT).show();
+                    return false;
                 }
             }
             return true;

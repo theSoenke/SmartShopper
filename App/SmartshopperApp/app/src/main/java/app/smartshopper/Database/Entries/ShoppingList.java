@@ -15,8 +15,6 @@ import app.smartshopper.Database.Tables.UserDataSource;
  * ShoppingList Model
  */
 public class ShoppingList extends DatabaseEntry {
-    @SerializedName("_id")
-    protected String id;
 //    @SerializedName("created_at")
     private transient String createdAt;
 //    @SerializedName("updated_at")
@@ -28,7 +26,7 @@ public class ShoppingList extends DatabaseEntry {
 //    @SerializedName("participants")
     private transient List<User> participants = new ArrayList<>();
     @SerializedName("products")
-    private List<SyncableMarketProduct> products = new ArrayList<>();
+    private List<ItemEntry> products = new ArrayList<>();
 
     /**
      * @return The createdAt
@@ -89,14 +87,14 @@ public class ShoppingList extends DatabaseEntry {
     /**
      * @return The products
      */
-    public List<SyncableMarketProduct> getProducts() {
+    public List<ItemEntry> getProducts() {
         return products;
     }
 
     /**
      * @param products The products
      */
-    public void setProducts(List<SyncableMarketProduct> products) {
+    public void setProducts(List<ItemEntry> products) {
         this.products = products;
     }
 
@@ -109,15 +107,7 @@ public class ShoppingList extends DatabaseEntry {
         return false;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void addMarketProduct(SyncableMarketProduct newMarketProduct) {
+    public void addMarketProduct(ItemEntry newMarketProduct) {
         products.add(newMarketProduct);
     }
 }

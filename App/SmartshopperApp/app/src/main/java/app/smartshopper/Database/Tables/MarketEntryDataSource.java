@@ -21,7 +21,7 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
                 MySQLiteHelper.MARKETENTRY_TABLE_NAME,
                 new String[]{
                         MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID,
-                        MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_NAME,
+                        MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID,
                         MySQLiteHelper.MARKETENTRY_COLUMN_PRICE,
                         MySQLiteHelper.MARKETENTRY_COLUMN_POSX,
                         MySQLiteHelper.MARKETENTRY_COLUMN_POSY,
@@ -33,13 +33,13 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
     public void add(MarketEntry entry) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID, entry.getMarketID());
-        values.put(MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_NAME, entry.getProductID());
+        values.put(MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID, entry.getProductID());
         values.put(MySQLiteHelper.MARKETENTRY_COLUMN_PRICE, entry.getPrice());
         values.put(MySQLiteHelper.MARKETENTRY_COLUMN_POSX, entry.getPosX());
         values.put(MySQLiteHelper.MARKETENTRY_COLUMN_POSY, entry.getPosY());
 
         String insertQuery = MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + entry.getMarketID() + "'" +
-                " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_NAME + " = '" + entry.getProductID() + "'" +
+                " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getProductID() + "'" +
                 " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRICE + " = " + entry.getPrice() +
                 " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_POSX + " = " + entry.getPosX() +
                 " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_POSY + " = " + entry.getPosY();
@@ -78,7 +78,7 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
     @Override
     public String getWhereClause(MarketEntry entry) {
         return MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + entry.getMarketID() + "'" +
-                " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_NAME + " = '" + entry.getProductID() + "'";
+                " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getProductID() + "'";
     }
 
     @Override
@@ -96,13 +96,13 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
 
     public boolean EntryExists(String MarketID, String ProductID) {
         List<MarketEntry> list = getEntry(MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + MarketID + "'"
-                + " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_NAME + " = '" + ProductID + "'");
+                + " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'");
         return !list.isEmpty();
     }
 
     public List<MarketEntry> getMarketEntryTo(Market m, Product p) {
         String query = MySQLiteHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + m.getId() + "'"
-                + " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_NAME + " = '" + p.getEntryName() + "'";
+                + " AND " + MySQLiteHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + p.getId() + "'";
         return getEntry(query);
     }
 }

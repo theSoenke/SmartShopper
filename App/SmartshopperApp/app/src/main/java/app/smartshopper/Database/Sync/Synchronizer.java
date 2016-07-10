@@ -206,13 +206,13 @@ public class Synchronizer {
         i.add((Product) getEntryByName(listOfProducts, "Käse"), Wocheneinkauf, 5);
 
         // just to have a already bought item that's in the middle of the list
-        ItemEntry entry = new ItemEntry();
-        entry.setEntryName("Tiefkühlpizza");
-        entry.setAmount(1);
-        entry.setBought(1);
-        entry.setListID(Wocheneinkauf.getId());
-        entry.setProductName(getEntryByName(listOfProducts, "Tiefkühlpizza").getEntryName());
-        i.add(entry);
+//        ItemEntry entry = new ItemEntry();
+//        entry.setEntryName("Tiefkühlpizza");
+//        entry.setAmount(1);
+//        entry.setBought(1);
+//        entry.setListID(Wocheneinkauf.getId());
+//        entry.setProduct((Product)getEntryByName(listOfProducts, "Tiefkühlpizza"));
+//        i.add(entry);
 
         i.add((Product) getEntryByName(listOfProducts, "Toast"), Wocheneinkauf, 1);
         i.add((Product) getEntryByName(listOfProducts, "Bratwurst"), Wocheneinkauf, 7);

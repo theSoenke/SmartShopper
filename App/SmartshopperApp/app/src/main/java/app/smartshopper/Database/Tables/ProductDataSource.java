@@ -22,23 +22,24 @@ public class ProductDataSource extends DatabaseTable<Product> {
         super(context,
                 MySQLiteHelper.PRODUCT_TABLE_NAME,
                 new String[]{
+                        MySQLiteHelper.PRODUCT_COLUMN_ID,
                         MySQLiteHelper.PRODUCT_COLUMN_NAME
                 });
     }
 
     @Override
     public String getWhereClause(Product entry) {
-        return MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_NAME + " = '" + entry.getEntryName() + "'";
+        return MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getId() + "'";
     }
 
     /**
      * Gets the product with the given ID.
      *
-     * @param name The ID of the product you want.
+     * @param id The ID of the product you want.
      * @return A product with the given ID or null if it doesn't exist.
      */
-    public Product get(String name) {
-        List<Product> listOfProducts = getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + name + "'");
+    public Product get(String id) {
+        List<Product> listOfProducts = getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + id + "'");
         if (listOfProducts != null && !listOfProducts.isEmpty()) {
             return listOfProducts.get(0);
         }
@@ -52,9 +53,11 @@ public class ProductDataSource extends DatabaseTable<Product> {
     @Override
     public void add(Product product) {
         ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.PRODUCT_COLUMN_ID, product.getId());
         values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product.getEntryName());
 
-        String insertQuery = MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '" + product.getEntryName() + "'";
+        String insertQuery = MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + product.getId() + "'" +
+                " AND " + MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '"+product.getEntryName() + "'";
 
         super.addEntryToDatabase(
                 product,
@@ -70,7 +73,8 @@ public class ProductDataSource extends DatabaseTable<Product> {
     @Override
     public Product cursorToEntry(Cursor cursor) {
         Product product = new Product();
-        product.setEntryName(cursor.getString(0));
+        product.setId(cursor.getString(0));
+        product.setEntryName(cursor.getString(1));
         return product;
     }
 
