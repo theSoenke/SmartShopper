@@ -118,4 +118,8 @@ public class ShoppingList extends DatabaseEntry {
     public void setId(String id) {
         this.id = id;
     }
+
+    public void addMarketProduct(SyncableMarketProduct newMarketProduct) {
+        products.add(newMarketProduct);
+    }
 }

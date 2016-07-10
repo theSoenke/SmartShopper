@@ -14,6 +14,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -32,6 +33,9 @@ public interface ApiService {
 	//    DELETE http://api.tecfuture.de:3000/lists/id
 	@DELETE("lists/{id}")
 	public void deleteList(@Path("id") int id);
+
+	@PUT("lists")
+	public void updateList(@Body ShoppingList shoppingList);
 
 	//    GET http://api.tecfuture.de:3000/search/query
 	@GET("search/{query}")

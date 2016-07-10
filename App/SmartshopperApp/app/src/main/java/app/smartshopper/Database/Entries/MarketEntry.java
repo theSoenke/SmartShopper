@@ -10,6 +10,7 @@ public class MarketEntry extends DatabaseEntry {
     private int _price;
     private int _posx;
     private int _posy;
+    private SyncableLocation _location;
 
     public MarketEntry(){
         _marketID = "";
@@ -82,5 +83,9 @@ public class MarketEntry extends DatabaseEntry {
     @Override
     public void setId(String id) {
         throw new UnsupportedOperationException("Market entries do not have one ID but two IDs for the product and the market this entry is in.");
+    }
+
+    public SyncableLocation getLocation() {
+        return new SyncableLocation(getPosX(), getPosY());
     }
 }

@@ -15,10 +15,17 @@ import android.widget.Toast;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
+import app.smartshopper.Database.Entries.Market;
+import app.smartshopper.Database.Entries.MarketEntry;
+import app.smartshopper.Database.Entries.SyncableMarketProduct;
 import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
+import app.smartshopper.Database.Sync.APIFactory;
+import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
+import app.smartshopper.Database.Tables.MarketDataSource;
+import app.smartshopper.Database.Tables.MarketEntryDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.R;
@@ -39,6 +46,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     ItemEntryDataSource _itemSource;
     ShoppingList _shoppingList;
     ListPagerAdapter listPagerAdapter;
+    private ApiService _apiService;
     //Get Store from BeaconID
 //    StoreBeaconTool storeBeaconTool;
 //    Store store = Store.Default;
@@ -81,6 +89,8 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
         listPagerAdapter = new ListPagerAdapter(getSupportFragmentManager(), 2);
         viewPager.setAdapter(listPagerAdapter);
+
+        _apiService = new APIFactory().getInstance();
     }
 
     @Override
@@ -98,7 +108,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
             ItemEntry e = new ItemEntry();
             if (_itemSource.EntryExists(_shoppingList.getId(), p.getEntryName())) {
-                e = _itemSource.getItemEntry(_shoppingList,p);
+                e = _itemSource.getItemEntry(_shoppingList, p);
                 _itemSource.removeEntryFromDatabase(e);
                 e.setAmount(amount + e.getAmount());
             } else {
@@ -107,8 +117,29 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                 e.setAmount(amount);
                 e.setBought(0);
             }
-            _itemSource.add(e);
-            updateFragments();
+
+            MarketDataSource marketDataSource = new MarketDataSource(getApplicationContext());
+            Market m = marketDataSource.getByName("Penny");
+
+            if (m != null) {
+                MarketEntryDataSource marketEntryDataSource = new MarketEntryDataSource(getApplicationContext());
+                List<MarketEntry> entries = marketEntryDataSource.getMarketEntryTo(m, p);
+                if (!entries.isEmpty()) {
+                    _itemSource.add(e);
+
+                    MarketEntry entry = entries.get(0);
+
+                    SyncableMarketProduct marketProduct = new SyncableMarketProduct();
+                    marketProduct.setProduct(p);
+                    marketProduct.setPrice(entry.getPrice());
+                    marketProduct.setLocation(entry.getLocation());
+                    _shoppingList.addMarketProduct(marketProduct);
+
+                    _apiService.updateList(_shoppingList);
+                    updateFragments();
+                }
+            }
+
             return true;
         }
     }
@@ -129,20 +160,18 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         return _productSource.getAllEntries();
     }
 
-    private void updateFragments()
-    {
-        for(Fragment fragment : listPagerAdapter.getPages())
-        {
+    private void updateFragments() {
+        for (Fragment fragment : listPagerAdapter.getPages()) {
             ((ProductPresenter) fragment).productsChanged();
         }
     }
 
-    public ItemEntry getItemEntryFromString(String entryName){
+    public ItemEntry getItemEntryFromString(String entryName) {
 
         int bought = 0;
         String[] split = entryName.split("\\s+");
-        if(split.length > 2){
-            if(split[2].equalsIgnoreCase("(gekauft)")){
+        if (split.length > 2) {
+            if (split[2].equalsIgnoreCase("(gekauft)")) {
                 bought = 1;
             }
         }
@@ -196,8 +225,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void openConfigureItemDialog(final ItemListEntry itemEntry)
-    {
+    public void openConfigureItemDialog(final ItemListEntry itemEntry) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_configure_item);
         dialog.setTitle("Configure '" + itemEntry.getItemEntry().getEntryName() + "'");

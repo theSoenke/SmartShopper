@@ -19,7 +19,6 @@ public class APIFactory // final verhindert Vererbung
 
 	private ApiService mApiService;
 
-
 	public APIFactory() //privater Konstruktor kann nur innerhalb benutzt werden
 	{
 		final String basicAuth = Preferences.getInstance().getBasicAuthHeader();

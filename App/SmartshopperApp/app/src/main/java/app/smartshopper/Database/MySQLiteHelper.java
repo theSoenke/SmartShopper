@@ -35,7 +35,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String MARKETENTRY_TABLE_NAME = "market_entry_table";
     public static final String MARKETENTRY_COLUMN_MARKET_ID = "market_id";
-    public static final String MARKETENTRY_COLUMN_PRODUCT_ID = "product_id";
+    public static final String MARKETENTRY_COLUMN_PRODUCT_NAME = "product_id";
     public static final String MARKETENTRY_COLUMN_POSX = "posx";
     public static final String MARKETENTRY_COLUMN_POSY = "posy";
     public static final String MARKETENTRY_COLUMN_PRICE = "price";
@@ -53,7 +53,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             SHOPPINGLIST_COLUMN_NAME + " TEXT NOT NULL);";
 
     private static final String ITEMENTRY_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + ITEMENTRY_TABLE_NAME + "(" +
-            ITEMENTRY_COLUMN_PRODUCT_NAME + " VARCHAR(24)," +
+            ITEMENTRY_COLUMN_PRODUCT_NAME + " TEXT," +
             ITEMENTRY_COLUMN_LIST_ID + " VARCHAR(24)," +
             ITEMENTRY_COLUMN_AMOUNT + " INTEGER NOT NULL," +
             ITEMENTRY_COLUMN_BOUGHT + " INTEGER NOT NULL," +
@@ -73,11 +73,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String MARKETENTRY_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + MARKETENTRY_TABLE_NAME + "(" +
             MARKETENTRY_COLUMN_MARKET_ID + " VARCHAR(24),"+
-            MARKETENTRY_COLUMN_PRODUCT_ID + " VARCHAR(24),"+
+            MARKETENTRY_COLUMN_PRODUCT_NAME + " TEXT,"+
             MARKETENTRY_COLUMN_POSX + " INTEGER NOT NULL,"+
             MARKETENTRY_COLUMN_POSY + " INTEGER NOT NULL,"+
             MARKETENTRY_COLUMN_PRICE + " INTEGER NOT NULL," +
-            "PRIMARY KEY(" + MARKETENTRY_COLUMN_MARKET_ID + ", " + MARKETENTRY_COLUMN_PRODUCT_ID  + "));";
+            "PRIMARY KEY(" + MARKETENTRY_COLUMN_MARKET_ID + ", " + MARKETENTRY_COLUMN_PRODUCT_NAME + "));";
 
 
     public MySQLiteHelper(Context context, String database_name, int database_version) {

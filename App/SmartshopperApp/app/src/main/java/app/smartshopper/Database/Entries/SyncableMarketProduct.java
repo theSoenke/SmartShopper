@@ -32,11 +32,23 @@ public class SyncableMarketProduct {
         return _product.getEntryName();
     }
 
+    public void setProduct(Product product){
+        _product = product;
+    }
+
     public int getPrice() {
         return _price;
     }
 
+    public void setPrice(int price){
+        _price = price;
+    }
+
     public SyncableLocation getLocation() {
         return _location.clone();
+    }
+
+    public void setLocation(SyncableLocation location){
+        _location = location;
     }
 }
