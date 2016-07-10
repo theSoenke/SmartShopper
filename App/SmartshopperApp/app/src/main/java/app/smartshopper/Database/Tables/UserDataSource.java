@@ -61,6 +61,11 @@ public class UserDataSource extends DatabaseTable<User> {
                 values);
     }
 
+    @Override
+    public void addLocally(User user){
+        add(user);
+    }
+
     /**
      * Creates a new user, adds it to the database and returns it.
      * If the user is already in the database, nothing happens and the user will be returned.

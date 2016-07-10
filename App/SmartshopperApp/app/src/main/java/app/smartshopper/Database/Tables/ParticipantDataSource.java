@@ -52,6 +52,11 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     }
 
     @Override
+    public void addLocally(Participant entry){
+        add(entry);
+    }
+
+    @Override
     public String getWhereClause(Participant entry) {
         return MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "' AND " +
                 MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";

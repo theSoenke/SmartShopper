@@ -145,11 +145,20 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
     }
 
     /**
-     * Adds the given entry to the database. There'll be no duplicates in the database.
+     * Adds the given entry to the database and uploads it to the remote server.
+     * There'll be no duplicates in the database.
      *
      * @param entry The new entry to add.
      */
     public abstract void add(T entry);
+
+    /**
+     * Adds the given entry to the database but does not upload it to the remote server.
+     * There'll be no duplicates in the database.
+     *
+     * @param entry The new entry to add.
+     */
+    public abstract void addLocally(T entry);
 
     /**
      * Gives a where clause for the given item that will return one entry with this item in it.

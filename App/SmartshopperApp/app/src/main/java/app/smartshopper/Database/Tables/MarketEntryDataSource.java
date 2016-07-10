@@ -53,6 +53,11 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
                 values);
     }
 
+    @Override
+    public void addLocally(MarketEntry entry){
+        add(entry);
+    }
+
     public void addAll(List<MarketEntry> allMarketEntries) {
         for (MarketEntry entry : allMarketEntries) {
             add(entry);

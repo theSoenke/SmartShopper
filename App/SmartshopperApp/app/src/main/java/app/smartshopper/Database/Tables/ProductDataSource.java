@@ -62,6 +62,11 @@ public class ProductDataSource extends DatabaseTable<Product> {
     }
 
     @Override
+    public void addLocally(Product product){
+        add(product);
+    }
+
+    @Override
     public Product cursorToEntry(Cursor cursor) {
         Product product = new Product();
         product.setId(cursor.getString(0));

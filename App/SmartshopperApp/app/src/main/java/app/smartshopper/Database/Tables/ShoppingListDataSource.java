@@ -71,17 +71,10 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
 
     @Override
     public void add(final ShoppingList list) {
-        list.setId(generateUniqueID());
-        ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
-        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
+        addLocally(list);
 
-        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = '" + list.getId() + "'" +
-                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
-
-//        final List<ShoppingList> apiList = new ArrayList<>();
-//        apiList.add(list);
         Call call = _apiService.lists(list);
+        Log.d("Send", "Send list to server...");
         call.enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -109,11 +102,6 @@ Log.i("response", "Request: " + new Gson().toJson(list));
                 Toast.makeText(getContext(), "Failed to send list: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-
-        super.addEntryToDatabase(
-                list,
-                insertQuery,
-                values);
     }
 
     /**
@@ -131,6 +119,21 @@ Log.i("response", "Request: " + new Gson().toJson(list));
         add(list);
 
         return list;
+    }
+
+    public void addLocally(ShoppingList list){
+        list.setId(generateUniqueID());
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
+        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
+
+        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = '" + list.getId() + "'" +
+                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
+
+        super.addEntryToDatabase(
+                list,
+                insertQuery,
+                values);
     }
 
     /**

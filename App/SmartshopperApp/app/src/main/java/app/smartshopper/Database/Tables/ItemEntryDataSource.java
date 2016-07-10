@@ -53,6 +53,11 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
                 values);
     }
 
+    @Override
+    public void addLocally(ItemEntry entry){
+        add(entry);
+    }
+
     /**
      * Creates a new item entry objects, adds it into the database and returns the new entry
      * including a unique ID.

@@ -41,6 +41,11 @@ public class MarketDataSource extends DatabaseTable<Market> {
     }
 
     @Override
+    public void addLocally(Market market){
+        add(market);
+    }
+
+    @Override
     public String getWhereClause(Market entry) {
         return MySQLiteHelper.MARKET_COLUMN_ID + " = '" + entry.getId() + "'" +
                 " AND " + MySQLiteHelper.MARKET_COLUMN_NAME + " = '" + entry.getEntryName() + "'";

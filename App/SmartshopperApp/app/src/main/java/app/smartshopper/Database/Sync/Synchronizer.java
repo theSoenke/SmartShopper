@@ -104,6 +104,7 @@ public class Synchronizer {
                     @Override
                     public void executeNextSync() {
                         syncMarkets(context, p);
+                        syncShoppingLists(context, p);
                     }
                 }
         );
@@ -131,10 +132,8 @@ public class Synchronizer {
 
                     @Override
                     public void executeNextSync() {
-                        Log.i("Synchronizer", "Sync item entries ...");
-                        ShoppingListDataSource s = syncItemEntries(context, p);
-
                         Log.i("Synchronizer", "Sync user data ...");
+                        ShoppingListDataSource s = new ShoppingListDataSource(context);
                         syncParticipants(context, s);
 
                         Log.i("Synchronizer", "Finished synchronizing");
@@ -145,44 +144,46 @@ public class Synchronizer {
         Log.i("Synchronizer", "Finished creating the market source and enqueueing the request.");
     }
 
-    private ShoppingListDataSource syncShoppingLists(Context context) {
-        ShoppingListDataSource s = new ShoppingListDataSource(context);
+    private ShoppingListDataSource syncShoppingLists(final Context context, final ProductDataSource p) {
+        final ShoppingListDataSource s = new ShoppingListDataSource(context);
 
-        syncEntries(s, new SyncProcessor() {
-            @Override
-            public void processUpdatedLocalData(List remoteList, List localList, DatabaseTable source) {
-            }
+        syncEntries(s,
+                new SyncProcessor() {
+                    @Override
+                    public void processUpdatedLocalData(List remoteList, List localList, DatabaseTable source) {
+                        // do not remove local lists that are not at the remote server but upload them
+                        //TODO upload local lists
+                    }
 
-            @Override
-            public void executeNextSync() {
+                    @Override
+                    public void executeNextSync() {
+                        // TODO sync item entries from remote
+//                        syncItemEntries(new ItemEntryDataSource(context), s, p);
+                    }
 
-            }
-            @Override
-            public Call<List<ShoppingList>> getCall() {
-                return restClient.listsLimit(10);
-            }
-        });
+                    @Override
+                    public Call<List<ShoppingList>> getCall() {
+                        return restClient.listsLimit(10);
+                    }
+                });
 
-        s.beginTransaction();
-        // single lists
-        s.add("Baumarkt");
-        s.add("Wocheneinkauf");
-        s.add("Getränkemarkt");
-
-        // group lists
-        s.add("Geburtstag von Max Mustermann");
-        s.add("Vereinstreffen");
-        s.add("OE-Liste");
-
-        s.endTransaction();
+//        s.beginTransaction();
+//        // single lists
+//        s.add("Baumarkt");
+//        s.add("Wocheneinkauf");
+//        s.add("Getränkemarkt");
+//
+//        // group lists
+//        s.add("Geburtstag von Max Mustermann");
+//        s.add("Vereinstreffen");
+//        s.add("OE-Liste");
+//
+//        s.endTransaction();
 
         return s;
     }
 
-    private ShoppingListDataSource syncItemEntries(Context context, ProductDataSource p) {
-        ShoppingListDataSource s = syncShoppingLists(context);
-        ItemEntryDataSource i = new ItemEntryDataSource(context);
-
+    private ShoppingListDataSource syncItemEntries(ItemEntryDataSource i, ShoppingListDataSource s, ProductDataSource p) {
         ShoppingList Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0);
         ShoppingList Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0);
         ShoppingList Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0);
@@ -370,7 +371,7 @@ public class Synchronizer {
         // Add new entries from remote
         for (DatabaseEntry entry : remoteList) {
             if (!localList.contains(entry)) {
-                source.add(entry);
+                source.addLocally(entry);
             }
         }
 
