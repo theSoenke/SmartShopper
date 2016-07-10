@@ -205,4 +205,12 @@ Log.i("response", "Request: " + new Gson().toJson(list));
         list.setEntryName(cursor.getString(1));
         return list;
     }
+
+    public ShoppingList getListFromString(String listName) {
+        List<ShoppingList> listOfLists = getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
+        if (!listOfLists.isEmpty()) {
+            return listOfLists.get(0);
+        }
+        return null;
+    }
 }

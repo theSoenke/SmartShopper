@@ -1,6 +1,7 @@
 package app.smartshopper.ShoppingLists.SingleList;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,10 +22,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.ShoppingList;
+import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.Sync.APIFactory;
+import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
+import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import app.smartshopper.R;
 import app.smartshopper.Database.Sync.ApiService;
@@ -86,10 +91,44 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         ListView list = (ListView) adapterView.findViewById(R.id.singleList_list);
-        String entry = list.getItemAtPosition(position).toString(); // get item at "position"
-        Intent i = new Intent(SingleListFragment.this.getActivity(), DetailedListActivity.class);
-        i.putExtra("list", entry);
-        getActivity().startActivity(i);
+        final String entry = list.getItemAtPosition(position).toString(); // get item at "position"
+        final Dialog dialog = new Dialog(getContext(), R.style.CustomDialog);
+        dialog.setContentView(R.layout.dialog_single_list_clicked);
+        dialog.setTitle("Choose your action for the list" + entry);
+        Button btMakeGroupList = (Button) dialog.findViewById(R.id.dialog_btMakeGroupList);
+        Button btView = (Button) dialog.findViewById(R.id.dialog_btViewSingleList);
+        Button btDeleteSingleList = (Button) dialog.findViewById(R.id.dialog_btDeleteSingleList);
+        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortSingleListClicked);
+        btAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btDeleteSingleList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO DELETE LIST
+                dialog.dismiss();
+            }
+        });
+        btMakeGroupList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openAddParticipantDialog(entry);
+                dialog.dismiss();
+            }
+        });
+        btView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(SingleListFragment.this.getActivity(), DetailedListActivity.class);
+                i.putExtra("list", entry);
+                getActivity().startActivity(i);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     private void openAddListDialog() {
@@ -116,5 +155,35 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         dialog.show();
     }
 
+    private void openAddParticipantDialog(final String listname) {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_add_participant);
+        dialog.setTitle("Add new participant ");
+        final EditText participantName = (EditText) dialog.findViewById(R.id.dialog_txtParticipant_input_field);
+        Button addButton = (Button) dialog.findViewById(R.id.dialog_btAddParticipant);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserDataSource userDataSource = new UserDataSource(getContext());
+                User user = userDataSource.add(participantName.getText().toString());
+                ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getContext());
+                ShoppingList list = shoppingListDataSource.getListFromString(listname);
+                ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
+                Participant participant = participantDataSource.add(list, user);
+                Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
+                service.updateList(list.getId(), list);
+                Log.i("ListParticipants", "List Participants upadated");
+                dialog.dismiss();
+            }
+        });
+        Button abortButton = (Button) dialog.findViewById(R.id.btAbortAddParticipant);
+        abortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
 
 }

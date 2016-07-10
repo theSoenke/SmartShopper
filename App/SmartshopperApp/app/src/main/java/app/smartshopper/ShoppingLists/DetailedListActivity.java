@@ -86,13 +86,9 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
         // get all lists with this name
         ShoppingListDataSource shoppingListSource = new ShoppingListDataSource(getApplicationContext());
-        List<ShoppingList> listOfEntries = shoppingListSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
+        _shoppingList = shoppingListSource.getListFromString(listName);
 
-        if (listOfEntries.size() > 0) {
-            if (listOfEntries.size() > 1) {
-                Toast.makeText(getApplicationContext(), "There's more than one list with the name " + listName + "! Taking the first occurrence.", Toast.LENGTH_SHORT).show();
-            }
-            _shoppingList = listOfEntries.get(0);
+        if (_shoppingList!= null) {
             _itemSource = new ItemEntryDataSource(getApplicationContext());
             _productSource = new ProductDataSource(getApplicationContext());
         } else {
@@ -246,7 +242,14 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     @Override
     public List<ItemEntry> getItemEntries() {
-        return _itemSource.getEntriesForList(_shoppingList);
+        List<ItemEntry> itemlist = new ArrayList<>();
+        if(_shoppingList.getParticipants()!= null && !_shoppingList.getParticipants().isEmpty()){
+            List<List<ItemEntry>> itemListList = groupListSetup();
+            itemlist = itemListList.get(getPositionInList(_shoppingList.getOwner()));
+        }else{
+            itemlist = _itemSource.getEntriesForList(_shoppingList);
+        }
+        return itemlist;
     }
 
     @Override
@@ -358,7 +361,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     }
 
-    public List<List<ItemEntry>> GroupListSetup(){
+    public List<List<ItemEntry>> groupListSetup(){
         List<List<ItemEntry>> out = new ArrayList<>();
         List<MarketEntry> interm = new ArrayList<>();
         List<ItemEntry> in = _itemSource.getEntriesForList(_shoppingList);
