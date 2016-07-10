@@ -55,7 +55,7 @@ exports.updateList = function (req, res, next) {
   let properties = {upsert: true, runValidators: true, new: true}
 
   List
-    .findByIdAndUpdate(req.params.id, properties)
+    .findByIdAndUpdate(req.params.id, req.body, properties)
     .populate('owner', 'name')
     .populate('participants', 'name fcmToken')
     .populate('products.product', 'name')
