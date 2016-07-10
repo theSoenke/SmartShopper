@@ -1,6 +1,7 @@
 package app.smartshopper.Database.Sync;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -46,12 +47,12 @@ public class Synchronizer {
         /**
          * Calls the next method that should be executed after a successful sync.
          */
-        void execute();
+        void executeNextSync();
 
         /**
          * Returns a call that will give us some data to sync.
          */
-        Call<List<T>> call();
+        Call<List<T>> getCall();
     }
 
     private ApiService restClient;
@@ -81,46 +82,6 @@ public class Synchronizer {
         syncProducts(context);
     }
 
-    /**
-     * Synchronizes all entries of the given data source with the list returned by the {@code caller}.
-     *
-     * @param source    The source that should be synced.
-     * @param processor The processor defines the operations that should be done to sync correctly.
-     */
-    private void syncEntries(final DatabaseTable<? extends DatabaseEntry> source,
-                             final SyncProcessor processor) {
-        Call<List<? extends DatabaseEntry>> remoteCall = processor.call();
-
-        remoteCall.enqueue(new Callback<List<? extends DatabaseEntry>>() {
-            @Override
-            public void onResponse(Call<List<? extends DatabaseEntry>> call, Response<List<? extends DatabaseEntry>> response) {
-                if (response.isSuccessful()) {
-                    List<? extends DatabaseEntry> remoteList = response.body();
-                    List<? extends DatabaseEntry> localList = source.getAllEntries();
-
-                    // The real sync method: synchronizes the local database and performs another operation defined in the processor
-                    updateLocalFromRemote(remoteList,
-                            localList,
-                            source,
-                            processor);
-
-                    Log.i("Next", source.toString());
-
-                    processor.execute();
-                } else {
-                    Log.e("Error Code", String.valueOf(response.code()));
-                    Log.e("Error Body", response.errorBody().toString());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<? extends DatabaseEntry>> call, Throwable t) {
-                Log.d("RESTClient", "Failure");
-                Log.d("RESTClient", t.getMessage());
-            }
-        });
-    }
-
     private void syncProducts(final Context context) {
 
         Log.i("Synchronizer", "Create product data source and enqueue request ...");
@@ -136,12 +97,12 @@ public class Synchronizer {
                     }
 
                     @Override
-                    public Call<List<Product>> call() {
+                    public Call<List<Product>> getCall() {
                         return restClient.products();
                     }
 
                     @Override
-                    public void execute() {
+                    public void executeNextSync() {
                         syncMarkets(context, p);
                     }
                 }
@@ -164,12 +125,12 @@ public class Synchronizer {
                     }
 
                     @Override
-                    public Call<List<Market>> call() {
+                    public Call<List<Market>> getCall() {
                         return restClient.markets();
                     }
 
                     @Override
-                    public void execute() {
+                    public void executeNextSync() {
                         Log.i("Synchronizer", "Sync item entries ...");
                         ShoppingListDataSource s = syncItemEntries(context, p);
 
@@ -184,59 +145,6 @@ public class Synchronizer {
         Log.i("Synchronizer", "Finished creating the market source and enqueueing the request.");
     }
 
-    private void syncFcmToken(String token) {
-        ApiService apiService = new APIFactory().getInstance();
-
-        JsonObject json = new JsonObject();
-        json.addProperty("token", token);
-
-        Call<ResponseBody> call = apiService.registerToken(json);
-
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    Log.e("Success", "Sync fcm token");
-                } else {
-                    Log.e("Error Code", String.valueOf(response.code()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("RESTClient", "Failure");
-                Log.d("RESTClient", t.getMessage());
-            }
-        });
-    }
-
-    /**
-     * Syncs the given local list with the given remote list. Noting is removes from the remote list or server, only the local database and list will be edited..
-     *
-     * @param remoteList The list of remote entries.
-     * @param localList  The list of local entries.
-     * @param source     The data source for the local entries.
-     * @param processor  A processor that works on the updated local database.
-     */
-    private void updateLocalFromRemote(List<? extends DatabaseEntry> remoteList, List<? extends DatabaseEntry> localList, DatabaseTable source, SyncProcessor processor) {
-        if (remoteList.equals(localList)) {
-            return;
-        }
-
-        source.beginTransaction();
-
-        // Add new entries from remote
-        for (DatabaseEntry entry : remoteList) {
-            if (!localList.contains(entry)) {
-                source.add(entry);
-            }
-        }
-
-        processor.processUpdatedLocalData(remoteList, localList, source);
-
-        source.endTransaction();
-    }
-
     private ShoppingListDataSource syncShoppingLists(Context context) {
         ShoppingListDataSource s = new ShoppingListDataSource(context);
 
@@ -246,11 +154,11 @@ public class Synchronizer {
             }
 
             @Override
-            public void execute() {
-            }
+            public void executeNextSync() {
 
+            }
             @Override
-            public Call<List<ShoppingList>> call() {
+            public Call<List<ShoppingList>> getCall() {
                 return restClient.listsLimit(10);
             }
         });
@@ -380,6 +288,97 @@ public class Synchronizer {
         p.endTransaction();
     }
 
+    private void syncFcmToken(String token) {
+        ApiService apiService = new APIFactory().getInstance();
+
+        JsonObject json = new JsonObject();
+        json.addProperty("token", token);
+
+        Call<ResponseBody> call = apiService.registerToken(json);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.e("Success", "Sync fcm token");
+                } else {
+                    Log.e("Error Code", String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("RESTClient", "Failure");
+                Log.d("RESTClient", t.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Synchronizes all entries of the given data source with the list returned by the {@code caller}.
+     *
+     * @param source    The source that should be synced.
+     * @param processor The processor defines the operations that should be done to sync correctly.
+     */
+    private void syncEntries(final DatabaseTable<? extends DatabaseEntry> source,
+                             final SyncProcessor processor) {
+        Call<List<? extends DatabaseEntry>> remoteCall = processor.getCall();
+
+        remoteCall.enqueue(new Callback<List<? extends DatabaseEntry>>() {
+            @Override
+            public void onResponse(Call<List<? extends DatabaseEntry>> call, Response<List<? extends DatabaseEntry>> response) {
+                if (response.isSuccessful()) {
+                    List<? extends DatabaseEntry> remoteList = response.body();
+                    List<? extends DatabaseEntry> localList = source.getAllEntries();
+
+                    // The real sync method: synchronizes the local database and performs another operation defined in the processor
+                    updateLocalFromRemote(remoteList,
+                            localList,
+                            source,
+                            processor);
+
+                    processor.executeNextSync();
+                } else {
+                    Log.e("Error Code", String.valueOf(response.code()));
+                    Log.e("Error Body", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<? extends DatabaseEntry>> call, Throwable t) {
+                Log.d("RESTClient", "Failure");
+                Log.d("RESTClient", t.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Syncs the given local list with the given remote list. Noting is removes from the remote list or server, only the local database and list will be edited..
+     *
+     * @param remoteList The list of remote entries.
+     * @param localList  The list of local entries.
+     * @param source     The data source for the local entries.
+     * @param processor  A processor that works on the updated local database.
+     */
+    private void updateLocalFromRemote(List<? extends DatabaseEntry> remoteList, List<? extends DatabaseEntry> localList, DatabaseTable source, SyncProcessor processor) {
+        if (remoteList.equals(localList)) {
+            return;
+        }
+
+        source.beginTransaction();
+
+        // Add new entries from remote
+        for (DatabaseEntry entry : remoteList) {
+            if (!localList.contains(entry)) {
+                source.add(entry);
+            }
+        }
+
+        processor.processUpdatedLocalData(remoteList, localList, source);
+
+        source.endTransaction();
+    }
+
     /**
      * Removes all entries from the local database that are in the list of remote entries but not in the list of local entries.
      *
@@ -403,6 +402,7 @@ public class Synchronizer {
      * @param name The name of the entry you want to know.
      * @return The database entry with the given name or {@code null} when the entry doesn't exist.
      */
+    @Nullable
     private DatabaseEntry getEntryByName(List<? extends DatabaseEntry> list, String name) {
         for (DatabaseEntry entry : list) {
             if (entry.getEntryName().equals(name)) {
