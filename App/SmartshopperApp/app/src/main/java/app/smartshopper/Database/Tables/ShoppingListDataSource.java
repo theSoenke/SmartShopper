@@ -125,6 +125,8 @@ Log.i("response", "Request: " + new Gson().toJson(list));
                 values);
 
         List<ShoppingList> l = getAllEntries();
+
+        getContext().getContentResolver().notifyChange(MySQLiteHelper.LIST_CONTENT_URI, null);
     }
 
     /**
