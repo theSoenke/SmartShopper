@@ -19,14 +19,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.google.android.gms.fitness.data.DataSource;
 import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.MapViewListener;
 import com.onlylemi.mapview.library.layer.BitmapLayer;
 import com.onlylemi.mapview.library.layer.LocationLayer;
-import com.onlylemi.mapview.library.layer.MapBaseLayer;
 import com.onlylemi.mapview.library.layer.MarkLayer;
 import com.onlylemi.mapview.library.utils.MapUtils;
 
@@ -49,7 +46,6 @@ import java.util.Set;
 import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.MarketDataSource;
 import app.smartshopper.Location.LocationTool;
 import app.smartshopper.R;
@@ -70,6 +66,11 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
     private static final int UNBOUGHT_ITEM_MARKTYPE = 1;
     private static final int BOUGHT_ITEM_MARKTYPE = 2;
+
+    private Dialog itemsAtMarkListDialog;
+    private ArrayAdapter<ItemListEntry> itemsAtMarkListAdapter;
+    private int itemsAtMarkListMark;
+    private int itemsAtMarkListNumMarks;
 
     private int width;
     private int height;
@@ -170,48 +171,50 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                         @Override
                         public void markIsClick(int num)
                         {
-                            final Dialog dialog = new Dialog(getContext());
-                            dialog.setContentView(R.layout.dialog_items_at_mark);
-                            dialog.setTitle("Items at this mark:");
-                            ListView list = (ListView) dialog.findViewById(R.id.items_at_mark_list);
-
-                            // Create ArrayAdapter using an empty list
-                            final ArrayAdapter<ItemListEntry> listAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
-
-                            for (ItemListEntry item : markIndexItemListEntryMap.get(num))
+                            if(markIndexItemListEntryMap.get(num).size() == 1)
                             {
-                                listAdapter.add(item);
+                                _productHolder.openConfigureItemDialog(markIndexItemListEntryMap.get(num).iterator().next());
                             }
+                            else {
+                                itemsAtMarkListDialog = new Dialog(getContext());
+                                itemsAtMarkListDialog.setContentView(R.layout.dialog_items_at_mark);
+                                itemsAtMarkListDialog.setTitle("Items at this mark:");
+                                ListView list = (ListView) itemsAtMarkListDialog.findViewById(R.id.items_at_mark_list);
 
-                            // add adapter with items to list (necessary to display items)
-                            list.setAdapter(listAdapter);
+                                // Create ArrayAdapter using an empty list
+                                itemsAtMarkListAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
+                                itemsAtMarkListMark = num;
+                                itemsAtMarkListNumMarks = marks.size();
 
-                            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
-                                {
-                                    final ItemListEntry itemEntry = listAdapter.getItem(position);
-                                    _productHolder.openConfigureItemDialog(itemEntry);
-                                    dialog.dismiss();
-                                }
-                            });
+                                updateItemsAtMarkList();
 
-                            Button closeButton = (Button) dialog.findViewById(R.id.dialog_btClose_items_at_mark_list);
-                            closeButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v)
-                                {
-                                    dialog.dismiss();
-                                }
-                            });
-                            dialog.show();
+                                // add adapter with items to list (necessary to display items)
+                                list.setAdapter(itemsAtMarkListAdapter);
+
+                                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                                        final ItemListEntry itemEntry = itemsAtMarkListAdapter.getItem(position);
+                                        _productHolder.openConfigureItemDialog(itemEntry);
+                                    }
+                                });
+
+                                Button closeButton = (Button) itemsAtMarkListDialog.findViewById(R.id.dialog_btClose_items_at_mark_list);
+                                closeButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        itemsAtMarkListDialog.dismiss();
+                                        itemsAtMarkListAdapter = null;
+                                    }
+                                });
+                                itemsAtMarkListDialog.show();
+                            }
                         }
                     });
                     mapView.addLayer(markLayer);
                     locationLayer = new LocationLayer(mapView, new PointF(50, 50));
                     locationLayer.setOpenCompass(false);
                     locationLayer.isVisible = false;
-                    mapView.addLayer(locationLayer);
                     productsChanged();
                     mapView.refresh();
                 }
@@ -237,6 +240,25 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         } else
         {
             throw new ClassCastException(context.toString() + " has to implement ProductHolder!");
+        }
+    }
+
+    private void updateItemsAtMarkList()
+    {
+        if(itemsAtMarkListAdapter != null)
+        {
+            if(itemsAtMarkListNumMarks == marks.size()) {
+                while (itemsAtMarkListAdapter.getCount() > 0) {
+                    itemsAtMarkListAdapter.remove(itemsAtMarkListAdapter.getItem(0));
+                }
+                for (ItemListEntry item : markIndexItemListEntryMap.get(itemsAtMarkListMark)) {
+                    itemsAtMarkListAdapter.add(item);
+                }
+            }
+            else
+            {
+                itemsAtMarkListDialog.dismiss();
+            }
         }
     }
 
@@ -283,7 +305,8 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 }
             }
         }
-//        mapView.refresh();
+        updateItemsAtMarkList();
+        mapView.refresh();
     }
 
     private void updatePosition(int sector)

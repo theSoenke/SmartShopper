@@ -80,16 +80,13 @@ public class MarkLayer extends MapBaseLayer {
                         isClickMark = true;
                         break;
                     }
-
-                    if (i == marks.size() - 1) {
-                        isClickMark = false;
-                    }
                 }
             }
 
             if (listener != null && isClickMark) {
                 listener.markIsClick(num);
                 mapView.refresh();
+                isClickMark = false;
             }
         }
     }
