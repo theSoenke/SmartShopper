@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.fitness.data.DataSource;
 import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.MapViewListener;
 import com.onlylemi.mapview.library.layer.BitmapLayer;
@@ -48,6 +49,8 @@ import java.util.Set;
 import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
+import app.smartshopper.Database.Tables.DatabaseTable;
+import app.smartshopper.Database.Tables.MarketDataSource;
 import app.smartshopper.Location.LocationTool;
 import app.smartshopper.R;
 
@@ -82,10 +85,27 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         super.onCreate(savedInstanceState);
 
         String storeName = getArguments().get("market").toString();
-//        MarketDataSource = new MarketDataSource();
+        MarketDataSource marketDataSource = new MarketDataSource(getContext());
+        List<Market> markets = marketDataSource.getAllEntries();
+        if(markets.size() == 0)
+        {
+            Log.e("Store", "No store found");
+        }
+        for(Market market : markets)
+        {
+            Log.i("Store","Store "+market.getEntryName()+" found");
+            if(market.getEntryName() == "Arbeitsraum")
+            {
+                _store = market;
+            }
+        }
+
         //TODO remove after using market data source
-        _store = new Market();
-        _store.setEntryName("Arbeitsraum");
+        if(_store == null) {
+            Log.e("Store", "Store Arbeitsraum not found");
+            _store = new Market();
+            _store.setEntryName("default");
+        }
 
         beaconManager = BeaconManager.getInstanceForApplication(this.getActivity());
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
