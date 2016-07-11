@@ -1,6 +1,7 @@
 package app.smartshopper.ShoppingLists;
 
 import android.app.Dialog;
+import android.content.ClipData;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -18,6 +19,7 @@ import java.util.Comparator;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
@@ -33,6 +35,7 @@ import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Tables.MarketDataSource;
 import app.smartshopper.Database.Tables.MarketEntryDataSource;
+import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
@@ -60,6 +63,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     MarketEntryDataSource _marketEntries;
     UserDataSource _userSource;
     private ApiService _apiService;
+    ParticipantDataSource _participantDataSource;
     //Get Store from BeaconID
 //    StoreBeaconTool storeBeaconTool;
 //    Store store = Store.Default;
@@ -95,8 +99,14 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
             Toast.makeText(getApplicationContext(), "There's no list called '" + listName + "'!", Toast.LENGTH_SHORT).show();
         }
+        String listtype = "";
+        Log.i("DetailedListActivity", _shoppingList.getId());
+        if(!_shoppingList.getParticipants().isEmpty()){
+            listtype = "group";
+        }
 
-        listPagerAdapter = new ListPagerAdapter(getSupportFragmentManager(), 2);
+
+        listPagerAdapter = new ListPagerAdapter(getSupportFragmentManager(), 2, listtype);
         viewPager.setAdapter(listPagerAdapter);
 
         _apiService = new APIFactory().getInstance();
@@ -299,6 +309,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         dialog.show();
     }
 
+
     private void openMarkItemDialog(final ItemEntry itemEntry) {
 
         final Dialog dialog = new Dialog(this, R.style.CustomDialog);
@@ -361,6 +372,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     }
 
+    @Override
     public List<List<ItemEntry>> groupListSetup(){
         List<List<ItemEntry>> out = new ArrayList<>();
         List<MarketEntry> interm = new ArrayList<>();
@@ -383,7 +395,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         List<List<MarketEntry>> output = new ArrayList<>();
         Collections.sort(input);
         Collections.reverse(input);
-        for(int i=0;i<_shoppingList.getParticipants().size();i++){
+        for(int i=0;i<_shoppingList.getParticipants().size() + 1;i++){
             List<MarketEntry> buf = new ArrayList<>();
             output.add(buf);
         }
@@ -424,6 +436,29 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             }
         }
         return -1;
+    }
+
+    @Override
+    public HashMap<String,List<String>> formatGroupEntries(List<List<ItemEntry>> in){
+        HashMap<String,List<String>> returnmap = new HashMap<>();
+        List<User> getuser = _shoppingList.getParticipants();
+        getuser.add(_shoppingList.getOwner());
+        for(int i= 0;i<getuser.size();i++){
+            List<ItemEntry> entryList = in.get(getPositionInList(getuser.get(i)));
+            List<String> formatList = new ArrayList<>();
+            for(int j= 0; j < entryList.size(); j++){
+                formatList.add(entryList.get(i).getEntryName());
+            }
+            returnmap.put(getuser.get(i).getEntryName(),formatList);
+        }
+        return returnmap;
+    }
+    @Override
+    public List<User> getUserList(){
+        Log.i("getUserList", _shoppingList.getId());
+        List<User> returnl = _shoppingList.getParticipants();
+        returnl.add(_shoppingList.getOwner());
+        return returnl;
     }
 }
 

@@ -1,9 +1,11 @@
 package app.smartshopper.ShoppingLists.ListTabs;
 
+import java.util.HashMap;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
+import app.smartshopper.Database.Entries.User;
 
 /**
  * Created by Rasmus on 02.06.16.
@@ -82,4 +84,32 @@ public interface ProductHolder {
      * @param itemEntry The ItemListEntry to configure
      */
     void openConfigureItemDialog(final ItemListEntry itemEntry);
+
+
+    /**
+     * algorithm to split lists between the participants, so that everyone buys the same amount
+     * @return List of Lists for ItemEntries (1 item Entry list per participant)
+     */
+    List<List<ItemEntry>> groupListSetup();
+
+    /**
+     * gets position of the user in the Lists of groupListSetup()
+     * @param user the user
+     * @return the position
+     */
+    int getPositionInList(User user);
+
+    /**
+     * makes List of List of Itementry in Hash Map connected with user
+     * necessary for expendable list view
+     * @param in itementry-list-list
+     * @return hashmap
+     */
+    HashMap<String,List<String>> formatGroupEntries(List<List<ItemEntry>> in);
+
+    /**
+     * return list of user participating in this list
+     * @return list of user
+     */
+    List<User> getUserList();
 }

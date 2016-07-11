@@ -77,6 +77,9 @@ public class ShoppingList extends DatabaseEntry {
         return participants;
     }
 
+    public void addParticipant(User participant){
+        this.participants.add(participant);
+    };
     /**
      * @param participants The participants
      */

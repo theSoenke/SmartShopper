@@ -180,10 +180,12 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
             public void onClick(View v) {
                 UserDataSource userDataSource = new UserDataSource(getContext());
                 User user = userDataSource.add(participantName.getText().toString());
+                Log.i("ID of the added User",user.getId());
                 ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getContext());
                 ShoppingList list = shoppingListDataSource.getListFromString(listname);
                 ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
-                Participant participant = participantDataSource.add(list, user);
+                participantDataSource.add(list, user);
+                list.addParticipant(user);
                 Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
                 service.updateList(list.getId(), list);
                 Log.i("ListParticipants", "List Participants upadated");

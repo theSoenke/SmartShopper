@@ -39,6 +39,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
     int expandedParent = -1;
     ApiService service;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,9 +113,8 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
 
             @Override
             public void OnItemClick(String entry) {
-                Intent i = new Intent(GroupListFragment.this.getActivity(), DetailedListActivity.class);
-                i.putExtra("list", entry);
-                getActivity().startActivity(i);
+                openConfigGroupListDialog(entry);
+
             }
         };
 
@@ -140,6 +140,46 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         });
 
         return view;
+    }
+
+    private void openConfigGroupListDialog(final String entry) {
+        final Dialog dialog = new Dialog(getContext(), R.style.CustomDialog);
+        dialog.setContentView(R.layout.dialog_group_list_clicked);
+        dialog.setTitle("Choose your action for the list" + entry);
+        Button btMakeSingleList = (Button) dialog.findViewById(R.id.dialog_btMakeSingleList);
+        Button btView = (Button) dialog.findViewById(R.id.dialog_btViewGroupList);
+        Button btDeleteList = (Button) dialog.findViewById(R.id.dialog_btDeleteGroupList);
+        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortGroupListClicked);
+        btAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btDeleteList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO DELETE LIST
+                dialog.dismiss();
+            }
+        });
+        btMakeSingleList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+            }
+        });
+        btView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(GroupListFragment.this.getActivity(), DetailedListActivity.class);
+                i.putExtra("list", entry);
+                getActivity().startActivity(i);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     @Override
@@ -169,5 +209,8 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             }
         });
         dialog.show();
+
     }
+
+
 }
