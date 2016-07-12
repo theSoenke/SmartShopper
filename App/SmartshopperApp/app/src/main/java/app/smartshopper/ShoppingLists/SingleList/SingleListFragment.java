@@ -17,7 +17,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.google.gson.JsonElement;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +37,9 @@ import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import app.smartshopper.R;
 import app.smartshopper.Database.Sync.ApiService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * The SingleListFragment contains a list with all single lists (list that's not shared to other participants).
@@ -43,6 +51,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
     private ApiService service;
     private ArrayAdapter<String> listAdapter;
 	private ShoppingListDataSource dataSource;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
@@ -52,7 +61,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         if (extras != null) {
             newList = extras.getString("newList");
         }
-        View view = inflater.inflate(R.layout.fragment_sinlge_list, null);
+        view = inflater.inflate(R.layout.fragment_sinlge_list, null);
 
         ListView list = (ListView) view.findViewById(R.id.singleList_list);
 
@@ -65,6 +74,8 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         if (newList != "") {
             dataSource.add(newList);
         }
+
+
 
         // add adapter with items to list (necessary to display items)
         list.setAdapter(listAdapter);
@@ -79,6 +90,8 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
             }
         });
 
+
+
 	    getActivity().getContentResolver().registerContentObserver(
 			    MySQLiteHelper.LIST_CONTENT_URI, true, new ContentObserver(new Handler(getActivity().getMainLooper()))
 			    {
@@ -90,7 +103,6 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
 			    });
 
         updateList();
-
         return view;
     }
 
@@ -100,6 +112,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         for (ShoppingList entry : listOfEntries) {
             listAdapter.add(entry.getEntryName());
         }
+        listEmpty();
     }
 
     @Override
@@ -156,6 +169,7 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
                 s.add(listName.getText().toString());
+                listEmpty();
                 dialog.dismiss();
             }
         });
@@ -201,5 +215,36 @@ public class SingleListFragment extends Fragment implements AdapterView.OnItemCl
         });
         dialog.show();
     }
+
+    private void listEmpty()
+    {
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabAddSingleList);
+        RelativeLayout.LayoutParams params;
+
+        TextView tv = (TextView) view.findViewById(R.id.noSingleListsText);
+
+        if (dataSource.getAllSingleLists().isEmpty())
+        {
+
+            params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+            tv.setVisibility(View.VISIBLE);
+
+        } else
+        {
+            tv.setVisibility(View.GONE);
+
+            params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params.addRule(RelativeLayout.ALIGN_PARENT_END);
+            params.setMarginEnd(15);
+            params.bottomMargin = 15;
+        }
+        fab.setLayoutParams(params);
+    }
+
 
 }

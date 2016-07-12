@@ -73,7 +73,6 @@ public class LocationTool{
     public void updateLaden(int minor)
     {
         _store = idLadenMap.get(minor);
-        Log.i("Navigation","Registered minor"+ minor);
     }
 
 

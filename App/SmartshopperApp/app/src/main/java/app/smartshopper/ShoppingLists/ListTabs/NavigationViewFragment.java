@@ -19,11 +19,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.MapViewListener;
 import com.onlylemi.mapview.library.layer.BitmapLayer;
 import com.onlylemi.mapview.library.layer.LocationLayer;
+import com.onlylemi.mapview.library.layer.MapBaseLayer;
 import com.onlylemi.mapview.library.layer.MarkLayer;
 import com.onlylemi.mapview.library.utils.MapUtils;
 
@@ -215,6 +217,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                     locationLayer = new LocationLayer(mapView, new PointF(50, 50));
                     locationLayer.setOpenCompass(false);
                     locationLayer.isVisible = false;
+                    mapView.addLayer(locationLayer);
                     productsChanged();
                     mapView.refresh();
                 }
@@ -312,49 +315,51 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
     private void updatePosition(int sector)
     {
-        if(fragmentExists) {
-            Log.i("Navigation", "Sector " + sector);
-            float heightPart = height / 10, widthPart = width / 4;
+        Log.i("Navigation", "Sector " + sector);
+        float heightPart = height / 10, widthPart = width / 4;
 
-            switch (sector) {
-                case 0:
+        switch (sector)
+        {
+            case 0:
+                if (locationLayer != null)
+                {
                     locationLayer.isVisible = false;
-                    break;
-                case 1:
-                    updateLocationLayer(3 * widthPart, 1 * heightPart);
-                    break;
-                case 2:
-                    updateLocationLayer(3 * widthPart, 3 * heightPart);
-                    break;
-                case 3:
-                    updateLocationLayer(3 * widthPart, 5 * heightPart);
-                    break;
-                case 4:
-                    updateLocationLayer(3 * widthPart, 7 * heightPart);
-                    break;
-                case 5:
-                    updateLocationLayer(3 * widthPart, 9 * heightPart);
-                    break;
-                case 6:
-                    updateLocationLayer(2 * widthPart, 9 * heightPart);
-                    break;
-                case 7:
-                    updateLocationLayer(1 * widthPart, 9 * heightPart);
-                    break;
-                case 8:
-                    updateLocationLayer(1 * widthPart, 7 * heightPart);
-                    break;
-                case 9:
-                    updateLocationLayer(1 * widthPart, 5 * heightPart);
-                    break;
-                case 10:
-                    updateLocationLayer(1 * widthPart, 3 * heightPart);
-                    break;
-                case 11:
-                    updateLocationLayer(1 * widthPart, 1 * heightPart);
+                }
+                break;
+            case 1:
+                updateLocationLayer(3 * widthPart, 1 * heightPart);
+                break;
+            case 2:
+                updateLocationLayer(3 * widthPart, 3 * heightPart);
+                break;
+            case 3:
+                updateLocationLayer(3 * widthPart, 5 * heightPart);
+                break;
+            case 4:
+                updateLocationLayer(3 * widthPart, 7 * heightPart);
+                break;
+            case 5:
+                updateLocationLayer(3 * widthPart, 9 * heightPart);
+                break;
+            case 6:
+                updateLocationLayer(2 * widthPart, 9 * heightPart);
+                break;
+            case 7:
+                updateLocationLayer(1 * widthPart, 9 * heightPart);
+                break;
+            case 8:
+                updateLocationLayer(1 * widthPart, 7 * heightPart);
+                break;
+            case 9:
+                updateLocationLayer(1 * widthPart, 5 * heightPart);
+                break;
+            case 10:
+                updateLocationLayer(1 * widthPart, 3 * heightPart);
+                break;
+            case 11:
+                updateLocationLayer(1 * widthPart, 1 * heightPart);
 
-                    break;
-            }
+                break;
         }
     }
 

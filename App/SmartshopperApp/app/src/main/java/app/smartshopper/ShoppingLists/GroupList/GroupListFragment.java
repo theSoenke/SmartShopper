@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +40,8 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
 
     int expandedParent = -1;
     ApiService service;
-
+    private View view;
+    ShoppingListDataSource source;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,12 +57,12 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         String newList = "";
         String newParticipants = "";
 
-        final View view = inflater.inflate(R.layout.fragment_group_list, null);
+        view = inflater.inflate(R.layout.fragment_group_list, null);
         FloatingActionButton btAdGroupList = (FloatingActionButton) view.findViewById(R.id.fabAddGroupList);
         final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
         final List<String> listgroups = new ArrayList<String>();
 
-        ShoppingListDataSource source = new ShoppingListDataSource(getContext());
+        source = new ShoppingListDataSource(getContext());
         ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
 
         if (newList != "") {
@@ -138,7 +141,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                 openAddListDialog();
             }
         });
-
+        listEmptyCheck();
         return view;
     }
 
@@ -198,6 +201,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
                 ShoppingList l = s.add(listName.getText().toString());
                 service.addList(l);
+                listEmptyCheck();
                 dialog.dismiss();
             }
         });
@@ -209,8 +213,35 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             }
         });
         dialog.show();
-
     }
 
+    private void listEmptyCheck()
+    {
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabAddGroupList);
+        RelativeLayout.LayoutParams params;
 
+        TextView tv = (TextView) view.findViewById(R.id.noGroupListsText);
+
+        if (source.getAllGroupLists().isEmpty())
+        {
+
+            params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+            tv.setVisibility(View.VISIBLE);
+
+        } else
+        {
+            tv.setVisibility(View.GONE);
+
+            params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params.addRule(RelativeLayout.ALIGN_PARENT_END);
+            params.setMarginEnd(15);
+            params.bottomMargin = 15;
+        }
+        fab.setLayoutParams(params);
+    }
 }

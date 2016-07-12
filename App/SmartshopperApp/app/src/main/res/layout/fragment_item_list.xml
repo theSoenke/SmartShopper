@@ -21,7 +21,6 @@
         android:layout_height="wrap_content"
         android:text="No items in this list, add some!"
         android:layout_centerHorizontal="true"
-        android:fontFamily=""
         android:layout_marginTop="150dp"
         android:visibility="gone"/>
 
