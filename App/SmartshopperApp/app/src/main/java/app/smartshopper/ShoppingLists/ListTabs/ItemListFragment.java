@@ -194,6 +194,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         List<ItemEntry> rawItemList = _productHolder.getItemEntries();
         listEmpty();
 
+        //TODO solve this without an extra class. Instead use the layout to display the different strings
         for (ItemEntry itemEntry : rawItemList)
         {
             ItemListEntry listEntry = new ItemListEntry(itemEntry);

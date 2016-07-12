@@ -31,7 +31,7 @@ public interface ApiService {
 	public Call<List<ShoppingList>> listforUser();
 
 	@POST("lists")
-	public Call<JsonElement> addList(@Body ShoppingList list);
+	public Call<ShoppingList> addList(@Body ShoppingList list);
 
 	//    DELETE http://api.tecfuture.de:3000/lists/id
 	@DELETE("lists/{id}")

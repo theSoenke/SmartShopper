@@ -157,12 +157,11 @@ public class Synchronizer {
                     public void processUpdatedLocalData(List remoteList, List localList, DatabaseTable source) {
                         // do not remove local lists that are not at the remote server but upload them
                         //TODO upload local lists
+                        //TODO IMPORTANT update and upload item entries!
                     }
 
                     @Override
                     public void executeNextSync() {
-                        // TODO sync item entries from remote
-//                        syncItemEntries(new ItemEntryDataSource(context), s, p);
                         Toast.makeText(context, "Finished ShoppingList Sync", Toast.LENGTH_SHORT).show();
                     }
 

@@ -58,13 +58,11 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
 
     @Override
     public void add(final ShoppingList list) {
-        addLocally(list);
-
-        Call call = _apiService.updateList(list.getId(), list);
+        Call<ShoppingList> call = _apiService.addList(list);
         Log.d("Send", "Send list to server...");
-        call.enqueue(new Callback() {
+        call.enqueue(new Callback<ShoppingList>() {
             @Override
-            public void onResponse(Call call, Response response) {
+            public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
                 if (!response.isSuccessful()) {
                     Toast.makeText(getContext(), "Could not send list to server :(", Toast.LENGTH_SHORT).show();
 
@@ -77,16 +75,21 @@ Log.i("response", "Request: " + new Gson().toJson(list));
                     }
                     Log.i("response", response.code() + "");
                     Log.i("response", response.headers().toString());
-
                 }
                 else{
                     Toast.makeText(getContext(), "List sent", Toast.LENGTH_SHORT).show();
+                    // Assign the body of the succeeded response because there's a valid ID given by the server
+                    ShoppingList newList = response.body();
+                    addLocally(newList);
                 }
             }
 
             @Override
-            public void onFailure(Call call, Throwable throwable) {
+            public void onFailure(Call<ShoppingList> call, Throwable throwable) {
                 Toast.makeText(getContext(), "Failed to send list: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
+                //FIXME IMPORTANT! set 'unsynced' flag to sync later
+                list.setId(generateUniqueID());
+                addLocally(list);
             }
         });
     }
@@ -100,7 +103,7 @@ Log.i("response", "Request: " + new Gson().toJson(list));
      */
     public ShoppingList add(String listName) {
         ShoppingList list = new ShoppingList();
-        list.setId(generateUniqueID());
+//        list.setId(generateUniqueID());
         list.setEntryName(listName);
 
         add(list);
@@ -123,8 +126,6 @@ Log.i("response", "Request: " + new Gson().toJson(list));
                 list,
                 insertQuery,
                 values);
-
-        List<ShoppingList> l = getAllEntries();
 
         getContext().getContentResolver().notifyChange(MySQLiteHelper.LIST_CONTENT_URI, null);
     }

@@ -200,6 +200,10 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
         configAdapter();
     }
 
+    /**
+     * Shows the floating action button right in the middle of the screen when no list exists.
+     * If there's a list (or more then one), the button is in the lower right corner.
+     */
     private void listEmpty()
     {
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabAddItem);
