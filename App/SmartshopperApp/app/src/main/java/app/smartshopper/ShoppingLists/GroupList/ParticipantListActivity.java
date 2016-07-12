@@ -101,14 +101,14 @@ public class ParticipantListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Context context = getApplicationContext();
-
                 UserDataSource userDataSource = new UserDataSource(context);
                 User user = userDataSource.add(participantName.getText().toString());
                 ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(context);
-                ShoppingList list = shoppingListDataSource.add(listName);
+                ShoppingList list = shoppingListDataSource.getListFromString(listName);
                 ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
                 Participant participant = participantDataSource.add(list, user);
                 Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
+                Log.i("List Participant","new size is  " + participantDataSource.getUserOfList(list.getId()).size());
                 listAdapter.add(participant);
                 listAdapter.notifyDataSetChanged();
                 service.updateList(list.getId(), list);

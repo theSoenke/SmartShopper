@@ -68,7 +68,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                 if (!response.isSuccessful()) {
                     Toast.makeText(getContext(), "Could not send list to server :(", Toast.LENGTH_SHORT).show();
 
-Log.i("response", "Request: " + new Gson().toJson(list));
+                    Log.i("response", "Request: " + new Gson().toJson(list));
 
                     try {
                         Log.i("response", response.errorBody().string());
