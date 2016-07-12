@@ -97,7 +97,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
         for(Market market : markets)
         {
             Log.i("Store","Store "+market.getEntryName()+" found");
-            if(market.getEntryName() == "Arbeitsraum")
+            if(market.getEntryName().equals("Arbeitsraum"))
             {
                 _store = market;
             }
