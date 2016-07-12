@@ -8,6 +8,10 @@ import android.widget.Toast;
  */
 public class SendToParticipants implements AsyncResponse
 {
+    /**
+     *
+     * @param params beliebige Anzahl an (String-)Token
+     */
     public static void send(String... params)
     {
         String[] tokenArray = params;
