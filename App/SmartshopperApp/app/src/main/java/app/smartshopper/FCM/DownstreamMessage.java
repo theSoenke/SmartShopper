@@ -27,6 +27,7 @@ public class DownstreamMessage extends AsyncTask<String,String,String>
         BufferedReader bufferedReader = null;
         String server_key = "";
         String client_key;
+        String notification_message;
         String content;
         String content_json_string;
 
@@ -35,6 +36,8 @@ public class DownstreamMessage extends AsyncTask<String,String,String>
         {
             URL url = new URL("https://fcm.googleapis.com/fcm/send");
             client_key = params[0];
+            notification_message = params[1];
+
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
             httpURLConnection.setRequestProperty("Authorization", server_key);
@@ -50,8 +53,8 @@ public class DownstreamMessage extends AsyncTask<String,String,String>
             JSONObject notification_json_object = new JSONObject();
             try
             {
-                notification_json_object.put("title","Hello World");
-                notification_json_object.put("text","Hello World");
+                notification_json_object.put("title","SmartShopper");
+                notification_json_object.put("text",notification_message);
             }
             catch (JSONException e) {
                 // TODO Auto-generated catch block
