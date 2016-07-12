@@ -45,7 +45,7 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_group_list_item_list, group, false);
+        view = inflater.inflate(R.layout.fragment_group_list_item_list, group, false);
 
         ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
         _list = (ExpandableListView) view.findViewById(R.id.grouplist_item_list);
@@ -86,7 +86,7 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
             }
         };
         _list.setAdapter(_adapter);
-        listEmpty();
+        //listEmpty();
     }
 
     private void openAddGroupItemDialog()
@@ -206,7 +206,7 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
      */
     private void listEmpty()
     {
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabAddItem);
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabAddGroupListItem);
         RelativeLayout.LayoutParams params;
 
         TextView tv = (TextView) view.findViewById(R.id.noItemsText);

@@ -95,13 +95,15 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         if (_shoppingList!= null) {
             _itemSource = new ItemEntryDataSource(getApplicationContext());
             _productSource = new ProductDataSource(getApplicationContext());
+            _participantDataSource = new ParticipantDataSource(getApplicationContext());
+            _marketEntries = new MarketEntryDataSource(getApplicationContext());
         } else {
 
             Toast.makeText(getApplicationContext(), "There's no list called '" + listName + "'!", Toast.LENGTH_SHORT).show();
         }
         String listtype = "";
         Log.i("DetailedListActivity", _shoppingList.getId());
-        if(!_shoppingList.getParticipants().isEmpty()){
+        if(!_participantDataSource.getUserOfList(_shoppingList.getId()).isEmpty()){
             listtype = "group";
         }
 
@@ -395,7 +397,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         List<List<MarketEntry>> output = new ArrayList<>();
         Collections.sort(input);
         Collections.reverse(input);
-        for(int i=0;i<_shoppingList.getParticipants().size() + 1;i++){
+        for(int i=0;i<getUserList().size();i++){
             List<MarketEntry> buf = new ArrayList<>();
             output.add(buf);
         }
@@ -428,26 +430,30 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
 
     public int getPositionInList(User user){
-        List<User> userList = _shoppingList.getParticipants();
-        userList.add(_shoppingList.getOwner());
+        List<User> userList = getUserList();
         for(int i = 0;i<userList.size();i++){
-            if(userList.get(0).getId() == user.getId()){
+            if(userList.get(i).getId().equalsIgnoreCase(user.getId())){
                 return i;
             }
         }
-        return -1;
+        return 0;
     }
 
     @Override
     public HashMap<String,List<String>> formatGroupEntries(List<List<ItemEntry>> in){
         HashMap<String,List<String>> returnmap = new HashMap<>();
-        List<User> getuser = _shoppingList.getParticipants();
-        getuser.add(_shoppingList.getOwner());
+        List<User> getuser = getUserList();
         for(int i= 0;i<getuser.size();i++){
             List<ItemEntry> entryList = in.get(getPositionInList(getuser.get(i)));
+            Log.i("Position of user", getuser.get(i).getEntryName() + ": " + getPositionInList(getuser.get(i)));
+            Log.i("Size of List", "for user" + getuser.get(i).getEntryName() + " : " + entryList.size());
             List<String> formatList = new ArrayList<>();
             for(int j= 0; j < entryList.size(); j++){
-                formatList.add(entryList.get(i).getEntryName());
+                if(entryList.get(j)!= null){
+                    formatList.add(entryList.get(i).getEntryName());
+                }else{
+                    Log.i("EntryList", "ENTRY IS NULL WTF");
+                }
             }
             returnmap.put(getuser.get(i).getEntryName(),formatList);
         }
@@ -456,8 +462,12 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public List<User> getUserList(){
         Log.i("getUserList", _shoppingList.getId());
-        List<User> returnl = _shoppingList.getParticipants();
-        returnl.add(_shoppingList.getOwner());
+        List<User> returnl = _participantDataSource.getUserOfList(_shoppingList.getId());
+        //returnl.add(_shoppingList.getOwner());
+        if(_shoppingList.getOwner() == null){
+            Log.i("owner is null", " we are doomed");
+        }
+        Log.i("getUserList size", "" + returnl.size());
         return returnl;
     }
 }

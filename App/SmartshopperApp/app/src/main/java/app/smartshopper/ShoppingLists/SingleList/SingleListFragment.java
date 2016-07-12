@@ -160,6 +160,7 @@ public class SingleListFragment extends Fragment {
                 Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
                 service.updateList(list.getId(), list);
                 Log.i("ListParticipants", "List Participants upadated");
+                Log.i("List Participant", "New Size is " + participantDataSource.getUserOfList(list.getId()).size());
                 dialog.dismiss();
             }
         });
