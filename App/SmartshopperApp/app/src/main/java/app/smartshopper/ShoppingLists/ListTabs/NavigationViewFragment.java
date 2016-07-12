@@ -76,6 +76,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 
     private int width;
     private int height;
+    private int old_sector;
 
     private Market _store;
     private boolean mapAlreadyLoaded = false;
@@ -327,50 +328,59 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
                 }
                 break;
             case 1:
-                updateLocationLayer(3 * widthPart, 1 * heightPart);
+                updateLocationLayer(3 * widthPart, 1 * heightPart,sector);
                 break;
             case 2:
-                updateLocationLayer(3 * widthPart, 3 * heightPart);
+                updateLocationLayer(3 * widthPart, 3 * heightPart,sector);
                 break;
             case 3:
-                updateLocationLayer(3 * widthPart, 5 * heightPart);
+                updateLocationLayer(3 * widthPart, 5 * heightPart,sector);
                 break;
             case 4:
-                updateLocationLayer(3 * widthPart, 7 * heightPart);
+                updateLocationLayer(3 * widthPart, 7 * heightPart,sector);
                 break;
             case 5:
-                updateLocationLayer(3 * widthPart, 9 * heightPart);
+                updateLocationLayer(3 * widthPart, 9 * heightPart,sector);
                 break;
             case 6:
-                updateLocationLayer(2 * widthPart, 9 * heightPart);
+                updateLocationLayer(2 * widthPart, 9 * heightPart,sector);
                 break;
             case 7:
-                updateLocationLayer(1 * widthPart, 9 * heightPart);
+                updateLocationLayer(1 * widthPart, 9 * heightPart,sector);
                 break;
             case 8:
-                updateLocationLayer(1 * widthPart, 7 * heightPart);
+                updateLocationLayer(1 * widthPart, 7 * heightPart,sector);
                 break;
             case 9:
-                updateLocationLayer(1 * widthPart, 5 * heightPart);
+                updateLocationLayer(1 * widthPart, 5 * heightPart,sector);
                 break;
             case 10:
-                updateLocationLayer(1 * widthPart, 3 * heightPart);
+                updateLocationLayer(1 * widthPart, 3 * heightPart,sector);
                 break;
             case 11:
-                updateLocationLayer(1 * widthPart, 1 * heightPart);
+                updateLocationLayer(1 * widthPart, 1 * heightPart,sector);
 
                 break;
         }
     }
 
-    public void updateLocationLayer(float width, float height)
+    public void updateLocationLayer(float width, float height, int sector)
     {
         Log.i("Navigation", "Layers: " + mapView.getLayers().size());
 
         locationLayer.setCurrentPosition(new PointF(width, height));
         locationLayer.isVisible = true;
-        mapView.refresh();
+        mapRefreshCheck(sector);
         Log.i("Navigation", "LocationLayer Position: " + locationLayer.getCurrentPosition());
+    }
+
+    private void mapRefreshCheck(int sector)
+    {
+        if(sector != old_sector)
+        {
+            mapView.refresh();
+            old_sector=sector;
+        }
     }
 
 
