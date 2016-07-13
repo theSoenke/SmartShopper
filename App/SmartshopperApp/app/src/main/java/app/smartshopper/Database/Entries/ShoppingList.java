@@ -19,12 +19,12 @@ public class ShoppingList extends DatabaseEntry {
     private transient String createdAt;
 //    @SerializedName("updated_at")
     private transient String updatedAt;
-//    @SerializedName("owner")
-    private transient User owner;
+    @SerializedName("owner")
+    private User owner;
     @SerializedName("__v")
     private Integer version;
-//    @SerializedName("participants")
-    private transient List<User> participants = new ArrayList<>();
+    @SerializedName("participants")
+    private List<User> participants = new ArrayList<>();
     @SerializedName("products")
     private List<ItemEntry> products = new ArrayList<>();
 

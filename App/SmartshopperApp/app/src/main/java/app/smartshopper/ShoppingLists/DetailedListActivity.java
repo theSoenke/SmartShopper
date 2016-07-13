@@ -258,7 +258,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             List<List<ItemEntry>> itemListList = groupListSetup();
             itemlist = itemListList.get(getPositionInList(_shoppingList.getOwner()));
         }else{
-            itemlist = _itemSource.getEntriesForList(_shoppingList);
+            itemlist = _itemSource.getEntriesForList(_shoppingList.getId());
         }
         return itemlist;
     }
@@ -383,7 +383,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     public List<List<ItemEntry>> groupListSetup(){
         List<List<ItemEntry>> out = new ArrayList<>();
         List<MarketEntry> interm = new ArrayList<>();
-        List<ItemEntry> in = _itemSource.getEntriesForList(_shoppingList);
+        List<ItemEntry> in = _itemSource.getEntriesForList(_shoppingList.getId());
         for(int i = 0;i<in.size();i++){
             interm.add(_marketEntries.getCheapestMarketForProduct(in.get(i).getProduct().getId()));
         }

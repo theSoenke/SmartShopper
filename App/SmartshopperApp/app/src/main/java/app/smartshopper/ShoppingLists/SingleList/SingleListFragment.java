@@ -18,7 +18,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +29,15 @@ import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.DatabaseHelper;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
+import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * The SingleListFragment contains a list with all single lists (list that's not shared to other participants).
@@ -40,257 +46,288 @@ import app.smartshopper.ShoppingLists.DetailedListActivity;
 // TODO Maybe Extract the communication and the dialog into extra classes?
 public class SingleListFragment extends Fragment {
 
-	private ApiService mApiService;
-	private ArrayAdapter<String> mListAdapter;
-	private ShoppingListDataSource mDataSource;
-	private View mSingleListView;
-	private Dialog mListDialog;
+    private ApiService mApiService;
+    private ArrayAdapter<String> mListAdapter;
+    private ShoppingListDataSource mDataSource;
+    private View mSingleListView;
+    private Dialog mListDialog;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
-		Bundle extras = getArguments();
-		mApiService = new APIFactory().getInstance();
-		String newList = "";
-		if (extras != null) {
-			newList = extras.getString("newList");
-		}
-		mSingleListView = inflater.inflate(R.layout.fragment_single_list, null);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
+        Bundle extras = getArguments();
+        mApiService = new APIFactory().getInstance();
+        String newList = "";
+        if (extras != null) {
+            newList = extras.getString("newList");
+        }
+        mSingleListView = inflater.inflate(R.layout.fragment_single_list, null);
 
-		ListView list = (ListView) mSingleListView.findViewById(R.id.singleList_list);
+        ListView list = (ListView) mSingleListView.findViewById(R.id.singleList_list);
 
-		// Create ArrayAdapter using an empty list
-		mListAdapter = new ArrayAdapter<>(getContext(), R.layout.simple_row, new ArrayList<String>());
+        // Create ArrayAdapter using an empty list
+        mListAdapter = new ArrayAdapter<>(getContext(), R.layout.simple_row, new ArrayList<String>());
 
-		// Get all entries and add all single-list entries to the list adapter.
-		mDataSource = new ShoppingListDataSource(getContext());
+        // Get all entries and add all single-list entries to the list adapter.
+        mDataSource = new ShoppingListDataSource(getContext());
 
-		if (!newList.isEmpty()) {
-			mDataSource.add(newList);
-		}
+        if (!newList.isEmpty()) {
+            mDataSource.add(newList);
+        }
 
-		// add adapter with items to list (necessary to display items)
-		list.setAdapter(mListAdapter);
+        // add adapter with items to list (necessary to display items)
+        list.setAdapter(mListAdapter);
 
-		// to get notified about clicks on items
-		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-				Log.d("click", "Normal click event.");
-				String listName = getListNameAt(i);
-				openDetailedListFor(listName);
-			}
-		});
-		list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-				Log.d("click", "Long click event.");
-				openActionChooseDialogFor(i);
-				return true;
-			}
-		});
+        // to get notified about clicks on items
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("click", "Normal click event.");
+                String listName = getListNameAt(i);
+                openDetailedListFor(listName);
+            }
+        });
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("click", "Long click event.");
+                openActionChooseDialogFor(i);
+                return true;
+            }
+        });
 
-		FloatingActionButton addList = (FloatingActionButton) mSingleListView.findViewById(R.id.fabAddItemSingleList);
-		addList.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View vw) {
-				openAddListDialog();
-			}
-		});
+        FloatingActionButton addList = (FloatingActionButton) mSingleListView.findViewById(R.id.fabAddItemSingleList);
+        addList.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View vw) {
+                openAddListDialog();
+            }
+        });
 
-		getActivity().getContentResolver().registerContentObserver(DatabaseHelper.LIST_CONTENT_URI, true, new ContentObserver(new Handler(getActivity().getMainLooper())) {
-			@Override
-			public void onChange(boolean selfChange) {
-				updateList();
-			}
-		});
+        getActivity().getContentResolver().registerContentObserver(DatabaseHelper.LIST_CONTENT_URI, true, new ContentObserver(new Handler(getActivity().getMainLooper())) {
+            @Override
+            public void onChange(boolean selfChange) {
+                updateList();
+            }
+        });
 
 
-		updateList();
+        updateList();
 
-		return mSingleListView;
-	}
+        return mSingleListView;
+    }
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if(mListDialog != null){
-			mListDialog.dismiss();
-		}
-	}
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mListDialog != null) {
+            mListDialog.dismiss();
+        }
+    }
 
-	private void updateList() {
-		List<ShoppingList> lists = mDataSource.getAllSingleLists();
+    private void updateList() {
+        List<ShoppingList> lists = mDataSource.getAllSingleLists();
 
-		mListAdapter.clear();
-		for (ShoppingList entry : lists) {
-			mListAdapter.add(entry.getEntryName());
-		}
+        mListAdapter.clear();
+        for (ShoppingList entry : lists) {
+            mListAdapter.add(entry.getEntryName());
+        }
 
-		if (lists.isEmpty()) {
-			listsEmpty();
-		}
-		else {
-			listsNotEmpty();
-		}
-	}
+        if (lists.isEmpty()) {
+            listsEmpty();
+        } else {
+            listsNotEmpty();
+        }
+    }
 
-	private void openAddListDialog() {
-		final Dialog dialog = new Dialog(getContext());
-		dialog.setContentView(R.layout.dialog_add_single_list);
-		dialog.setTitle("Create your new list ");
-		final EditText listName = (EditText) dialog.findViewById(R.id.dialog_txtList_input_field);
-		Button btcrt = (Button) dialog.findViewById(R.id.dialog_btAddSingleList);
-		btcrt.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				ShoppingListDataSource shoppingList = new ShoppingListDataSource(getContext());
-				shoppingList.add(listName.getText().toString());
-				listsEmpty();
-				dialog.dismiss();
-			}
-		});
-		Button btnAbort = (Button) dialog.findViewById(R.id.btAbortAddSingleList);
-		btnAbort.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-		dialog.show();
-	}
+    private void openAddListDialog() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_add_single_list);
+        dialog.setTitle("Create your new list ");
 
-	private void openAddParticipantDialog(final String listname) {
-		final Dialog dialog = new Dialog(getContext());
-		dialog.setContentView(R.layout.dialog_add_participant);
-		dialog.setTitle("Add new participant ");
-		final EditText participantName = (EditText) dialog.findViewById(R.id.dialog_txtParticipant_input_field);
-		Button addButton = (Button) dialog.findViewById(R.id.dialog_btAddParticipant);
-		addButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				UserDataSource userDataSource = new UserDataSource(getContext());
-				User user = userDataSource.add(participantName.getText().toString());
-				Log.i("ID of the added User", user.getId());
-				ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getContext());
-				ShoppingList list = shoppingListDataSource.getListFromString(listname);
-				ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
-				participantDataSource.add(list, user);
-				list.addParticipant(user);
-				Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
-				mApiService.updateList(list.getId(), list);
-				Log.i("ListParticipants", "List Participants upadated");
-				Log.i("List Participant", "New Size is " + participantDataSource.getUserOfList(list.getId()).size());
-				dialog.dismiss();
-			}
-		});
-		Button abortButton = (Button) dialog.findViewById(R.id.btAbortAddParticipant);
-		abortButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-		dialog.show();
-	}
+        final EditText listNameEditField = (EditText) dialog.findViewById(R.id.dialog_txtList_input_field);
+        Button addSingleListButton = (Button) dialog.findViewById(R.id.dialog_btAddSingleList);
+        Button abordButton = (Button) dialog.findViewById(R.id.btAbortAddSingleList);
 
-	/**
-	 * Shows the floating action button right in the middle of the screen when no list exists.
-	 */
-	private void listsEmpty() {
-		FloatingActionButton addProductBtn = (FloatingActionButton) mSingleListView.findViewById(R.id.fabAddItemSingleList);
-		RelativeLayout.LayoutParams params;
+        addSingleListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShoppingListDataSource shoppingList = new ShoppingListDataSource(getContext());
+                shoppingList.add(listNameEditField.getText().toString());
+                listsEmpty();
+                updateList();
+                dialog.dismiss();
+            }
+        });
+        abordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
 
-		TextView tv = (TextView) mSingleListView.findViewById(R.id.noSingleListsText);
+    private void openAddParticipantDialog(final String listname) {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_add_participant);
+        dialog.setTitle("Add new participant ");
+        final EditText participantName = (EditText) dialog.findViewById(R.id.dialog_txtParticipant_input_field);
+        Button addButton = (Button) dialog.findViewById(R.id.dialog_btAddParticipant);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO register user on remote server
+                UserDataSource userDataSource = new UserDataSource(getContext());
+                User user = new User();
+                user.setEntryName(participantName.getText().toString());
+                user.setId("576fd0953024ac5f26877993");//DatabaseTable.generateUniqueID());
+                userDataSource.addLocally(user);
+                Log.i("ID of the added User", user.getId());
 
-		params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getContext());
+                ShoppingList list = shoppingListDataSource.getListFromString(listname);
 
-		tv.setVisibility(View.VISIBLE);
-		addProductBtn.setLayoutParams(params);
-	}
+                ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
+                participantDataSource.add(list, user);
+                list.addParticipant(user);
+                Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
 
-	/**
-	 * If there's a list (or more then one), the button is in the lower right corner.
-	 */
-	private void listsNotEmpty() {
-		FloatingActionButton addProductBtn = (FloatingActionButton) mSingleListView.findViewById(R.id.fabAddItemSingleList);
-		RelativeLayout.LayoutParams params;
+                Call<ShoppingList> call = mApiService.updateList(list.getId(), list);
+                call.enqueue(new Callback<ShoppingList>() {
+                    @Override
+                    public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
+                        if (!response.isSuccessful()) {
+                            Toast.makeText(getContext(), "Hochladen der aktualisierten liste fehlgeschlagen!", Toast.LENGTH_SHORT).show();
+                            try {
+                                Log.e("Update list", response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
 
-		TextView tv = (TextView) mSingleListView.findViewById(R.id.noSingleListsText);
-		tv.setVisibility(View.GONE);
+                    @Override
+                    public void onFailure(Call<ShoppingList> call, Throwable t) {
+                        Toast.makeText(getContext(), "Hochladen der aktualisierten liste fehlgeschlagen!", Toast.LENGTH_SHORT).show();
+                        Log.e("Update list", t.getMessage());
+                    }
+                });
 
-		params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		params.addRule(RelativeLayout.ALIGN_PARENT_END);
-		params.setMarginEnd(15);
-		params.bottomMargin = 15;
+                Log.i("ListParticipants", "List Participants upadated");
+                Log.i("List Participant", "New Size is " + participantDataSource.getUserOfList(list.getId()).size());
 
-		addProductBtn.setLayoutParams(params);
-	}
+                updateList();
+                dialog.dismiss();
+            }
+        });
+        Button abortButton = (Button) dialog.findViewById(R.id.btAbortAddParticipant);
+        abortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
 
-	/**
-	 * Opens a dialog where to user can choose between various actions to execute on the selected list.
-	 *
-	 * @param position The position of the selected/clicked list.
-	 */
-	private void openActionChooseDialogFor(int position) {
-		final String entry = getListNameAt(position);
-		mListDialog = new Dialog(getContext(), R.style.CustomDialog);
-		mListDialog.setContentView(R.layout.dialog_single_list_clicked);
-		mListDialog.setTitle("List: " + entry);
-		Button btnMakeGroupList = (Button) mListDialog.findViewById(R.id.dialog_btMakeGroupList);
-		Button btnView = (Button) mListDialog.findViewById(R.id.dialog_btViewSingleList);
-		Button btnDeleteSingleList = (Button) mListDialog.findViewById(R.id.dialog_btDeleteSingleList);
-		Button btnAbort = (Button) mListDialog.findViewById(R.id.dialog_btAbortSingleListClicked);
-		btnAbort.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mListDialog.dismiss();
-			}
-		});
-		btnDeleteSingleList.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				//TODO DELETE LIST
-				mListDialog.dismiss();
-			}
-		});
-		btnMakeGroupList.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				openAddParticipantDialog(entry);
-				mListDialog.dismiss();
-			}
-		});
-		btnView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				openDetailedListFor(entry);
-				mListDialog.dismiss();
-			}
-		});
-		mListDialog.show();
-	}
+    /**
+     * Shows the floating action button right in the middle of the screen when no list exists.
+     */
+    private void listsEmpty() {
+        FloatingActionButton addProductBtn = (FloatingActionButton) mSingleListView.findViewById(R.id.fabAddItemSingleList);
+        RelativeLayout.LayoutParams params;
 
-	/**
-	 * Gets the text (=name) of the list entry at the given position.
-	 *
-	 * @param position The position of the entry which name you want to have.
-	 * @return The text (=name) of the entry.
-	 */
-	private String getListNameAt(int position) {
-		ListView list = (ListView) getView().findViewById(R.id.singleList_list);
-		String listName = list.getItemAtPosition(position).toString(); // get item at "position"
-		return listName;
-	}
+        TextView tv = (TextView) mSingleListView.findViewById(R.id.noSingleListsText);
 
-	/**
-	 * Opens a detailed list activity for the list with the given name.
-	 *
-	 * @param list The name of the list you want to open.
-	 */
-	private void openDetailedListFor(String list) {
-		Intent i = new Intent(SingleListFragment.this.getActivity(), DetailedListActivity.class);
-		i.putExtra("list", list);
-		getActivity().startActivity(i);
-	}
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        tv.setVisibility(View.VISIBLE);
+        addProductBtn.setLayoutParams(params);
+    }
+
+    /**
+     * If there's a list (or more then one), the button is in the lower right corner.
+     */
+    private void listsNotEmpty() {
+        FloatingActionButton addProductBtn = (FloatingActionButton) mSingleListView.findViewById(R.id.fabAddItemSingleList);
+        RelativeLayout.LayoutParams params;
+
+        TextView tv = (TextView) mSingleListView.findViewById(R.id.noSingleListsText);
+        tv.setVisibility(View.GONE);
+
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.addRule(RelativeLayout.ALIGN_PARENT_END);
+        params.setMarginEnd(15);
+        params.bottomMargin = 15;
+
+        addProductBtn.setLayoutParams(params);
+    }
+
+    /**
+     * Opens a dialog where to user can choose between various actions to execute on the selected list.
+     *
+     * @param position The position of the selected/clicked list.
+     */
+    private void openActionChooseDialogFor(int position) {
+        final String entry = getListNameAt(position);
+        mListDialog = new Dialog(getContext(), R.style.CustomDialog);
+        mListDialog.setContentView(R.layout.dialog_single_list_clicked);
+        mListDialog.setTitle("List: " + entry);
+        Button btnMakeGroupList = (Button) mListDialog.findViewById(R.id.dialog_btMakeGroupList);
+        Button btnView = (Button) mListDialog.findViewById(R.id.dialog_btViewSingleList);
+        Button btnDeleteSingleList = (Button) mListDialog.findViewById(R.id.dialog_btDeleteSingleList);
+        Button btnAbort = (Button) mListDialog.findViewById(R.id.dialog_btAbortSingleListClicked);
+        btnAbort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListDialog.dismiss();
+            }
+        });
+        btnDeleteSingleList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO DELETE LIST
+                mListDialog.dismiss();
+            }
+        });
+        btnMakeGroupList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openAddParticipantDialog(entry);
+                mListDialog.dismiss();
+            }
+        });
+        btnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDetailedListFor(entry);
+                mListDialog.dismiss();
+            }
+        });
+        mListDialog.show();
+    }
+
+    /**
+     * Gets the text (=name) of the list entry at the given position.
+     *
+     * @param position The position of the entry which name you want to have.
+     * @return The text (=name) of the entry.
+     */
+    private String getListNameAt(int position) {
+        ListView list = (ListView) getView().findViewById(R.id.singleList_list);
+        String listName = list.getItemAtPosition(position).toString(); // get item at "position"
+        return listName;
+    }
+
+    /**
+     * Opens a detailed list activity for the list with the given name.
+     *
+     * @param list The name of the list you want to open.
+     */
+    private void openDetailedListFor(String list) {
+        Intent i = new Intent(SingleListFragment.this.getActivity(), DetailedListActivity.class);
+        i.putExtra("list", list);
+        getActivity().startActivity(i);
+    }
 }

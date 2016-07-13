@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
@@ -33,6 +34,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     private ParticipantDataSource _participantSource;
     private UserDataSource _userDataSource;
     private ApiService _apiService;
+    private ItemEntryDataSource _itemEntrySource;
 
     /**
      * Creates a new data source for the shopping list table and initializes it with the columns from the helper.
@@ -48,6 +50,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                 });
         _participantSource = new ParticipantDataSource(context);
         _userDataSource = new UserDataSource(context);
+        _itemEntrySource = new ItemEntryDataSource(context);
         _apiService = new APIFactory().getInstance();
     }
 
@@ -75,8 +78,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                     }
                     Log.i("response", response.code() + "");
                     Log.i("response", response.headers().toString());
-                }
-                else{
+                } else {
                     Toast.makeText(getContext(), "List sent", Toast.LENGTH_SHORT).show();
                     // Assign the body of the succeeded response because there's a valid ID given by the server
                     ShoppingList newList = response.body();
@@ -103,7 +105,6 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      */
     public ShoppingList add(String listName) {
         ShoppingList list = new ShoppingList();
-//        list.setId(generateUniqueID());
         list.setEntryName(listName);
 
         add(list);
@@ -111,14 +112,15 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         return list;
     }
 
-    public void addLocally(ShoppingList list){
-//        list.setId(generateUniqueID());
+    public void addLocally(ShoppingList list) {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
         values.put(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
+        values.put(DatabaseHelper.SHOPPINGLIST_COLUMN_OWNER, list.getOwner().getId());
 
         String insertQuery = DatabaseHelper.SHOPPINGLIST_COLUMN_ID + " = '" + list.getId() + "'" +
-                " AND " + DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
+                " AND " + DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'" +
+                " AND " + DatabaseHelper.SHOPPINGLIST_COLUMN_OWNER + " = '" + list.getOwner().getId() + "'";
 
         //TODO go through all item entries in the shopping list and write them into the database
 
@@ -206,6 +208,13 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         ShoppingList list = new ShoppingList();
         list.setId(cursor.getString(0));
         list.setEntryName(cursor.getString(1));
+
+        List<User> participants = _participantSource.getUserOfList(list.getId());
+        list.setParticipants(participants);
+
+        List<ItemEntry> items = _itemEntrySource.getEntriesForList(list.getId());
+        list.setProducts(items);
+
         return list;
     }
 

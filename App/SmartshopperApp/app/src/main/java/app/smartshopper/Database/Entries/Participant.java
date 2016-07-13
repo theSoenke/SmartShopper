@@ -6,9 +6,6 @@ import com.google.gson.annotations.SerializedName;
  * Created by Hauke on 25.05.2016.
  */
 public class Participant extends DatabaseEntry {
-	@SerializedName("fcmToken")
-	private String mFcmToken;
-
 	private String mShoppingListId;
 
 	public String getmShoppingListId() {
@@ -17,14 +14,6 @@ public class Participant extends DatabaseEntry {
 
 	public void setmShoppingListId(String mShoppingListId) {
 		this.mShoppingListId = mShoppingListId;
-	}
-
-	public String getFcmToken() {
-		return mFcmToken;
-	}
-
-	public void setFcmToken(String token) {
-		mFcmToken = token;
 	}
 
 	@Override

@@ -212,7 +212,7 @@ public class Synchronizer {
 //        entry.setProduct((Product)getEntryByName(listOfProducts, "Tiefkühlpizza"));
 //        i.add(entry);
 
-        Call<List<ShoppingList>> call = restClient.listforUser();
+        Call<List<ShoppingList>> call = restClient.listForUser();
 
         call.enqueue(new Callback<List<ShoppingList>>() {
             @Override

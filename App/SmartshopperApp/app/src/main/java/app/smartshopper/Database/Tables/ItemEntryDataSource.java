@@ -174,8 +174,8 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         return amountbuffer;
     }
 
-    public List<ItemEntry> getEntriesForList(ShoppingList shoppingList) {
-        return getEntry(DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + shoppingList.getId() + "'");
+    public List<ItemEntry> getEntriesForList(String shoppingListID) {
+        return getEntry(DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + shoppingListID + "'");
     }
 
     public boolean EntryExists(String ListID, String ProductName) {

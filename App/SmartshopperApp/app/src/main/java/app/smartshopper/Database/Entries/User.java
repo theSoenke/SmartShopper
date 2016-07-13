@@ -6,6 +6,20 @@ import com.google.gson.annotations.SerializedName;
  * Created by Hauke on 25.05.2016.
  */
 public class User extends DatabaseEntry implements Comparable {
+	@SerializedName("fcmToken")
+	private String FcmToken;
+	@SerializedName("__v")
+	private Integer version;
+    @SerializedName("password")
+    private static String password = "";
+
+	public String getFcmToken() {
+		return FcmToken;
+	}
+
+	public void setFcmToken(String token) {
+		FcmToken = token;
+	}
 	/**
 	 * Compares this object to the specified object to determine their relative
 	 * order.

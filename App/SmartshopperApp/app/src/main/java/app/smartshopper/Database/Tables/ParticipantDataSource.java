@@ -53,7 +53,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     }
 
     @Override
-    public void addLocally(Participant entry){
+    public void addLocally(Participant entry) {
         add(entry);
     }
 
@@ -63,6 +63,12 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
                 DatabaseHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getId() + "'";
     }
 
+    /**
+     * Gets all participants of the list identified by the given ID.
+     *
+     * @param id The ID of the list which participants you want to know.
+     * @return A list of all participants.
+     */
     public List<User> getUserOfList(String id) {
         String query = DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + id + "'";
         List<Participant> participantList = getEntry(query);
