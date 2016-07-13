@@ -20,14 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
-import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 
@@ -38,10 +36,11 @@ import app.smartshopper.ShoppingLists.DetailedListActivity;
  */
 public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    int expandedParent = -1;
-    ApiService service;
-    private View view;
-    ShoppingListDataSource source;
+    private int mExpandedParent = -1;
+    private ApiService mApiService;
+    private View mGroupListView;
+    private ShoppingListDataSource mListDataSource;
+	private Dialog mListDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,31 +51,30 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        service = new APIFactory().getInstance();
+        mApiService = new APIFactory().getInstance();
         Bundle extras = getArguments();
         String newList = "";
-        String newParticipants = "";
 
-        view = inflater.inflate(R.layout.fragment_group_list, null);
-        FloatingActionButton btAdGroupList = (FloatingActionButton) view.findViewById(R.id.fabAddGroupList);
-        final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.grouplist_list);
-        final List<String> listgroups = new ArrayList<String>();
+        mGroupListView = inflater.inflate(R.layout.fragment_group_list, null);
+        FloatingActionButton btAdGroupList = (FloatingActionButton) mGroupListView.findViewById(R.id.fabAddGroupList);
+        final ExpandableListView list = (ExpandableListView) mGroupListView.findViewById(R.id.grouplist_list);
+        final List<String> listgroups = new ArrayList<>();
 
-        source = new ShoppingListDataSource(getContext());
+        mListDataSource = new ShoppingListDataSource(getContext());
         ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
 
         if (newList != "") {
-            source.add(newList);
+            mListDataSource.add(newList);
         }
         // Get all lists from the database and add all the non-single list entries to the list.
-        List<ShoppingList> listOfEntries = source.getAllGroupLists();
-        final HashMap<String, List<String>> childlists = new HashMap<String, List<String>>();
+        List<ShoppingList> listOfEntries = mListDataSource.getAllGroupLists();
+        final HashMap<String, List<String>> childlists = new HashMap<>();
 
         int i = 0;
         for (ShoppingList entry : listOfEntries) {
             listgroups.add(entry.getEntryName());
 
-            List<String> child = new ArrayList<String>();
+            List<String> child = new ArrayList<>();
             List<User> userList = participantDataSource.getUserOfList(entry.getId());
 
             StringBuilder builder = new StringBuilder();
@@ -108,9 +106,9 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                 if (isExpanded) {
                     list.collapseGroup(groupPosition);
                 } else {
-                    list.collapseGroup(expandedParent);
+                    list.collapseGroup(mExpandedParent);
                     list.expandGroup(groupPosition);
-                    expandedParent = groupPosition;
+                    mExpandedParent = groupPosition;
                 }
             }
 
@@ -142,38 +140,46 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             }
         });
         listEmptyCheck();
-        return view;
+        return mGroupListView;
     }
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if(mListDialog != null){
+			mListDialog.dismiss();
+		}
+	}
 
     private void openConfigGroupListDialog(final String entry) {
         final Dialog dialog = new Dialog(getContext(), R.style.CustomDialog);
         dialog.setContentView(R.layout.dialog_group_list_clicked);
-        dialog.setTitle("Choose your action for the list" + entry);
-        Button btMakeSingleList = (Button) dialog.findViewById(R.id.dialog_btMakeSingleList);
-        Button btView = (Button) dialog.findViewById(R.id.dialog_btViewGroupList);
-        Button btDeleteList = (Button) dialog.findViewById(R.id.dialog_btDeleteGroupList);
-        Button btAbort = (Button) dialog.findViewById(R.id.dialog_btAbortGroupListClicked);
-        btAbort.setOnClickListener(new View.OnClickListener() {
+        dialog.setTitle("List: " + entry);
+        Button btnMakeSingleList = (Button) dialog.findViewById(R.id.dialog_btMakeSingleList);
+        Button btnView = (Button) dialog.findViewById(R.id.dialog_btViewGroupList);
+        Button btnDeleteList = (Button) dialog.findViewById(R.id.dialog_btDeleteGroupList);
+        Button btnAbort = (Button) dialog.findViewById(R.id.dialog_btAbortGroupListClicked);
+        btnAbort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
-        btDeleteList.setOnClickListener(new View.OnClickListener() {
+        btnDeleteList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO DELETE LIST
                 dialog.dismiss();
             }
         });
-        btMakeSingleList.setOnClickListener(new View.OnClickListener() {
+        btnMakeSingleList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 dialog.dismiss();
             }
         });
-        btView.setOnClickListener(new View.OnClickListener() {
+        btnView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(GroupListFragment.this.getActivity(), DetailedListActivity.class);
@@ -190,39 +196,39 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     private void openAddListDialog() {
-        final Dialog dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.dialog_add_group_list);
-        dialog.setTitle("Create your new list ");
-        final EditText listName = (EditText) dialog.findViewById(R.id.dialog_txtGroupListName);
-        Button btcrt = (Button) dialog.findViewById(R.id.dialog_btCreateGroupList);
+	    mListDialog = new Dialog(getContext());
+        mListDialog.setContentView(R.layout.dialog_add_group_list);
+	    mListDialog.setTitle("Create your new list ");
+        final EditText listName = (EditText) mListDialog.findViewById(R.id.dialog_txtGroupListName);
+        Button btcrt = (Button) mListDialog.findViewById(R.id.dialog_btCreateGroupList);
         btcrt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
                 ShoppingList l = s.add(listName.getText().toString());
-                service.addList(l);
+                mApiService.addList(l);
                 listEmptyCheck();
-                dialog.dismiss();
+	            mListDialog.dismiss();
             }
         });
-        Button btabort = (Button) dialog.findViewById(R.id.btAbortAddGroupList);
+        Button btabort = (Button) mListDialog.findViewById(R.id.btAbortAddGroupList);
         btabort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+	            mListDialog.dismiss();
             }
         });
-        dialog.show();
+	    mListDialog.show();
     }
 
     private void listEmptyCheck()
     {
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabAddGroupList);
+        FloatingActionButton fab = (FloatingActionButton) mGroupListView.findViewById(R.id.fabAddGroupList);
         RelativeLayout.LayoutParams params;
 
-        TextView tv = (TextView) view.findViewById(R.id.noGroupListsText);
+        TextView tv = (TextView) mGroupListView.findViewById(R.id.noGroupListsText);
 
-        if (source.getAllGroupLists().isEmpty())
+        if (mListDataSource.getAllGroupLists().isEmpty())
         {
 
             params = new RelativeLayout.LayoutParams(
