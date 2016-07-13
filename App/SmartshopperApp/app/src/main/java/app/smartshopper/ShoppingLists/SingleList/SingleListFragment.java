@@ -33,6 +33,7 @@ import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
+import app.smartshopper.FCM.SendToParticipants;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import retrofit2.Call;
@@ -110,7 +111,7 @@ public class SingleListFragment extends Fragment {
         });
 
 
-        updateList();
+	    updateList();
 
         return mSingleListView;
     }
@@ -139,6 +140,12 @@ public class SingleListFragment extends Fragment {
     }
 
     private void openAddListDialog() {
+
+	    Log.d("send notification", "notifcation");
+	    String token = "fxunXsE36No:APA91bH0EMh_SwkzSfX-c25mLsW-vJgqyL7AOZ8MgAtHzfv-EJce4_1p7LDRevuxqlDRYkmOQE252OfNG-0HiZCvqvEmsglkRIr7ob1tQ16iy0qYkJf9QcldQJ-s3F1nbhjs0V0jwj_L";
+	    String notification = getString(R.string.participant_added);
+	    SendToParticipants.send(notification, token);
+
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_single_list);
         dialog.setTitle("Create your new list ");
@@ -150,6 +157,8 @@ public class SingleListFragment extends Fragment {
         addSingleListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 ShoppingListDataSource shoppingList = new ShoppingListDataSource(getContext());
                 shoppingList.add(listNameEditField.getText().toString());
                 listsEmpty();
