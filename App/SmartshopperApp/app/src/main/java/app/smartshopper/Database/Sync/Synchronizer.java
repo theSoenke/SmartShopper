@@ -11,18 +11,14 @@ import com.google.gson.JsonObject;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
-import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Market;
-import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
-import app.smartshopper.Database.Entries.User;
-import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.DatabaseHelper;
 import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
 import app.smartshopper.Database.Tables.MarketDataSource;
-import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
@@ -71,7 +67,7 @@ public class Synchronizer {
         Log.i("Synchronizer", "Got the rest client reference.");
 
         Log.i("Synchronizer", "Create db helper ...");
-        MySQLiteHelper helper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
+        DatabaseHelper helper = new DatabaseHelper(context, DatabaseHelper.DATABASE_NAME, DatabaseHelper.DATABASE_VERSION);
         helper.onCreate(helper.getWritableDatabase());
         Log.i("Synchronizer", "Created helper");
 
@@ -190,12 +186,12 @@ public class Synchronizer {
     private ShoppingListDataSource syncItemEntries(ItemEntryDataSource i, ShoppingListDataSource s, ProductDataSource p) {
         List<Product> listOfProducts = p.getAllEntries();
 
-        ShoppingList Baumarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0);
-        ShoppingList Wocheneinkauf = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0);
-        ShoppingList Greänkemarkt = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0);
-        ShoppingList Geburtstag = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
-        ShoppingList Vereinstreffen = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
-        ShoppingList OE = s.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
+        ShoppingList Baumarkt = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0);
+        ShoppingList Wocheneinkauf = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0);
+        ShoppingList Greänkemarkt = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0);
+        ShoppingList Geburtstag = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
+        ShoppingList Vereinstreffen = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
+        ShoppingList OE = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
 
         Log.i("Synchronizer", "Create shopping list data source...");
 

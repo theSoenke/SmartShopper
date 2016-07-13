@@ -8,7 +8,7 @@ import android.net.Uri;
 /**
  * Created by Felix on 02.05.2016.
  */
-public class MySQLiteHelper extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CONTENT_AUTHORITY = "app.smartshopper";
 	private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 	private static final String PATH_LISTS = "lists";
@@ -88,7 +88,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             "PRIMARY KEY(" + MARKETENTRY_COLUMN_MARKET_ID + ", " + MARKETENTRY_COLUMN_PRODUCT_ID + "));";
 
 
-    public MySQLiteHelper(Context context, String database_name, int database_version) {
+    public DatabaseHelper(Context context, String database_name, int database_version) {
         super(context, database_name, null, database_version);
     }
 

@@ -12,14 +12,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.DatabaseHelper;
 import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
@@ -64,12 +63,12 @@ public class ParticipantListActivity extends AppCompatActivity {
         });
 
         ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getApplicationContext());
-        List<ShoppingList> shoppingList = shoppingListDataSource.getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
+        List<ShoppingList> shoppingList = shoppingListDataSource.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
         if (shoppingList.size() > 0) {
             String listID = shoppingList.get(0).getId();
 
             ParticipantDataSource source = new ParticipantDataSource(getApplicationContext());
-            List<Participant> participantList = source.getEntry(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + listID + "'");
+            List<Participant> participantList = source.getEntry(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + listID + "'");
 
             for (Participant participant : participantList) {
                 listAdapter.add(participant);

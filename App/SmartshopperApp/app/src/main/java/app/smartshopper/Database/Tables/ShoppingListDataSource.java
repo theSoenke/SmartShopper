@@ -19,7 +19,7 @@ import java.util.Set;
 import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
-import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.DatabaseHelper;
 import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Sync.APIFactory;
 import retrofit2.Call;
@@ -41,10 +41,10 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      */
     public ShoppingListDataSource(Context context) {
         super(context,
-                MySQLiteHelper.SHOPPINGLIST_TABLE_NAME,
+                DatabaseHelper.SHOPPINGLIST_TABLE_NAME,
                 new String[]{
-                        MySQLiteHelper.SHOPPINGLIST_COLUMN_ID,
-                        MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME
+                        DatabaseHelper.SHOPPINGLIST_COLUMN_ID,
+                        DatabaseHelper.SHOPPINGLIST_COLUMN_NAME
                 });
         _participantSource = new ParticipantDataSource(context);
         _userDataSource = new UserDataSource(context);
@@ -114,11 +114,11 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     public void addLocally(ShoppingList list){
 //        list.setId(generateUniqueID());
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
-        values.put(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
+        values.put(DatabaseHelper.SHOPPINGLIST_COLUMN_ID, list.getId());
+        values.put(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME, list.getEntryName());
 
-        String insertQuery = MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = '" + list.getId() + "'" +
-                " AND " + MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
+        String insertQuery = DatabaseHelper.SHOPPINGLIST_COLUMN_ID + " = '" + list.getId() + "'" +
+                " AND " + DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + list.getEntryName() + "'";
 
         //TODO go through all item entries in the shopping list and write them into the database
 
@@ -127,7 +127,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                 insertQuery,
                 values);
 
-        getContext().getContentResolver().notifyChange(MySQLiteHelper.LIST_CONTENT_URI, null);
+        getContext().getContentResolver().notifyChange(DatabaseHelper.LIST_CONTENT_URI, null);
     }
 
     /**
@@ -178,7 +178,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
 
     @Override
     public String getWhereClause(ShoppingList entry) {
-        return MySQLiteHelper.SHOPPINGLIST_COLUMN_ID + " = " + entry.getId();
+        return DatabaseHelper.SHOPPINGLIST_COLUMN_ID + " = " + entry.getId();
     }
 
     /**
@@ -189,7 +189,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
      */
     private List<User> getParticipantsOf(ShoppingList list) {
         List<User> listOfUser = new LinkedList<User>();
-        List<Participant> listOfParticipants = _participantSource.getEntry(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + list.getId() + "'");
+        List<Participant> listOfParticipants = _participantSource.getEntry(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + list.getId() + "'");
 
         for (Participant itemEntry : listOfParticipants) {
             User user = _userDataSource.get(itemEntry.getUserID());
@@ -210,7 +210,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
     }
 
     public ShoppingList getListFromString(String listName) {
-        List<ShoppingList> listOfLists = getEntry(MySQLiteHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
+        List<ShoppingList> listOfLists = getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
         if (!listOfLists.isEmpty()) {
             return listOfLists.get(0);
         }

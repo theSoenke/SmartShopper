@@ -6,15 +6,11 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
-import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.DatabaseHelper;
 
 /**
  * Created by hauke on 10.05.16.
@@ -23,7 +19,7 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
 
     private final String tableName;
     protected final String[] allColumns;
-    private final MySQLiteHelper dbHelper;
+    private final DatabaseHelper dbHelper;
     protected static SQLiteDatabase database = null;
     private final Context context;
 
@@ -31,7 +27,7 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
         this.tableName = tableName;
         this.allColumns = columns;
         this.context = context;
-        this.dbHelper = new MySQLiteHelper(context, MySQLiteHelper.DATABASE_NAME, MySQLiteHelper.DATABASE_VERSION);
+        this.dbHelper = new DatabaseHelper(context, DatabaseHelper.DATABASE_NAME, DatabaseHelper.DATABASE_VERSION);
         open();
     }
 

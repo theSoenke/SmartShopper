@@ -3,16 +3,11 @@ package app.smartshopper.Database.Tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
-import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.User;
-import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.DatabaseHelper;
 
 /**
  * Created by Hauke on 25.05.2016.
@@ -25,20 +20,20 @@ public class UserDataSource extends DatabaseTable<User> {
      */
     public UserDataSource(Context context) {
         super(context,
-                MySQLiteHelper.USER_TABLE_NAME,
+                DatabaseHelper.USER_TABLE_NAME,
                 new String[]{
-                        MySQLiteHelper.USER_COLUMN_ID,
-                        MySQLiteHelper.USER_COLUMN_NAME,
+                        DatabaseHelper.USER_COLUMN_ID,
+                        DatabaseHelper.USER_COLUMN_NAME,
                 });
     }
 
     @Override
     public String getWhereClause(User entry) {
-        return MySQLiteHelper.USER_COLUMN_ID + " = '" + entry.getId() + "'";
+        return DatabaseHelper.USER_COLUMN_ID + " = '" + entry.getId() + "'";
     }
 
     public User get(String id){
-        List<User> listOfUser = getEntry(MySQLiteHelper.USER_COLUMN_ID + " = '" + id + "'");
+        List<User> listOfUser = getEntry(DatabaseHelper.USER_COLUMN_ID + " = '" + id + "'");
         if(listOfUser != null && !listOfUser.isEmpty()){
             return listOfUser.get(0);
         }
@@ -54,11 +49,11 @@ public class UserDataSource extends DatabaseTable<User> {
     public void add(User user) {
         ContentValues values = new ContentValues();
         user.setId(generateUniqueID());
-        values.put(MySQLiteHelper.USER_COLUMN_ID, user.getId());
-        values.put(MySQLiteHelper.USER_COLUMN_NAME, user.getEntryName());
+        values.put(DatabaseHelper.USER_COLUMN_ID, user.getId());
+        values.put(DatabaseHelper.USER_COLUMN_NAME, user.getEntryName());
 
-        String insertQuery = MySQLiteHelper.USER_COLUMN_ID + " = '" + user.getId() + "'" +
-                " AND " + MySQLiteHelper.USER_COLUMN_NAME + " = '" + user.getEntryName() + "'";
+        String insertQuery = DatabaseHelper.USER_COLUMN_ID + " = '" + user.getId() + "'" +
+                " AND " + DatabaseHelper.USER_COLUMN_NAME + " = '" + user.getEntryName() + "'";
 
         super.addEntryToDatabase(
                 user,
@@ -97,7 +92,7 @@ public class UserDataSource extends DatabaseTable<User> {
     }
 
     public User getUserByName(String userName) {
-        List<User> listOfUser = getEntry(MySQLiteHelper.USER_COLUMN_NAME+ " = '" + userName + "'");
+        List<User> listOfUser = getEntry(DatabaseHelper.USER_COLUMN_NAME+ " = '" + userName + "'");
         if(listOfUser != null && !listOfUser.isEmpty()){
             return listOfUser.get(0);
         }

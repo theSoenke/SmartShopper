@@ -7,7 +7,7 @@ import android.database.Cursor;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.Market;
-import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.DatabaseHelper;
 
 /**
  * Created by hauke on 01.07.16.
@@ -17,10 +17,10 @@ public class MarketDataSource extends DatabaseTable<Market> {
 
     public MarketDataSource(Context context) {
         super(context,
-                MySQLiteHelper.MARKET_TABLE_NAME,
+                DatabaseHelper.MARKET_TABLE_NAME,
                 new String[]{
-                        MySQLiteHelper.MARKET_COLUMN_ID,
-                        MySQLiteHelper.MARKET_COLUMN_NAME
+                        DatabaseHelper.MARKET_COLUMN_ID,
+                        DatabaseHelper.MARKET_COLUMN_NAME
                 });
         _marketEntryDataSource = new MarketEntryDataSource(context);
     }
@@ -28,11 +28,11 @@ public class MarketDataSource extends DatabaseTable<Market> {
     @Override
     public void add(Market entry) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.MARKET_COLUMN_ID, entry.getId());
-        values.put(MySQLiteHelper.MARKET_COLUMN_NAME, entry.getEntryName());
+        values.put(DatabaseHelper.MARKET_COLUMN_ID, entry.getId());
+        values.put(DatabaseHelper.MARKET_COLUMN_NAME, entry.getEntryName());
 
-        String insertQuery = MySQLiteHelper.MARKET_COLUMN_ID + " = '" + entry.getId() + "'" +
-                " AND " + MySQLiteHelper.MARKET_COLUMN_NAME + " = '" + entry.getEntryName() + "'";
+        String insertQuery = DatabaseHelper.MARKET_COLUMN_ID + " = '" + entry.getId() + "'" +
+                " AND " + DatabaseHelper.MARKET_COLUMN_NAME + " = '" + entry.getEntryName() + "'";
 
         _marketEntryDataSource.addAll(entry.getAllMarketEntries());
 
@@ -49,8 +49,8 @@ public class MarketDataSource extends DatabaseTable<Market> {
 
     @Override
     public String getWhereClause(Market entry) {
-        return MySQLiteHelper.MARKET_COLUMN_ID + " = '" + entry.getId() + "'" +
-                " AND " + MySQLiteHelper.MARKET_COLUMN_NAME + " = '" + entry.getEntryName() + "'";
+        return DatabaseHelper.MARKET_COLUMN_ID + " = '" + entry.getId() + "'" +
+                " AND " + DatabaseHelper.MARKET_COLUMN_NAME + " = '" + entry.getEntryName() + "'";
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MarketDataSource extends DatabaseTable<Market> {
     }
 
     public Market getByName(String name) {
-        String query = MySQLiteHelper.MARKET_COLUMN_NAME + " = '" + name + "'";
+        String query = DatabaseHelper.MARKET_COLUMN_NAME + " = '" + name + "'";
         List<Market> marketList = getEntry(query);
         if (!marketList.isEmpty()) {
             return marketList.get(0);

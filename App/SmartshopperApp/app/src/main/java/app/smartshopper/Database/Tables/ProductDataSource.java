@@ -7,7 +7,7 @@ import android.database.Cursor;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.Product;
-import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.DatabaseHelper;
 
 /**
  * Created by Felix on 02.05.2016.
@@ -20,16 +20,16 @@ public class ProductDataSource extends DatabaseTable<Product> {
      */
     public ProductDataSource(Context context) {
         super(context,
-                MySQLiteHelper.PRODUCT_TABLE_NAME,
+                DatabaseHelper.PRODUCT_TABLE_NAME,
                 new String[]{
-                        MySQLiteHelper.PRODUCT_COLUMN_ID,
-                        MySQLiteHelper.PRODUCT_COLUMN_NAME
+                        DatabaseHelper.PRODUCT_COLUMN_ID,
+                        DatabaseHelper.PRODUCT_COLUMN_NAME
                 });
     }
 
     @Override
     public String getWhereClause(Product entry) {
-        return MySQLiteHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getId() + "'";
+        return DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getId() + "'";
     }
 
     /**
@@ -39,7 +39,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
      * @return A product with the given ID or null if it doesn't exist.
      */
     public Product get(String id) {
-        List<Product> listOfProducts = getEntry(MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + id + "'");
+        List<Product> listOfProducts = getEntry(DatabaseHelper.PRODUCT_COLUMN_ID + " = '" + id + "'");
         if (listOfProducts != null && !listOfProducts.isEmpty()) {
             return listOfProducts.get(0);
         }
@@ -53,11 +53,11 @@ public class ProductDataSource extends DatabaseTable<Product> {
     @Override
     public void add(Product product) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.PRODUCT_COLUMN_ID, product.getId());
-        values.put(MySQLiteHelper.PRODUCT_COLUMN_NAME, product.getEntryName());
+        values.put(DatabaseHelper.PRODUCT_COLUMN_ID, product.getId());
+        values.put(DatabaseHelper.PRODUCT_COLUMN_NAME, product.getEntryName());
 
-        String insertQuery = MySQLiteHelper.PRODUCT_COLUMN_ID + " = '" + product.getId() + "'" +
-                " AND " + MySQLiteHelper.PRODUCT_COLUMN_NAME + " = '"+product.getEntryName() + "'";
+        String insertQuery = DatabaseHelper.PRODUCT_COLUMN_ID + " = '" + product.getId() + "'" +
+                " AND " + DatabaseHelper.PRODUCT_COLUMN_NAME + " = '"+product.getEntryName() + "'";
 
         super.addEntryToDatabase(
                 product,
@@ -85,7 +85,7 @@ public class ProductDataSource extends DatabaseTable<Product> {
      * @return The first occurred product or null if there'name no product with the given name.
      */
     public Product getProductFromString(String name) {
-        List<Product> productList = getEntry(MySQLiteHelper.PRODUCT_COLUMN_NAME + " = " + "'" + name + "'");
+        List<Product> productList = getEntry(DatabaseHelper.PRODUCT_COLUMN_NAME + " = " + "'" + name + "'");
         if (productList.isEmpty()) {
             return null;
         } else {

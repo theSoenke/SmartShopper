@@ -3,9 +3,6 @@ package app.smartshopper.Database.Tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
-
-import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,7 +10,7 @@ import java.util.List;
 import app.smartshopper.Database.Entries.Participant;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
-import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.DatabaseHelper;
 
 /**
  * Created by Hauke on 25.05.2016.
@@ -28,10 +25,10 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
      */
     public ParticipantDataSource(Context context) {
         super(context,
-                MySQLiteHelper.PARTICIPANT_TABLE_NAME,
+                DatabaseHelper.PARTICIPANT_TABLE_NAME,
                 new String[]{
-                        MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID,
-                        MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID,
+                        DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID,
+                        DatabaseHelper.PARTICIPANT_COLUMN_USER_ID,
                 });
         _userDataSource = new UserDataSource(context);
     }
@@ -43,11 +40,11 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     @Override
     public void add(Participant entry) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID, entry.getShoppingListID());
-        values.put(MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID, entry.getUserID());
+        values.put(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID, entry.getShoppingListID());
+        values.put(DatabaseHelper.PARTICIPANT_COLUMN_USER_ID, entry.getUserID());
 
-        String insertQuery = MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "'" +
-                " AND " + MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
+        String insertQuery = DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "'" +
+                " AND " + DatabaseHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
 
         super.addEntryToDatabase(
                 entry,
@@ -62,17 +59,17 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
 
     @Override
     public String getWhereClause(Participant entry) {
-        return MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "' AND " +
-                MySQLiteHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
+        return DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "' AND " +
+                DatabaseHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
     }
 
     public List<User> getUserOfList(String id) {
-        String query = MySQLiteHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + id + "'";
+        String query = DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + id + "'";
         List<Participant> participantList = getEntry(query);
         List<User> userList = new LinkedList<User>();
 
         for (Participant participant : participantList) {
-            List<User> results = _userDataSource.getEntry(MySQLiteHelper.USER_COLUMN_ID + " = '" + participant.getUserID() + "'");
+            List<User> results = _userDataSource.getEntry(DatabaseHelper.USER_COLUMN_ID + " = '" + participant.getUserID() + "'");
 
             if (results.size() > 0) {
                 userList.add(results.get(0));
@@ -124,7 +121,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
      */
     public String getNameOf(Participant participant) {
         String userId = participant.getUserID();
-        List<User> userList = _userDataSource.getEntry(MySQLiteHelper.USER_COLUMN_ID + " = '" + userId + "'");
+        List<User> userList = _userDataSource.getEntry(DatabaseHelper.USER_COLUMN_ID + " = '" + userId + "'");
 
         String participantName = "";
 
