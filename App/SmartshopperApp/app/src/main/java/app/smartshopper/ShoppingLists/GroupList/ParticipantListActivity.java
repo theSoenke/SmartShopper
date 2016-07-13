@@ -33,135 +33,140 @@ import app.smartshopper.R;
  * Created by hauke on 19.05.16.
  */
 public class ParticipantListActivity extends AppCompatActivity {
-    private String listName;
-    private ApiService service;
+	private String listName;
+	private ApiService mApiService;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(getLayoutInflater().inflate(R.layout.participant_list, null));
-        service = new APIFactory().getInstance();
-        // Set tag for the item fragment so that it knows that items to show
-        listName = "";
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            listName = extras.getString("list");
-        }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(getLayoutInflater().inflate(R.layout.participant_list, null));
+		mApiService = new APIFactory().getInstance();
+		// Set tag for the item fragment so that it knows that items to show
+		listName = "";
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			listName = extras.getString("list");
+		}
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        // Create ArrayAdapter using an empty list
-        final ArrayAdapter<Participant> listAdapter = new ArrayAdapter<Participant>(this, R.layout.simple_row, new ArrayList<Participant>());
-        final ListView listView = (ListView) findViewById(R.id.participantList_list);
+		// Create ArrayAdapter using an empty list
+		final ArrayAdapter<Participant> listAdapter = new ArrayAdapter<Participant>(this, R.layout.simple_row, new ArrayList<Participant>());
+		final ListView listView = (ListView) findViewById(R.id.participantList_list);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                openRemoveParticipantDialog((Participant) listView.getAdapter().getItem(position), listAdapter);
-            }
-        });
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				openRemoveParticipantDialog((Participant) listView.getAdapter().getItem(position), listAdapter);
+			}
+		});
 
-        ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getApplicationContext());
-        List<ShoppingList> shoppingList = shoppingListDataSource.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
-        if (shoppingList.size() > 0) {
-            String listID = shoppingList.get(0).getId();
+		ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getApplicationContext());
+		List<ShoppingList> shoppingList = shoppingListDataSource.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
+		if (shoppingList.size() > 0) {
+			String listID = shoppingList.get(0).getId();
 
-            ParticipantDataSource source = new ParticipantDataSource(getApplicationContext());
-            List<Participant> participantList = source.getEntry(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + listID + "'");
+			ParticipantDataSource source = new ParticipantDataSource(getApplicationContext());
+			List<Participant> participantList = source.getEntry(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + listID + "'");
 
-            for (Participant participant : participantList) {
-                listAdapter.add(participant);
-            }
+			for (Participant participant : participantList) {
+				listAdapter.add(participant);
+			}
 
-            listView.setAdapter(listAdapter);
+			listView.setAdapter(listAdapter);
 
-            FloatingActionButton addList = (FloatingActionButton) findViewById(R.id.fabAddParticipantList);
-            addList.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View vw) {
-                    openAddParticipantDialog(listAdapter);
-                }
-            });
-        } else {
-            Toast.makeText(getApplicationContext(), "The list " + listName + " was not found in the database", Toast.LENGTH_LONG).show();
-            finish();
-        }
-    }
+			FloatingActionButton addList = (FloatingActionButton) findViewById(R.id.fabAddParticipantList);
+			addList.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View vw) {
+					openAddParticipantDialog(listAdapter);
+				}
+			});
+		}
+		else {
+			Toast.makeText(getApplicationContext(), "The list " + listName + " was not found in the database", Toast.LENGTH_LONG).show();
+			finish();
+		}
+	}
 
-    private void openAddParticipantDialog(final ArrayAdapter<Participant> listAdapter) {
-        // TODO replace this dialog by sharing a generated token
+	private void openAddParticipantDialog(final ArrayAdapter<Participant> listAdapter) {
+		// TODO replace this dialog by sharing a generated token
 
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_add_participant);
-        dialog.setTitle("Add new participant ");
-        final EditText participantName = (EditText) dialog.findViewById(R.id.dialog_txtParticipant_input_field);
-        Button addButton = (Button) dialog.findViewById(R.id.dialog_btAddParticipant);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = getApplicationContext();
-                UserDataSource userDataSource = new UserDataSource(context);
-                User user = userDataSource.add(participantName.getText().toString());
-                ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(context);
-                ShoppingList list = shoppingListDataSource.getListFromString(listName);
-                ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
-                Participant participant = participantDataSource.add(list, user);
-                Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
-                Log.i("List Participant","new size is  " + participantDataSource.getUserOfList(list.getId()).size());
-                listAdapter.add(participant);
-                listAdapter.notifyDataSetChanged();
-                service.updateList(list.getId(), list);
-                Log.i("ListParticipants","List Participants upadated");
-                dialog.dismiss();
-            }
-        });
-        Button abortButton = (Button) dialog.findViewById(R.id.btAbortAddParticipant);
-        abortButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
+		final Dialog dialog = new Dialog(this);
+		dialog.setContentView(R.layout.dialog_add_participant);
+		dialog.setTitle("Add new participant ");
+		final EditText participantName = (EditText) dialog.findViewById(R.id.dialog_txtParticipant_input_field);
+		Button addButton = (Button) dialog.findViewById(R.id.dialog_btAddParticipant);
+		addButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Context context = getApplicationContext();
+				UserDataSource userDataSource = new UserDataSource(context);
+				User user = userDataSource.add(participantName.getText().toString());
+				ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(context);
+				ShoppingList list = shoppingListDataSource.getListFromString(listName);
+				ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
+				Participant participant = participantDataSource.add(list, user);
+				Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
+				Log.i("List Participant", "new size is  " + participantDataSource.getUserOfList(list.getId()).size());
+				listAdapter.add(participant);
+				listAdapter.notifyDataSetChanged();
+				mApiService.updateList(list.getId(), list);
 
-    private void openRemoveParticipantDialog(final Participant participant, final ArrayAdapter<Participant> listAdapter) {
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_remove_participant);
-        dialog.setTitle("Remove participant ");
+				String notification = getString(R.string.participant_added);
+				//SendToParticipants.send(notification, participant.getFcmToken());
 
-        Button cancelButton = (Button) dialog.findViewById(R.id.remove_participant_cancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+				Log.i("ListParticipants", "List Participants updated");
+				dialog.dismiss();
+			}
+		});
+		Button abortButton = (Button) dialog.findViewById(R.id.btAbortAddParticipant);
+		abortButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show();
+	}
 
-        Button okButton = (Button) dialog.findViewById(R.id.remove_participant_ok);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+	private void openRemoveParticipantDialog(final Participant participant, final ArrayAdapter<Participant> listAdapter) {
+		final Dialog dialog = new Dialog(this);
+		dialog.setContentView(R.layout.dialog_remove_participant);
+		dialog.setTitle("Remove participant ");
 
-                Context context = getApplicationContext();
+		Button cancelButton = (Button) dialog.findViewById(R.id.remove_participant_cancel);
+		cancelButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
 
-                ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
+		Button okButton = (Button) dialog.findViewById(R.id.remove_participant_ok);
+		okButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
 
-                participantDataSource.removeEntryFromDatabase(participant);
-                Log.i("REMOVED PARTICIPANT", participant.getShoppingListID() + " - " + participant.getUserID());
+				Context context = getApplicationContext();
 
-                listAdapter.remove(participant);
-                listAdapter.notifyDataSetChanged();
-                dialog.dismiss();
-            }
-        });
+				ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
 
-        dialog.show();
-    }
+				participantDataSource.removeEntryFromDatabase(participant);
+				Log.i("REMOVED PARTICIPANT", participant.getmShoppingListId() + " - " + participant.getId());
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        finish();
-        return true;
-    }
+				listAdapter.remove(participant);
+				listAdapter.notifyDataSetChanged();
+				dialog.dismiss();
+			}
+		});
+
+		dialog.show();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		finish();
+		return true;
+	}
 }

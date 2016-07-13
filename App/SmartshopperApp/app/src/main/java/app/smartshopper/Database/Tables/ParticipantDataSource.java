@@ -40,11 +40,11 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     @Override
     public void add(Participant entry) {
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID, entry.getShoppingListID());
-        values.put(DatabaseHelper.PARTICIPANT_COLUMN_USER_ID, entry.getUserID());
+        values.put(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID, entry.getmShoppingListId());
+        values.put(DatabaseHelper.PARTICIPANT_COLUMN_USER_ID, entry.getId());
 
-        String insertQuery = DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "'" +
-                " AND " + DatabaseHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
+        String insertQuery = DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getmShoppingListId() + "'" +
+                " AND " + DatabaseHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getId() + "'";
 
         super.addEntryToDatabase(
                 entry,
@@ -59,8 +59,8 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
 
     @Override
     public String getWhereClause(Participant entry) {
-        return DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListID() + "' AND " +
-                DatabaseHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getUserID() + "'";
+        return DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getmShoppingListId() + "' AND " +
+                DatabaseHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getId() + "'";
     }
 
     public List<User> getUserOfList(String id) {
@@ -69,7 +69,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
         List<User> userList = new LinkedList<User>();
 
         for (Participant participant : participantList) {
-            List<User> results = _userDataSource.getEntry(DatabaseHelper.USER_COLUMN_ID + " = '" + participant.getUserID() + "'");
+            List<User> results = _userDataSource.getEntry(DatabaseHelper.USER_COLUMN_ID + " = '" + participant.getId() + "'");
 
             if (results.size() > 0) {
                 userList.add(results.get(0));
@@ -89,8 +89,8 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
      */
     public Participant add(ShoppingList shoppingList, User user) {
         Participant entry = new Participant();
-        entry.setShoppingListID(shoppingList.getId());
-        entry.setUserID(user.getId());
+        entry.setmShoppingListId(shoppingList.getId());
+        entry.setId(user.getId());
 
         if (user != null) {
             entry.setEntryName(user.getEntryName());
@@ -104,10 +104,10 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     @Override
     public Participant cursorToEntry(Cursor cursor) {
         Participant participant = new Participant();
-        participant.setShoppingListID(cursor.getString(0));
-        participant.setUserID(cursor.getString(1));
+        participant.setmShoppingListId(cursor.getString(0));
+        participant.setId(cursor.getString(1));
 
-        User user = _userDataSource.get(participant.getUserID());
+        User user = _userDataSource.get(participant.getId());
         participant.setEntryName(user.getEntryName());
 
         return participant;
@@ -120,7 +120,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
      * @return The name of the participant.
      */
     public String getNameOf(Participant participant) {
-        String userId = participant.getUserID();
+        String userId = participant.getId();
         List<User> userList = _userDataSource.getEntry(DatabaseHelper.USER_COLUMN_ID + " = '" + userId + "'");
 
         String participantName = "";

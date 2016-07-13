@@ -141,7 +141,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         // The remaining entries are all single lists, because they have no participants.
         for (Participant p : participantList) {
             ShoppingList list = new ShoppingList();
-            list.setId(p.getShoppingListID());
+            list.setId(p.getmShoppingListId());
             shoppingListList.remove(list); // this works because of the equals-definition in ShoppingList
         }
 
@@ -165,7 +165,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         // It's a set, so there won't be duplicates.
         Set<ShoppingList> shoppingListSet = new LinkedHashSet<ShoppingList>();
         for (Participant participant : participantList) {
-            String listID = participant.getShoppingListID();
+            String listID = participant.getmShoppingListId();
             ShoppingList list = shoppingListMap.get(listID);
             shoppingListSet.add(list);
         }
@@ -192,7 +192,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         List<Participant> listOfParticipants = _participantSource.getEntry(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + list.getId() + "'");
 
         for (Participant itemEntry : listOfParticipants) {
-            User user = _userDataSource.get(itemEntry.getUserID());
+            User user = _userDataSource.get(itemEntry.getId());
             if (user != null) {
                 listOfUser.add(user);
             }

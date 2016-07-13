@@ -84,4 +84,6 @@
     <string name="auth_email">Username</string>
     <string name="auth_password">Password</string>
     <string name="wait">Please wait…</string>
+
+    <string name="participant_added">You have been added to a list</string>
 </resources>

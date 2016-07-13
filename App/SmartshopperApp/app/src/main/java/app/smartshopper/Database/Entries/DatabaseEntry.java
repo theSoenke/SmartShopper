@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class DatabaseEntry {
     @SerializedName("_id")
-    private String id;
+    protected String id;
     @SerializedName("name")
     private String entryName;
 
@@ -26,4 +26,14 @@ public class DatabaseEntry {
     public void setId(String id) {
         this.id = id;
     }
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof DatabaseEntry && obj != null) {
+			DatabaseEntry entry = (DatabaseEntry) obj;
+			return entry.getEntryName().equals(getEntryName()) &&
+					entry.getId().equals(getId());
+		}
+		return false;
+	}
 }

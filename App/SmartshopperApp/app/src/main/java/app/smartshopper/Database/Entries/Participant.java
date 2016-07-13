@@ -1,40 +1,44 @@
 package app.smartshopper.Database.Entries;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Hauke on 25.05.2016.
  */
 public class Participant extends DatabaseEntry {
-    private String shoppingListID;
-    private String userID;
+	@SerializedName("fcmToken")
+	private String mFcmToken;
 
-    public String getShoppingListID() {
-        return shoppingListID;
-    }
+	private String mShoppingListId;
 
-    public void setShoppingListID(String shoppingListID) {
-        this.shoppingListID = shoppingListID;
-    }
+	public String getmShoppingListId() {
+		return mShoppingListId;
+	}
 
-    public String getUserID() {
-        return userID;
-    }
+	public void setmShoppingListId(String mShoppingListId) {
+		this.mShoppingListId = mShoppingListId;
+	}
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
+	public String getFcmToken() {
+		return mFcmToken;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Object && obj != null) {
-            Participant p = (Participant) obj;
-            return p.getShoppingListID().equals(getShoppingListID()) &&
-                    p.getUserID().equals(getUserID());
-        }
-        return false;
-    }
+	public void setFcmToken(String token) {
+		mFcmToken = token;
+	}
 
-    @Override
-    public String toString(){
-        return getEntryName();
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Object && obj != null) {
+			Participant p = (Participant) obj;
+			return p.getmShoppingListId().equals(getmShoppingListId()) &&
+					p.getId().equals(getId());
+		}
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return getEntryName();
+	}
 }
