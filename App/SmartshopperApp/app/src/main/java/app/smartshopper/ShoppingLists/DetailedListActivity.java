@@ -1,7 +1,6 @@
 package app.smartshopper.ShoppingLists;
 
 import android.app.Dialog;
-import android.content.ClipData;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -13,26 +12,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
+import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.MarketEntry;
-import app.smartshopper.Database.Entries.User;
-import app.smartshopper.Database.MySQLiteHelper;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
-import app.smartshopper.Database.Preferences;
-import app.smartshopper.Database.Tables.ItemEntryDataSource;
-import app.smartshopper.Database.Entries.Market;
+import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
+import app.smartshopper.Database.Tables.ItemEntryDataSource;
 import app.smartshopper.Database.Tables.MarketDataSource;
 import app.smartshopper.Database.Tables.MarketEntryDataSource;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
@@ -56,15 +53,17 @@ import retrofit2.Response;
  */
 public class DetailedListActivity extends AbstractDetailedListActivity implements ProductHolder {
 
-    ProductDataSource _productSource;
-    ItemEntryDataSource _itemSource;
-    ShoppingList _shoppingList;
-    ListPagerAdapter listPagerAdapter;
-    MarketEntryDataSource _marketEntries;
-    UserDataSource _userSource;
+	private final static String TAG = DetailedListActivity.class.getSimpleName();
+
+    private ProductDataSource _productSource;
+    private ItemEntryDataSource _itemSource;
+    private ShoppingList _shoppingList;
+    private ListPagerAdapter listPagerAdapter;
+    private MarketEntryDataSource _marketEntries;
     private ApiService _apiService;
-    ParticipantDataSource _participantDataSource;
-    //Get Store from BeaconID
+    private ParticipantDataSource _participantDataSource;
+
+	//Get Store from BeaconID
 //    StoreBeaconTool storeBeaconTool;
 //    Store store = Store.Default;
 
@@ -84,8 +83,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         ViewPager viewPager = (ViewPager) findViewById(R.id.tab_view_pager);
 
         _productSource = new ProductDataSource(getApplicationContext());
-        String listName = "";
-        listName = viewPager.getTag().toString();
+        String listName = viewPager.getTag().toString();
         Log.i("List", "List name is " + listName);
 
         // get all lists with this name
@@ -135,11 +133,11 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             }
 
             MarketDataSource marketDataSource = new MarketDataSource(getApplicationContext());
-            Market m = marketDataSource.getByName("Penny");
+            Market market = marketDataSource.getByName("Penny");
 
-            if (m != null) {
+            if (market != null) {
                 MarketEntryDataSource marketEntryDataSource = new MarketEntryDataSource(getApplicationContext());
-                List<MarketEntry> entries = marketEntryDataSource.getMarketEntryTo(m, p);
+                List<MarketEntry> entries = marketEntryDataSource.getMarketEntryTo(market, p);
                 if (!entries.isEmpty()) {
                     _itemSource.add(e);
 
@@ -157,7 +155,8 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                                 Log.i("Update ShoppingList", response.message());
                                 try {
                                     Log.i("Update ShoppingList", response.errorBody().string());
-                                } catch (IOException e1) {
+                                } catch (IOException e) {
+	                                Log.e(TAG, e.getMessage());
                                 }
                             }
                         }
@@ -319,7 +318,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         dialog.setContentView(R.layout.dialog_choose_bought_amount);
         dialog.setTitle("How many " + itemEntry.getEntryName() + " did u buy?");
 
-        final EditText AmountEditText = (EditText) dialog.findViewById(R.id.dialog_txtBoughtItemAmount);
+        final EditText amountEditText = (EditText) dialog.findViewById(R.id.dialog_txtBoughtItemAmount);
         Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortBoughtItemDialog);
         Button buttonBoughtAmount = (Button) dialog.findViewById(R.id.dialog_btBoughtAmount);
         Button buttonBoughtAll = (Button) dialog.findViewById(R.id.dialog_btBoughtAll);
@@ -333,8 +332,14 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         buttonBoughtAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                markItemAsBought(itemEntry, Integer.parseInt(AmountEditText.getText().toString()));
-                dialog.dismiss();
+                try
+                {
+                    markItemAsBought(itemEntry, Integer.parseInt(amountEditText.getText().toString()));
+                }
+                catch (NumberFormatException e){
+	                markItemAsBought(itemEntry, 0);
+                }
+	            dialog.dismiss();
             }
         });
         buttonBoughtAll.setOnClickListener(new View.OnClickListener() {

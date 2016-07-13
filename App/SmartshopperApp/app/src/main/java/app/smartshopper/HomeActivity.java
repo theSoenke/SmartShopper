@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	{
 		super.onCreate(savedInstanceState);
 
+		Log.e("test", "test");
 		new Preferences(this);
 
 		if (!LoginActivity.isAuthenticated(this))
@@ -226,7 +228,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.replace(app.smartshopper.R.id.home_content, fragment);
-		fragmentTransaction.addToBackStack(null); // puts the transaction onto the stack
 		fragmentTransaction.commit(); //
 
 		if (selectedItem != null)

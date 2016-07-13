@@ -24,14 +24,14 @@ import java.util.List;
 
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
-import app.smartshopper.Database.Sync.APIFactory;
-import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.MySQLiteHelper;
+import app.smartshopper.Database.Sync.APIFactory;
+import app.smartshopper.Database.Sync.ApiService;
+import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
-import app.smartshopper.ShoppingLists.DetailedListActivity;
 import app.smartshopper.R;
-import app.smartshopper.Database.Sync.ApiService;
+import app.smartshopper.ShoppingLists.DetailedListActivity;
 
 /**
  * The SingleListFragment contains a list with all single lists (list that's not shared to other participants).
@@ -53,7 +53,7 @@ public class SingleListFragment extends Fragment {
         if (extras != null) {
             newList = extras.getString("newList");
         }
-        view = inflater.inflate(R.layout.fragment_sinlge_list, null);
+        view = inflater.inflate(R.layout.fragment_single_list, null);
 
         ListView list = (ListView) view.findViewById(R.id.singleList_list);
 
@@ -62,8 +62,8 @@ public class SingleListFragment extends Fragment {
 
         // Get all entries and add all single-list entries to the list adapter.
         dataSource = new ShoppingListDataSource(getContext());
-        
-        if (newList != "") {
+
+        if (!newList.isEmpty()) {
             dataSource.add(newList);
         }
 
@@ -88,7 +88,7 @@ public class SingleListFragment extends Fragment {
             }
         });
 
-        FloatingActionButton addList = (FloatingActionButton) view.findViewById(R.id.fabAddSingleList);
+        FloatingActionButton addList = (FloatingActionButton) view.findViewById(R.id.fabAddItemSingleList);
         addList.setOnClickListener(new View.OnClickListener() {
             public void onClick(View vw) {
                 openAddListDialog();
@@ -179,7 +179,7 @@ public class SingleListFragment extends Fragment {
      * If there's a list (or more then one), the button is in the lower right corner.
      */
     private void listEmpty() {
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fabAddSingleList);
+        FloatingActionButton addProductBtn = (FloatingActionButton) view.findViewById(R.id.fabAddItemSingleList);
         RelativeLayout.LayoutParams params;
 
         TextView tv = (TextView) view.findViewById(R.id.noSingleListsText);
@@ -202,7 +202,7 @@ public class SingleListFragment extends Fragment {
             params.setMarginEnd(15);
             params.bottomMargin = 15;
         }
-        fab.setLayoutParams(params);
+        addProductBtn.setLayoutParams(params);
     }
 
     /**
