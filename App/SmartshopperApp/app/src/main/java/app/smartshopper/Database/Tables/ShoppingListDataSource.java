@@ -46,7 +46,8 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
                 DatabaseHelper.SHOPPINGLIST_TABLE_NAME,
                 new String[]{
                         DatabaseHelper.SHOPPINGLIST_COLUMN_ID,
-                        DatabaseHelper.SHOPPINGLIST_COLUMN_NAME
+                        DatabaseHelper.SHOPPINGLIST_COLUMN_NAME,
+                        DatabaseHelper.SHOPPINGLIST_COLUMN_OWNER,
                 });
         _participantSource = new ParticipantDataSource(context);
         _userDataSource = new UserDataSource(context);

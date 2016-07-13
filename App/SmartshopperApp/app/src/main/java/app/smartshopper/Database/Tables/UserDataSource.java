@@ -31,6 +31,7 @@ public class UserDataSource extends DatabaseTable<User> {
                 new String[]{
                         DatabaseHelper.USER_COLUMN_ID,
                         DatabaseHelper.USER_COLUMN_NAME,
+                        DatabaseHelper.USER_COLUMN_FCMTOKEN,
                 });
     }
 
@@ -117,9 +118,11 @@ public class UserDataSource extends DatabaseTable<User> {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.USER_COLUMN_ID, user.getId());
         values.put(DatabaseHelper.USER_COLUMN_NAME, user.getEntryName());
+        values.put(DatabaseHelper.USER_COLUMN_FCMTOKEN, user.getFcmToken());
 
         String insertQuery = DatabaseHelper.USER_COLUMN_ID + " = '" + user.getId() + "'" +
-                " AND " + DatabaseHelper.USER_COLUMN_NAME + " = '" + user.getEntryName() + "'";
+                " AND " + DatabaseHelper.USER_COLUMN_NAME + " = '" + user.getEntryName() + "'" +
+                " AND " + DatabaseHelper.USER_COLUMN_FCMTOKEN + " = '" + user.getFcmToken() + "'";
 
         super.addEntryToDatabase(
                 user,
@@ -146,8 +149,11 @@ public class UserDataSource extends DatabaseTable<User> {
     @Override
     public User cursorToEntry(Cursor cursor) {
         User user = new User();
+
         user.setId(cursor.getString(0));
         user.setEntryName(cursor.getString(1));
+        user.setFcmToken(cursor.getString(2));
+
         return user;
     }
 

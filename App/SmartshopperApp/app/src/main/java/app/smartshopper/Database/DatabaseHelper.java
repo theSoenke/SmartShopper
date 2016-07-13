@@ -32,6 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String USER_TABLE_NAME = "user_table";
     public static final String USER_COLUMN_ID = "id";
     public static final String USER_COLUMN_NAME = "name";
+    public static final String USER_COLUMN_FCMTOKEN = "tcmToken";
 
     public static final String PARTICIPANT_TABLE_NAME = "participant_table";
     public static final String PARTICIPANT_COLUMN_USER_ID = "user_id";
@@ -50,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "list.db";
 
-    public static final int DATABASE_VERSION = 16;
+    public static final int DATABASE_VERSION = 17;
 
     //Database creation statement
     private static final String PRODUCT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PRODUCT_TABLE_NAME + "(" +
@@ -71,7 +72,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String USER_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + USER_TABLE_NAME + "(" +
             USER_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL," +
-            USER_COLUMN_NAME + " TEXT NOT NULL);";
+            USER_COLUMN_NAME + " TEXT NOT NULL," +
+            USER_COLUMN_FCMTOKEN + " TEXT);";
 
     private static final String PARTICIPANT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PARTICIPANT_TABLE_NAME + "(" +
             PARTICIPANT_COLUMN_USER_ID + " VARCHAR(24)," +

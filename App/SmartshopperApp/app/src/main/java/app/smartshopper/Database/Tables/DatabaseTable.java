@@ -102,8 +102,9 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
 
     /**
      * Sets the ID for those items that have an ID.
+     *
      * @param newEntry The entry which ID should be set.
-     * @param id The ID of the entry.
+     * @param id       The ID of the entry.
      */
     protected abstract void setIDForEntry(T newEntry, String id);
 
