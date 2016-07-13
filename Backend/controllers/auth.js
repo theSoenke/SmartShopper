@@ -87,3 +87,13 @@ exports.registerFcmToken = function (req, res, next) {
     })
     .select('-password')
 }
+
+exports.findAllUser = function (req, res, next) {
+  User
+    .find()
+    .select('name')
+    .exec(function (err, doc) {
+      if (err) return next(err)
+      return res.json(doc)
+    })
+}

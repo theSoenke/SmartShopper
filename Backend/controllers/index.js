@@ -37,6 +37,7 @@ router.get('/products', products.getProducts)
 router.get('/markets', markets.getMarkets)
 router.post('/import/products', products.uploadProducts)
 router.post('/import/markets', markets.uploadMarketData)
+router.get('/user', auth.findAllUser)
 
 router.use(function (err, req, res, next) {
   if (req.app.get('env') !== 'development') {
