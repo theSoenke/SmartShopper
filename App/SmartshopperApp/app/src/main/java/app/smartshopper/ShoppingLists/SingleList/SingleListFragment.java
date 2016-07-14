@@ -290,15 +290,16 @@ public class SingleListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO DELETE LIST
-                Call<ResponseBody> call = mApiService.deleteList(mDataSource.getListFromString(entry).getId());
+                final ShoppingList shoppingList = mDataSource.getListFromString(entry);
+                Call<ResponseBody> call = mApiService.deleteList(shoppingList.getId());
 
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
                             Log.e("Success", "List deleted");
-                            Synchronizer synchronizer = new Synchronizer();
-
+                            mDataSource.removeEntryFromDatabase(shoppingList);
+                            updateList();
                         } else {
                             Log.e("Error Code", String.valueOf(response.code()));
                         }

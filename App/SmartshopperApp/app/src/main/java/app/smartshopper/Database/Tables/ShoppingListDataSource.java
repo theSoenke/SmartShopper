@@ -181,7 +181,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
 
     @Override
     public String getWhereClause(ShoppingList entry) {
-        return DatabaseHelper.SHOPPINGLIST_COLUMN_ID + " = " + entry.getId();
+        return DatabaseHelper.SHOPPINGLIST_COLUMN_ID + " = '" + entry.getId() + "'";
     }
 
     /**

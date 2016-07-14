@@ -29,6 +29,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
+import app.smartshopper.Database.Preferences;
 import app.smartshopper.R;
 
 /**

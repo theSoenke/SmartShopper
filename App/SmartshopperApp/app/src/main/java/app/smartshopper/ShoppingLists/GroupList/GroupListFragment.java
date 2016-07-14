@@ -151,6 +151,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             }
         });
 
+
         btAdGroupList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
