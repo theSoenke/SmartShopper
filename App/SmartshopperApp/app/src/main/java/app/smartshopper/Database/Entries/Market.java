@@ -1,6 +1,7 @@
 package app.smartshopper.Database.Entries;
 
 import android.graphics.PointF;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -36,6 +37,7 @@ public class Market extends DatabaseEntry {
 
     public PointF getPositionOf(Product product) {
         if(product == null){
+            Log.i("MarketClass", "Product was null");
             return new PointF();
         }
 
@@ -52,6 +54,7 @@ public class Market extends DatabaseEntry {
         PointF position = new PointF();
         if (marketProduct != null) {
             position = marketProduct.getLocation().toPointF();
+            Log.i("MarketClass", "Product found, position: " + position.toString());
         }
         return position;
     }

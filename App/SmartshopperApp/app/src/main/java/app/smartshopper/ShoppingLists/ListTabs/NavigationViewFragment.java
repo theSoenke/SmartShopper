@@ -49,6 +49,7 @@ import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Tables.MarketDataSource;
+import app.smartshopper.Database.Tables.MarketEntryDataSource;
 import app.smartshopper.Location.LocationTool;
 import app.smartshopper.R;
 
@@ -371,12 +372,15 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 				Log.i("Navigation", "Laden: " + _store.toString() + " (" + _store.getEntryName() + ")");
 				Log.i("Navigation", "Laden Tool: " + locationTool.getLaden().toString());
 
-				if (!_store.getEntryName().equals(locationTool.getLaden())) {
-					// get store from data source
-//                    _store = locationTool.getLaden();
-					refreshMap();
-					Log.i("Navigation", "Map changed");
-				}
+
+
+				//TODO Store Check
+//				if (!_store.getEntryName().equals(locationTool.getLaden())) {
+//					// get store from data source
+////                    _store = locationTool.getLaden();
+////					refreshMap();
+//					Log.i("Navigation", "Map changed");
+//				}
 				updatePosition(locationTool.computeSector());
 			}
 		});
@@ -392,13 +396,13 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 		if (_store != null) {
 			try {
 				Bitmap bitmap;
-				if (_store.getEntryName().equals("default")) {
+				if (_store.getEntryName().equals("Arbeitsraum")) {
 					InputStream inputStreamMap = mActivity.getAssets().open("room2.png");
 					bitmap = BitmapFactory.decodeStream(inputStreamMap);
 					width = 480;
 					height = 700;
 				}
-				else if (_store.getEntryName().equals("penny")) {
+				else if (_store.getEntryName().equals("Penny")) {
 					InputStream inputStreamMap = mActivity.getAssets().open("penny.png");
 					bitmap = BitmapFactory.decodeStream(inputStreamMap);
 					width = 440;
@@ -417,6 +421,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 				Log.e("ERROR: ", e.getMessage());
 			}
 		}
+		mapView.refresh();
 	}
 
 

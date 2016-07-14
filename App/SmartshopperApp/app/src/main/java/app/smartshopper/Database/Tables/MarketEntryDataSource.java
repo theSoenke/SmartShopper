@@ -117,6 +117,8 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
         return null;
     }
 
+
+
     /**
      * Gets the market entry to the given market-product combination.
      *
