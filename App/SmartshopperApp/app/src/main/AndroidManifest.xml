@@ -55,7 +55,7 @@
 
         <service android:name=".FCM.InstanceIdService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCEID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
 
