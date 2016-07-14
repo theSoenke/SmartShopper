@@ -39,3 +39,4 @@ proguard/
 # Android Studio captures folder
 captures/
 google-services.json
+server_key.xml
