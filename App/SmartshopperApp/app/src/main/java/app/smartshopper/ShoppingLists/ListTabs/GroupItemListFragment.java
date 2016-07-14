@@ -44,6 +44,7 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
     ExpandableListView _list;
     GroupListMaker _maker;
     View view;
+    List<List<ItemEntry>> _source;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState)
@@ -70,8 +71,8 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
         for(int i = 0;i< userList.size();i++){
             formattedUserList.add(userList.get(i).getEntryName());
         }
-        List<List<ItemEntry>> entries = _maker.groupListSetup(_productHolder.getList());
-        _adapter = new GroupExpListAdapter(getContext(),formattedUserList,_maker.formatGroupEntries(entries,_productHolder.getList())){
+        _source = _maker.groupListSetup(_productHolder.getList());
+        _adapter = new GroupExpListAdapter(getContext(),formattedUserList,_maker.formatGroupEntries(_source,_productHolder.getList())){
             @Override
             public void OnIndicatorClick(boolean isExpanded, int groupPosition) {
                 if (isExpanded) {
@@ -90,7 +91,8 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
         _list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                //TODO OPEN CONFIG ITEM DIALOG (GETTING ITEMENTRY FROM STRING)
+                ItemEntryDataSource i = new ItemEntryDataSource(getContext());
+                _productHolder.openConfigureItemDialog(_source.get(groupPosition).get(childPosition));
                 return true;
             }
         });

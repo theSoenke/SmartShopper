@@ -12,6 +12,7 @@ import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.DatabaseHelper;
+import app.smartshopper.Database.Entries.SyncableMarketProduct;
 
 /**
  * Created by hauke on 10.05.16.
@@ -116,6 +117,8 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
         return null;
     }
 
+
+
     /**
      * Gets the market entry to the given market-product combination.
      *
@@ -126,6 +129,17 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
     public List<MarketEntry> getMarketEntryTo(Market m, Product p) {
         String query = DatabaseHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + m.getId() + "'"
                 + " AND " + DatabaseHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + p.getId() + "'";
+        return getEntry(query);
+    }
+
+    /**
+     * Gets all entries in the given market.
+     *
+     * @param market The market
+     * @return All entries in the market.
+     */
+    public List<MarketEntry> getEntriesFromMarket(Market market) {
+        String query = DatabaseHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + market.getId() + "'";
         return getEntry(query);
     }
 }

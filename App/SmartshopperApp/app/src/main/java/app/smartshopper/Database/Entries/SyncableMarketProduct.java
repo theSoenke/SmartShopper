@@ -52,4 +52,26 @@ public class SyncableMarketProduct {
     public void setLocation(SyncableLocation location){
         _location = location;
     }
+
+    //FIXME is quick&dirty, just implement the todo above
+    public MarketEntry toMarketEntry(){
+        MarketEntry entry = new MarketEntry();
+
+        entry.setPosX(_location.getX());
+        entry.setPosY(_location.getY());
+        entry.setPrice(_price);
+        entry.setProductID(_product.getId());
+
+        return entry;
+    }
+
+    public static SyncableMarketProduct fromMarketEntry(MarketEntry entry, Product product){
+        SyncableMarketProduct marketProduct = new SyncableMarketProduct();
+
+        marketProduct._location = new SyncableLocation(entry.getPosX(), entry.getPosY());
+        marketProduct._price = entry.getPrice();
+        marketProduct._product = product;
+
+        return marketProduct;
+    }
 }

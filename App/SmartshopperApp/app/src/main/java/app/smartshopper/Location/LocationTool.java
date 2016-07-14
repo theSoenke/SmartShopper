@@ -33,10 +33,13 @@ public class LocationTool{
         p3 = new PointF(4.8f, 7);
         p4 = new PointF(0, 7);
 
-        beaconID1 = 41230; //e10
+//        beaconID1 = 41230; //e10
+        beaconID1 = 48638;
         beaconID2 = 1744; //esti003
-        beaconID3 = 21333; //esti005
+//        beaconID3 = 21333; //esti005
+        beaconID3 = 59127;
         beaconID4 = 31883; //esti002
+
 
         beacons = new ArrayList<>();
         beacons.add(new BeaconEntity(p1, beaconID1, 1));
@@ -45,10 +48,10 @@ public class LocationTool{
         beacons.add(new BeaconEntity(p4, beaconID4, 4));
 
         idLadenMap = new HashMap<Integer, String>();
-        idLadenMap.put(beaconID1, "default");
-        idLadenMap.put(beaconID2, "default");
-        idLadenMap.put(beaconID3, "default");
-        idLadenMap.put(beaconID4, "default");
+        idLadenMap.put(beaconID1, "Arbeitsraum");
+        idLadenMap.put(beaconID2, "Arbeitsraum");
+        idLadenMap.put(beaconID3, "Arbeitsraum");
+        idLadenMap.put(beaconID4, "Arbeitsraum");
     }
 
     public void updateBeacons(Collection<Beacon> beacons)

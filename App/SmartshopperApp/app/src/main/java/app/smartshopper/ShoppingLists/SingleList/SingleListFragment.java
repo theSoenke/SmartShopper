@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,12 +30,15 @@ import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.DatabaseHelper;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
+import app.smartshopper.Database.Sync.Synchronizer;
 import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
+import app.smartshopper.FCM.AsyncResponse;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,13 +48,13 @@ import retrofit2.Response;
  * This class also contains the "add"-dialog to create lists and manages the communication with the database.
  */
 // TODO Maybe Extract the communication and the dialog into extra classes?
-public class SingleListFragment extends Fragment {
-
+public class SingleListFragment extends Fragment implements AsyncResponse {
     private ApiService mApiService;
     private ArrayAdapter<String> mListAdapter;
     private ShoppingListDataSource mDataSource;
     private View mSingleListView;
     private Dialog mListDialog;
+	private SwipeRefreshLayout mSwipeContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
@@ -109,6 +113,18 @@ public class SingleListFragment extends Fragment {
             }
         });
 
+	    mSwipeContainer = (SwipeRefreshLayout) mSingleListView.findViewById(R.id.swipeContainer);
+
+	    // Setup refresh listener which triggers new data loading
+	    mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+	    {
+		    @Override
+		    public void onRefresh()
+		    {
+			    Synchronizer synchronizer = new Synchronizer(SingleListFragment.this);
+			    synchronizer.sync(getActivity());
+		    }
+	    });
 
         updateList();
 
@@ -124,6 +140,7 @@ public class SingleListFragment extends Fragment {
     }
 
     private void updateList() {
+	    mSwipeContainer.setRefreshing(false);
         List<ShoppingList> lists = mDataSource.getAllSingleLists();
 
         mListAdapter.clear();
@@ -288,6 +305,26 @@ public class SingleListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO DELETE LIST
+                Call<ResponseBody> call = mApiService.deleteList(mDataSource.getListFromString(entry).getId());
+
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            Log.e("Success", "List deleted");
+                            Synchronizer synchronizer = new Synchronizer();
+
+                        } else {
+                            Log.e("Error Code", String.valueOf(response.code()));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d("Failure", "List deletion failed");
+                        Log.d("List deletion", t.getMessage());
+                    }
+                });
                 mListDialog.dismiss();
             }
         });
@@ -330,4 +367,10 @@ public class SingleListFragment extends Fragment {
         i.putExtra("list", list);
         getActivity().startActivity(i);
     }
+
+	@Override
+	public void processFinish(String output)
+	{
+		mSwipeContainer.setRefreshing(false);
+	}
 }
