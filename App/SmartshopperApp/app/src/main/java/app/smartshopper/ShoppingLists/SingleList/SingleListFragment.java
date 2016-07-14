@@ -36,6 +36,7 @@ import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.FCM.AsyncResponse;
+import app.smartshopper.FCM.SendToParticipants;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import okhttp3.ResponseBody;
@@ -156,6 +157,7 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
     }
 
     private void openAddListDialog() {
+
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_single_list);
         dialog.setTitle("Create your new list ");

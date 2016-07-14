@@ -27,6 +27,7 @@ import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
+import app.smartshopper.FCM.SendToParticipants;
 import app.smartshopper.R;
 
 /**
@@ -116,8 +117,9 @@ public class ParticipantListActivity extends AppCompatActivity {
 				listAdapter.notifyDataSetChanged();
 				mApiService.updateList(list.getId(), list);
 
+				String token = "e3KHYHEcyCQ:APA91bE1Za8OqfZjUMhVaN22kiSqyHyDPZ5y1Sx1KbO48KilD88DuouPRGKfSaK1rJwRrgf71o4VdZYJ4FqfqiEMugfvS5d1bknqRDylSBHqsnUYxomwbwHJOMU2UkVAzizje5FGysOi";
 				String notification = getString(R.string.participant_added);
-				//SendToParticipants.send(notification, participant.getFcmToken());
+				SendToParticipants.send(notification, token);
 
 				Log.i("ListParticipants", "List Participants updated");
 				dialog.dismiss();
