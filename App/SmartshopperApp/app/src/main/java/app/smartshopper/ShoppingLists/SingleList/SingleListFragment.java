@@ -216,12 +216,9 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
                 list.addParticipant(user);
                 Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
 
-	            String token = user.getFcmToken();// currently null
-	            // token for testing
-	            token = "eAfdxdoQey0:APA91bHOpWA5r9uwEMRQsSFjWB_ZWbG4eLz1Y84dqurtcofKJ1FOunamIHfGM7-NwWJvEF8ahobNmHACb7Du4OcrF33_gWd_4VRbvxN0hCFm9xYIWtQ2D0H5scuaW7IxRIhZ1VWjuoBD";
+	            String token = user.getFcmToken();
 	            String notification = getString(R.string.participant_added);
 	            SendToParticipants.send(notification, token);
-
 
                 Call<ShoppingList> call = mApiService.updateList(list.getId(), list);
                 call.enqueue(new Callback<ShoppingList>() {
