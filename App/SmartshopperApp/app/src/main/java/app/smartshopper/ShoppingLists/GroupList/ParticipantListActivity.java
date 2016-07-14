@@ -105,7 +105,13 @@ public class ParticipantListActivity extends AppCompatActivity {
 				UserDataSource userDataSource = new UserDataSource(context);
 
 				String userName = participantName.getText().toString();
-				User user = new UserDataSource(getApplicationContext()).getUserByName(userName);
+				User user = userDataSource.getUserByName(userName);
+
+				if(user == null)
+				{
+					Toast.makeText(getApplicationContext(), "User does not exist!", Toast.LENGTH_SHORT).show();
+					return;
+				}
 				//user.setEntryName(userName);
 				//user.setId(userDataSource.generateUniqueID());
 				//userDataSource.addLocally(user);
@@ -119,6 +125,7 @@ public class ParticipantListActivity extends AppCompatActivity {
 				listAdapter.notifyDataSetChanged();
 				mApiService.updateList(list.getId(), list);
 
+				Log.i("Send", "notification");
 				String token = user.getFcmToken();
 				String notification = getString(R.string.participant_added);
 				SendToParticipants.send(notification, token);
