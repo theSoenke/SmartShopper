@@ -1,15 +1,9 @@
 package app.smartshopper.Database.Entries;
 
-import android.content.Context;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-
-import app.smartshopper.Database.Preferences;
-import app.smartshopper.Database.Tables.UserDataSource;
 
 /*
  * ShoppingList Model

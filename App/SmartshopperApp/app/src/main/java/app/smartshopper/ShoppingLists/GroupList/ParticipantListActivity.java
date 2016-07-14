@@ -93,8 +93,6 @@ public class ParticipantListActivity extends AppCompatActivity {
 	private void openAddParticipantDialog(final ArrayAdapter<Participant> listAdapter) {
 		// TODO replace this dialog by sharing a generated token
 
-		Log.e("add ", "test");
-
 		final Dialog dialog = new Dialog(this);
 		dialog.setContentView(R.layout.dialog_add_participant);
 		dialog.setTitle("Add new participant ");
@@ -105,6 +103,8 @@ public class ParticipantListActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				Context context = getApplicationContext();
 				UserDataSource userDataSource = new UserDataSource(context);
+
+				// TODO get user from database
 				User user = new User();
 				user.setEntryName(participantName.getText().toString());
 				user.setId(userDataSource.generateUniqueID());
@@ -119,7 +119,7 @@ public class ParticipantListActivity extends AppCompatActivity {
 				listAdapter.notifyDataSetChanged();
 				mApiService.updateList(list.getId(), list);
 
-				String token = "fxunXsE36No:APA91bH0EMh_SwkzSfX-c25mLsW-vJgqyL7AOZ8MgAtHzfv-EJce4_1p7LDRevuxqlDRYkmOQE252OfNG-0HiZCvqvEmsglkRIr7ob1tQ16iy0qYkJf9QcldQJ-s3F1nbhjs0V0jwj_L";
+				String token = user.getFcmToken();
 				String notification = getString(R.string.participant_added);
 				Log.e("fcm", user.getFcmToken());
 				SendToParticipants.send(notification, token);

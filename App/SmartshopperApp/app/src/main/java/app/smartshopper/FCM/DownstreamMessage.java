@@ -20,7 +20,7 @@ public class DownstreamMessage extends AsyncTask<String, String, String> {
 	@Override
 	protected String doInBackground(String... params) {
 		HttpURLConnection httpURLConnection;
-		final String serverKey = "";
+		final String serverKey = "AIzaSyDi3RAH88CKkGY7QIo2VyPuXUQaNj4ojIY";
 		int responseCode = 0;
 
 		try {
@@ -31,8 +31,6 @@ public class DownstreamMessage extends AsyncTask<String, String, String> {
 			httpURLConnection = (HttpURLConnection) url.openConnection();
 			httpURLConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
 			httpURLConnection.setRequestProperty("Authorization", "key=" + serverKey);
-			httpURLConnection.setConnectTimeout(5000);
-			httpURLConnection.setReadTimeout(10000);
 			httpURLConnection.setRequestMethod("POST");
 			httpURLConnection.connect();
 
@@ -51,7 +49,6 @@ public class DownstreamMessage extends AsyncTask<String, String, String> {
 				content_json_object.put("notification", notificationJson);
 				content_json_object.put("to", clientKey);
 
-				Log.e("json", notificationJson.toString());
 			}
 			catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -59,6 +56,7 @@ public class DownstreamMessage extends AsyncTask<String, String, String> {
 			}
 
 			String bodyContent = content_json_object.toString();
+			Log.e("json", bodyContent);
 
 			OutputStream output = httpURLConnection.getOutputStream();
 			output.write(bodyContent.getBytes());
