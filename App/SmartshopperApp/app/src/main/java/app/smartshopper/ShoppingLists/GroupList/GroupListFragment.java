@@ -223,18 +223,31 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             public void onClick(View v) {
                 ShoppingListDataSource s = new ShoppingListDataSource(getContext());
                 ShoppingList l = s.add(listName.getText().toString());
-                mApiService.addList(l);
+                Call<ShoppingList> listCall = mApiService.addList(l);
+                Toast.makeText(getContext(),"adding List...", Toast.LENGTH_SHORT);
+                listCall.enqueue(new Callback<ShoppingList>() {
+                    @Override
+                    public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
+                        if(response.isSuccessful()){
+                            GroupListMaker maker = new GroupListMaker(getContext());
+                            ShoppingList oldList = mListDataSource.getListFromString(entry);
+                            ShoppingList newlist = mListDataSource.getListFromString(listName.getText().toString());
+                            List<ItemEntry> oldEntries = new ArrayList<>();
+                            oldEntries = maker.getListForOwner(oldList);
+                            for(int i= 0; i < oldEntries.size();i++) {
+                                ItemEntry newItem = new ItemEntry(oldEntries.get(i).getProduct(), newlist.getId(), oldEntries.get(i).getAmount(), oldEntries.get(i).amountBought());
+                                addEntry(newItem, newlist);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ShoppingList> call, Throwable throwable) {
+
+                    }
+                });
                 listEmptyCheck();
                 mListDialog.dismiss();
-                GroupListMaker maker = new GroupListMaker(getContext());
-                ShoppingList oldList = mListDataSource.getListFromString(entry);
-                ShoppingList newlist = mListDataSource.getListFromString(listName.getText().toString());
-                List<ItemEntry> oldEntries = new ArrayList<>();
-                oldEntries = maker.getListForOwner(oldList);
-                for(int i= 0; i < oldEntries.size();i++) {
-                    ItemEntry newItem = new ItemEntry(oldEntries.get(i).getProduct(), newlist.getId(), oldEntries.get(i).getAmount(), oldEntries.get(i).amountBought());
-                    addEntry(newItem, newlist);
-                }
             }
         });
         Button btabort = (Button) mListDialog.findViewById(R.id.btAbortAddGroupList);
