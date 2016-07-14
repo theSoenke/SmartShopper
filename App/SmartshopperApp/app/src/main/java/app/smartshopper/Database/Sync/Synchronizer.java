@@ -12,7 +12,6 @@ import java.util.List;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.Entries.Market;
-import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.DatabaseHelper;
@@ -43,7 +42,7 @@ public class Synchronizer {
         /**
          * Does something when a local table (specified by the given source) has been updated.
          */
-        void processUpdatedLocalData(List<T> remoteList, List<T> localList, DatabaseTable source);
+        void processLocalData(List<T> remoteList, List<T> localList, DatabaseTable source);
 
         /**
          * Calls the next method that should be executed after a successful sync.
@@ -100,7 +99,7 @@ public class Synchronizer {
                 p,
                 new SyncProcessor<Product>() {
                     @Override
-                    public void processUpdatedLocalData(List<Product> remoteList, List<Product> localList, DatabaseTable source) {
+                    public void processLocalData(List<Product> remoteList, List<Product> localList, DatabaseTable source) {
                         // remove old entries that are not in the remote list
                         removeOldLocalEntries(remoteList, localList, source);
                     }
@@ -130,7 +129,7 @@ public class Synchronizer {
                 m,
                 new SyncProcessor<Market>() {
                     @Override
-                    public void processUpdatedLocalData(List<Market> remoteList, List<Market> localList, DatabaseTable source) {
+                    public void processLocalData(List<Market> remoteList, List<Market> localList, DatabaseTable source) {
                         // remove old entries that are not in the remote list
                         removeOldLocalEntries(remoteList, localList, source);
                     }
@@ -162,7 +161,7 @@ public class Synchronizer {
         syncEntries(s,
                 new SyncProcessor() {
                     @Override
-                    public void processUpdatedLocalData(List remoteList, List localList, DatabaseTable source) {
+                    public void processLocalData(List remoteList, List localList, DatabaseTable source) {
                         // do not remove local lists that are not at the remote server but upload them
                         //TODO upload local lists
                         //TODO IMPORTANT update and upload item entries!
@@ -259,12 +258,13 @@ public class Synchronizer {
         syncEntries(u,
                 new SyncProcessor() {
                     @Override
-                    public void processUpdatedLocalData(List remoteList, List localList, DatabaseTable source) {
+                    public void processLocalData(List remoteList, List localList, DatabaseTable source) {
                         removeOldLocalEntries(remoteList, localList, source);
                     }
 
                     @Override
                     public void executeNextSync() {
+                        List<User> user = u.getAllEntries();
                     }
 
                     @Override
@@ -349,20 +349,18 @@ public class Synchronizer {
      * @param processor  A processor that works on the updated local database.
      */
     private void updateLocalFromRemote(List<? extends DatabaseEntry> remoteList, List<? extends DatabaseEntry> localList, DatabaseTable source, SyncProcessor processor) {
-        if (remoteList.equals(localList)) {
-            return;
-        }
-
         source.beginTransaction();
 
-        // Add new entries from remote
-        for (DatabaseEntry entry : remoteList) {
-            if (!localList.contains(entry)) {
-                source.addLocally(entry);
+        if (!remoteList.equals(localList)) {
+            // Add new entries from remote
+            for (DatabaseEntry entry : remoteList) {
+                if (!localList.contains(entry)) {
+                    source.addLocally(entry);
+                }
             }
         }
 
-        processor.processUpdatedLocalData(remoteList, localList, source);
+        processor.processLocalData(remoteList, localList, source);
 
         source.endTransaction();
     }

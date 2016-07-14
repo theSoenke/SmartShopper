@@ -91,7 +91,7 @@ exports.registerFcmToken = function (req, res, next) {
 exports.findAllUser = function (req, res, next) {
   User
     .find()
-    .select('name')
+    .select('name fcmToken')
     .exec(function (err, doc) {
       if (err) return next(err)
       return res.json(doc)

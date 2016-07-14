@@ -62,9 +62,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			}
 		}
 
-		Synchronizer synchronizer = new Synchronizer();
-		synchronizer.sync(getApplicationContext());
-
 		setContentView(app.smartshopper.R.layout.home_layout);
 
 		Toolbar toolbar = (Toolbar) findViewById(app.smartshopper.R.id.home_toolbar);
@@ -82,6 +79,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		mOldSelectedMenuItem.setChecked(true);
 
 		switchToFragment(SingleListFragment.class, null);
+
+		Synchronizer synchronizer = new Synchronizer();
+		synchronizer.sync(getApplicationContext());
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
     private ShoppingListDataSource mDataSource;
     private View mSingleListView;
     private Dialog mListDialog;
-	private SwipeRefreshLayout mSwipeContainer;
+    private SwipeRefreshLayout mSwipeContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
@@ -110,22 +110,21 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
         getActivity().getContentResolver().registerContentObserver(DatabaseHelper.LIST_CONTENT_URI, true, new ContentObserver(new Handler(getActivity().getMainLooper())) {
             @Override
             public void onChange(boolean selfChange) {
-                updateList();
+	            mSwipeContainer.setRefreshing(false);
+                //updateList();
             }
         });
 
-	    mSwipeContainer = (SwipeRefreshLayout) mSingleListView.findViewById(R.id.swipeContainer);
+        mSwipeContainer = (SwipeRefreshLayout) mSingleListView.findViewById(R.id.swipeContainer);
 
-	    // Setup refresh listener which triggers new data loading
-	    mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-	    {
-		    @Override
-		    public void onRefresh()
-		    {
-			    Synchronizer synchronizer = new Synchronizer(SingleListFragment.this);
-			    synchronizer.sync(getActivity());
-		    }
-	    });
+        // Setup refresh listener which triggers new data loading
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Synchronizer synchronizer = new Synchronizer(SingleListFragment.this);
+                synchronizer.sync(getActivity());
+            }
+        });
 
         updateList();
 
@@ -141,7 +140,7 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
     }
 
     private void updateList() {
-	    mSwipeContainer.setRefreshing(false);
+        mSwipeContainer.setRefreshing(false);
         List<ShoppingList> lists = mDataSource.getAllSingleLists();
 
         mListAdapter.clear();
@@ -158,10 +157,10 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
 
     private void openAddListDialog() {
 
-	    Log.e("Send", "notfi");
-	    String token = "c6CNnrN3TSU:APA91bHZj9Z9d74iDcaksVDL-Ab5i_Mt3tHew0InjZOypdit7pVl4kmUvn8o4P_jOQqr5PKkAyRvZf3uju-HDUZmLzsJja1hxq3Fym7mh-0W-kWDjjR03BZPJdCnCKP3K8x_ANRQxTqB";
-	    String notification = getString(R.string.participant_added);
-	    SendToParticipants.send(notification, token);
+        Log.e("Send", "notfi");
+        String token = "c6CNnrN3TSU:APA91bHZj9Z9d74iDcaksVDL-Ab5i_Mt3tHew0InjZOypdit7pVl4kmUvn8o4P_jOQqr5PKkAyRvZf3uju-HDUZmLzsJja1hxq3Fym7mh-0W-kWDjjR03BZPJdCnCKP3K8x_ANRQxTqB";
+        String notification = getString(R.string.participant_added);
+        SendToParticipants.send(notification, token);
 
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_single_list);
@@ -199,12 +198,14 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO register user on remote server
                 UserDataSource userDataSource = new UserDataSource(getContext());
-                User user = new User();
-                user.setEntryName(participantName.getText().toString());
-                user.setId(DatabaseTable.generateUniqueID());
-                userDataSource.addLocally(user);
+                User user = userDataSource.getUserByName(participantName.getText().toString());
+                if (user == null) { // no user with the given name exists
+                    Toast.makeText(getContext(), "User does not exist!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // TODO register user on remote server
                 Log.i("ID of the added User", user.getId());
 
                 ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getContext());
@@ -214,6 +215,13 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
                 participantDataSource.add(list, user);
                 list.addParticipant(user);
                 Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
+
+	            String token = user.getFcmToken();// currently null
+	            // token for testing
+	            token = "eAfdxdoQey0:APA91bHOpWA5r9uwEMRQsSFjWB_ZWbG4eLz1Y84dqurtcofKJ1FOunamIHfGM7-NwWJvEF8ahobNmHACb7Du4OcrF33_gWd_4VRbvxN0hCFm9xYIWtQ2D0H5scuaW7IxRIhZ1VWjuoBD";
+	            String notification = getString(R.string.participant_added);
+	            SendToParticipants.send(notification, token);
+
 
                 Call<ShoppingList> call = mApiService.updateList(list.getId(), list);
                 call.enqueue(new Callback<ShoppingList>() {
@@ -226,6 +234,8 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                        } else {
+
                         }
                     }
 
@@ -376,9 +386,8 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
         getActivity().startActivity(i);
     }
 
-	@Override
-	public void processFinish(String output)
-	{
-		mSwipeContainer.setRefreshing(false);
-	}
+    @Override
+    public void processFinish(String output) {
+        mSwipeContainer.setRefreshing(false);
+    }
 }
