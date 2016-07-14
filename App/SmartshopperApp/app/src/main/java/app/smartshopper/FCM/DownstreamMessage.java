@@ -1,5 +1,6 @@
 package app.smartshopper.FCM;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -13,19 +14,29 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import app.smartshopper.Database.Preferences;
+
 /**
  * Created by Felix on 12.07.2016.
  */
 public class DownstreamMessage extends AsyncTask<String,String,String>
 {
     AsyncResponse delegate = null;
+
+    //Activity für den Kontext von Downstreammessage (damit getApplication() aufgerufen werden kann=
+    public Activity activity;
     int responseCode;
+
+    public DownstreamMessage()
+    {
+
+    }
     @Override
     protected String doInBackground(String... params)
     {
         HttpURLConnection httpURLConnection = null;
         BufferedReader bufferedReader = null;
-        String server_key = "";
+        String server_key = Preferences.getServerKey();
         String client_key;
         String notification_message;
         String content;
