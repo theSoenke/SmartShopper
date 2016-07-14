@@ -19,7 +19,7 @@ public class SendToParticipants implements AsyncResponse
         for (int i=0;i<tokenArray.length;i++)
         {
             DownstreamMessage downstreamMessage = new DownstreamMessage();
-            downstreamMessage.execute(tokenArray[0],message);
+            downstreamMessage.execute(tokenArray[i],message);
         }
 
     }

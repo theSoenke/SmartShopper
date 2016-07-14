@@ -7,7 +7,6 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -19,98 +18,77 @@ import app.smartshopper.Database.Preferences;
 /**
  * Created by Felix on 12.07.2016.
  */
-public class DownstreamMessage extends AsyncTask<String,String,String>
+public class DownstreamMessage extends AsyncTask<String, String, String>
 {
-    AsyncResponse delegate = null;
+	@Override
+	protected String doInBackground(String... params)
+	{
+		HttpURLConnection httpURLConnection;
+		final String serverKey = Preferences.getServerKey();
+		int responseCode = 0;
 
-    //Activity für den Kontext von Downstreammessage (damit getApplication() aufgerufen werden kann=
-    public Activity activity;
-    int responseCode;
+		try
+		{
+			URL url = new URL("https://fcm.googleapis.com/fcm/send");
+			String clientKey = params[0];
+			String message = params[1];
 
-    public DownstreamMessage()
-    {
+			httpURLConnection = (HttpURLConnection) url.openConnection();
+			httpURLConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+			httpURLConnection.setRequestProperty("Authorization", serverKey);
+			httpURLConnection.setRequestMethod("POST");
+			httpURLConnection.connect();
 
-    }
-    @Override
-    protected String doInBackground(String... params)
-    {
-        HttpURLConnection httpURLConnection = null;
-        BufferedReader bufferedReader = null;
-        String server_key = Preferences.getServerKey();
-        String client_key;
-        String notification_message;
-        String content;
-        String content_json_string;
+			JSONObject notification = new JSONObject();
+			try
+			{
+				notification.put("title", "SmartShopper");
+				notification.put("text", message);
+			}
+			catch (JSONException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
+			JSONObject content = new JSONObject();
+			try
+			{
+				content.put("notification", notification);
+				content.put("to", clientKey);
 
-        try
-        {
-            URL url = new URL("https://fcm.googleapis.com/fcm/send");
-            client_key = params[0];
-            notification_message = params[1];
+			}
+			catch (JSONException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            httpURLConnection.setRequestProperty("Authorization", server_key);
-            httpURLConnection.setConnectTimeout(5000);
-            httpURLConnection.setReadTimeout(10000);
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.connect();
+			String contentStr = content.toString();
+			Log.d("notification", content.toString());
 
+			OutputStream output = httpURLConnection.getOutputStream();
+			output.write(contentStr.getBytes());
+			output.flush();
+			output.close();
 
+			responseCode = httpURLConnection.getResponseCode();
+		}
+		catch (ProtocolException e)
+		{
 
+		}
+		catch (IOException e)
+		{
 
+		}
 
-            JSONObject notification_json_object = new JSONObject();
-            try
-            {
-                notification_json_object.put("title","SmartShopper");
-                notification_json_object.put("text",notification_message);
-            }
-            catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+		return "" + responseCode;
+	}
 
-            JSONObject content_json_object = new JSONObject();
-            try
-            {
-                content_json_object.put("notification",notification_json_object);
-                content_json_object.put("to",client_key);
-
-            }
-            catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-
-            content_json_string = content_json_object.toString();
-
-            OutputStream output = httpURLConnection.getOutputStream();
-            output.write(content_json_string.getBytes());
-            output.flush();
-            output.close();
-
-            responseCode = httpURLConnection.getResponseCode();
-
-
-        }
-        catch (ProtocolException e)
-        {
-
-        }
-        catch (IOException e)
-        {
-
-        }
-
-        return "" + responseCode;
-    }
-
-    @Override
-    protected void onPostExecute(String result)
-    {
-        delegate.processFinish(result);
-    }
+	@Override
+	protected void onPostExecute(String result)
+	{
+		Log.d("FCM Response", result);
+	}
 }

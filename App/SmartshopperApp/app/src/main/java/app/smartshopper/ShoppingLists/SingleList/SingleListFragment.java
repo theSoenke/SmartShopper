@@ -158,6 +158,11 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
 
     private void openAddListDialog() {
 
+	    Log.e("Send", "notfi");
+	    String token = "c6CNnrN3TSU:APA91bHZj9Z9d74iDcaksVDL-Ab5i_Mt3tHew0InjZOypdit7pVl4kmUvn8o4P_jOQqr5PKkAyRvZf3uju-HDUZmLzsJja1hxq3Fym7mh-0W-kWDjjR03BZPJdCnCKP3K8x_ANRQxTqB";
+	    String notification = getString(R.string.participant_added);
+	    SendToParticipants.send(notification, token);
+
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_single_list);
         dialog.setTitle("Create your new list ");
@@ -198,7 +203,7 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
                 UserDataSource userDataSource = new UserDataSource(getContext());
                 User user = new User();
                 user.setEntryName(participantName.getText().toString());
-                user.setId("576fd0953024ac5f26877993");//DatabaseTable.generateUniqueID());
+                user.setId(DatabaseTable.generateUniqueID());
                 userDataSource.addLocally(user);
                 Log.i("ID of the added User", user.getId());
 

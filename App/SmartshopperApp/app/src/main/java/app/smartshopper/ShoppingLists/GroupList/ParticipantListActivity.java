@@ -103,10 +103,12 @@ public class ParticipantListActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				Context context = getApplicationContext();
 				UserDataSource userDataSource = new UserDataSource(context);
-				User user = new User();
-				user.setEntryName(participantName.getText().toString());
-				user.setId(userDataSource.generateUniqueID());
-				userDataSource.addLocally(user);
+
+				String userName = participantName.getText().toString();
+				User user = new UserDataSource(getApplicationContext()).getUserByName(userName);
+				//user.setEntryName(userName);
+				//user.setId(userDataSource.generateUniqueID());
+				//userDataSource.addLocally(user);
 				ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(context);
 				ShoppingList list = shoppingListDataSource.getListFromString(listName);
 				ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
@@ -117,7 +119,7 @@ public class ParticipantListActivity extends AppCompatActivity {
 				listAdapter.notifyDataSetChanged();
 				mApiService.updateList(list.getId(), list);
 
-				String token = "e3KHYHEcyCQ:APA91bE1Za8OqfZjUMhVaN22kiSqyHyDPZ5y1Sx1KbO48KilD88DuouPRGKfSaK1rJwRrgf71o4VdZYJ4FqfqiEMugfvS5d1bknqRDylSBHqsnUYxomwbwHJOMU2UkVAzizje5FGysOi";
+				String token = user.getFcmToken();
 				String notification = getString(R.string.participant_added);
 				SendToParticipants.send(notification, token);
 

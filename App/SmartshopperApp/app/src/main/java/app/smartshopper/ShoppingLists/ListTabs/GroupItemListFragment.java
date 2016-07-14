@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
+import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
-import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.GroupList.GroupExpListAdapter;
 import app.smartshopper.ShoppingLists.GroupListMaker;
