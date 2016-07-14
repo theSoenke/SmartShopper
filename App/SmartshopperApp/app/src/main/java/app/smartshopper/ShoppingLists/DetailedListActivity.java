@@ -52,7 +52,7 @@ import retrofit2.Response;
  */
 public class DetailedListActivity extends AbstractDetailedListActivity implements ProductHolder {
 
-	private final static String TAG = DetailedListActivity.class.getSimpleName();
+    private final static String TAG = DetailedListActivity.class.getSimpleName();
 
     private ProductDataSource _productSource;
     private ItemEntryDataSource _itemSource;
@@ -62,7 +62,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     private ApiService _apiService;
     private ParticipantDataSource _participantDataSource;
 
-	//Get Store from BeaconID
+    //Get Store from BeaconID
 //    StoreBeaconTool storeBeaconTool;
 //    Store store = Store.Default;
 
@@ -90,7 +90,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         _shoppingList = shoppingListSource.getListFromString(listName);
 
 
-        if (_shoppingList!= null) {
+        if (_shoppingList != null) {
             _itemSource = new ItemEntryDataSource(getApplicationContext());
             _productSource = new ProductDataSource(getApplicationContext());
             _participantDataSource = new ParticipantDataSource(getApplicationContext());
@@ -102,7 +102,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         }
         String listtype = "";
         Log.i("DetailedListActivity", _shoppingList.getId());
-        if(!_participantDataSource.getUserOfList(_shoppingList.getId()).isEmpty()){
+        if (!_participantDataSource.getUserOfList(_shoppingList.getId()).isEmpty()) {
             listtype = "group";
         }
 
@@ -118,8 +118,6 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         finish();
         return true;
     }
-
-
 
     @Override
     public boolean addEntry(String product, int amount) {
@@ -160,7 +158,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                                 try {
                                     Log.i("Update ShoppingList", response.errorBody().string());
                                 } catch (IOException e) {
-	                                Log.e(TAG, e.getMessage());
+                                    Log.e(TAG, e.getMessage());
                                 }
                             }
                         }
@@ -174,9 +172,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                     });
 
                     updateFragments();
-                }
-                else
-                {
+                } else {
                     Toast.makeText(getApplicationContext(), "Not in this market!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -263,12 +259,12 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public List<ItemEntry> getItemEntries() {
         List<ItemEntry> itemlist = new ArrayList<>();
-     //   if(_shoppingList.getParticipants()!= null && !_shoppingList.getParticipants().isEmpty()){
-      //      List<List<ItemEntry>> itemListList = groupListSetup();
-      //      itemlist = itemListList.get(getPositionInList(_shoppingList.getOwner()));
-      //  }else{
-            itemlist = _itemSource.getEntriesForList(_shoppingList.getId());
-      //  }
+        //   if(_shoppingList.getParticipants()!= null && !_shoppingList.getParticipants().isEmpty()){
+        //      List<List<ItemEntry>> itemListList = groupListSetup();
+        //      itemlist = itemListList.get(getPositionInList(_shoppingList.getOwner()));
+        //  }else{
+        itemlist = _itemSource.getEntriesForList(_shoppingList.getId());
+        //  }
         return itemlist;
     }
 
@@ -341,14 +337,12 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         buttonBoughtAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try
-                {
+                try {
                     markItemAsBought(itemEntry, Integer.parseInt(amountEditText.getText().toString()));
+                } catch (NumberFormatException e) {
+                    markItemAsBought(itemEntry, 0);
                 }
-                catch (NumberFormatException e){
-	                markItemAsBought(itemEntry, 0);
-                }
-	            dialog.dismiss();
+                dialog.dismiss();
             }
         });
         buttonBoughtAll.setOnClickListener(new View.OnClickListener() {

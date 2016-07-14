@@ -74,4 +74,8 @@ public class SyncableMarketProduct {
 
         return marketProduct;
     }
+
+    public Product getProduct() {
+        return _product;
+    }
 }

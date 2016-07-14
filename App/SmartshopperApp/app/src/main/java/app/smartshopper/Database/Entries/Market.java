@@ -58,4 +58,12 @@ public class Market extends DatabaseEntry {
         }
         return position;
     }
+
+    public List<Product> getAllProducts() {
+        List<Product> productList = new ArrayList<>();
+        for(SyncableMarketProduct syncableMarketProduct:_marketProducts){
+            productList.add(syncableMarketProduct.getProduct());
+        }
+        return productList;
+    }
 }
