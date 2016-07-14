@@ -203,7 +203,7 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
                 UserDataSource userDataSource = new UserDataSource(getContext());
                 User user = new User();
                 user.setEntryName(participantName.getText().toString());
-                user.setId("576fd0953024ac5f26877993");//DatabaseTable.generateUniqueID());
+                user.setId(DatabaseTable.generateUniqueID());
                 userDataSource.addLocally(user);
                 Log.i("ID of the added User", user.getId());
 
