@@ -119,7 +119,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         List<ItemEntry> listOfEntries = getEntry(
 
                 DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + list.getId() + "' AND " +
-                        DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getEntryName() + "'"
+                        DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + product.getId() + "'"
 
         );
         if (!listOfEntries.isEmpty()) {
@@ -182,5 +182,18 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         List<ItemEntry> list = getEntry(DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListID + "'"
                 + " AND " + DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductName + "'");
         return !list.isEmpty();
+    }
+
+    public ItemEntry getEntryFromString(String entry, ShoppingList list){
+        String[] split = entry.split("\\s+");
+        if(split.length > 5) {
+            int amount = Integer.parseInt(split[5]);
+            int bought = Integer.parseInt(split[3]);
+            ItemEntry output = new ItemEntry(_productDataSource.getProductFromString(split[1]), list.getId(), amount, bought);
+
+            return output;
+        }else{
+            return null;
+        }
     }
 }

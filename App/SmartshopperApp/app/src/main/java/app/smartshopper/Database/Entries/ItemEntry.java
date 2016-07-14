@@ -69,4 +69,11 @@ public class ItemEntry extends DatabaseEntry {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return getEntryName() + " ( " + amountBought() + " / " + getAmount() + " ) ";
+    }
+
+
 }

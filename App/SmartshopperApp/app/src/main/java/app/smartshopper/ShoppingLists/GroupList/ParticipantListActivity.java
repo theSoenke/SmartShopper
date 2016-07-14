@@ -102,7 +102,10 @@ public class ParticipantListActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				Context context = getApplicationContext();
 				UserDataSource userDataSource = new UserDataSource(context);
-				User user = userDataSource.add(participantName.getText().toString());
+				User user = new User();
+				user.setEntryName(participantName.getText().toString());
+				user.setId(userDataSource.generateUniqueID());
+				userDataSource.addLocally(user);
 				ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(context);
 				ShoppingList list = shoppingListDataSource.getListFromString(listName);
 				ParticipantDataSource participantDataSource = new ParticipantDataSource(context);

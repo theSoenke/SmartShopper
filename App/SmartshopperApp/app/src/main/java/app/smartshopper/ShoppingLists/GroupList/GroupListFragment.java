@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,19 +16,34 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import app.smartshopper.Database.Entries.ItemEntry;
+import app.smartshopper.Database.Entries.Market;
+import app.smartshopper.Database.Entries.MarketEntry;
+import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
+import app.smartshopper.Database.Tables.ItemEntryDataSource;
+import app.smartshopper.Database.Tables.MarketDataSource;
+import app.smartshopper.Database.Tables.MarketEntryDataSource;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
+import app.smartshopper.ShoppingLists.GroupListMaker;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * The GroupListFragment contains a list of all group-lists (list with more then one participant) and
@@ -41,6 +57,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
     private View mGroupListView;
     private ShoppingListDataSource mListDataSource;
 	private Dialog mListDialog;
+    private ItemEntryDataSource mItemEntrySource;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +78,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         final List<String> listgroups = new ArrayList<>();
 
         mListDataSource = new ShoppingListDataSource(getContext());
+        mItemEntrySource = new ItemEntryDataSource(getContext());
         ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
 
         if (newList != "") {
@@ -175,7 +193,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         btnMakeSingleList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                openMakeSingleListDialog(entry);
                 dialog.dismiss();
             }
         });
@@ -190,6 +208,75 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         });
         dialog.show();
     }
+
+    private void openMakeSingleListDialog(String entry) {
+
+        mListDataSource.add("imFancy");
+        ShoppingList newlist = mListDataSource.getListFromString("imFancy");
+        GroupListMaker maker = new GroupListMaker(getContext());
+        ShoppingList oldList = mListDataSource.getListFromString(entry);
+        List<ItemEntry> oldEntries = new ArrayList<>();
+        oldEntries = maker.getListForOwner(oldList);
+        for(int i= 0; i < oldEntries.size();i++) {
+            ItemEntry newItem = new ItemEntry(oldEntries.get(i).getProduct(), newlist.getId(), oldEntries.get(i).getAmount(), oldEntries.get(i).amountBought());
+            addEntry(newItem, newlist);
+        }
+    }
+
+    private boolean addEntry(ItemEntry newItem, final ShoppingList newList) {
+        if (newItem == null) {
+            return false;
+        } else {
+
+            MarketDataSource marketDataSource = new MarketDataSource(getContext());
+            Market market = marketDataSource.getByName("Penny");
+
+            if (market != null) {
+                MarketEntryDataSource marketEntryDataSource = new MarketEntryDataSource(getContext());
+                List<MarketEntry> entries = marketEntryDataSource.getMarketEntryTo(market, newItem.getProduct());
+                if (!entries.isEmpty()) {
+                    mItemEntrySource.add(newItem);
+                    Log.i("item added", "name: " + newItem.getProduct().getEntryName() + " list: " + newItem.getListID());
+                    newList.addMarketProduct(newItem);
+
+                    Call call = mApiService.updateList(newList.getId(), newList);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            if (response.isSuccessful()) {
+                                Log.i("Update ShoppingList", "The update of the shopping list " + newList + " was successful!");
+                                Log.i("Update ShoppingList", new Gson().toJson(newList));
+                            } else {
+                                Log.i("Update ShoppingList", "The update of the shopping list " + newList + "failed!");
+                                Log.i("Update ShoppingList", response.message());
+                                try {
+                                    Log.i("Update ShoppingList", response.errorBody().string());
+                                } catch (IOException e) {
+                                    Log.e("TAG", e.getMessage());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call call, Throwable t) {
+                            Log.e("Update ShoppingList", "The update of the shopping list " + newList + " failed!");
+                            Log.e("Update ShoppingList", t.getMessage());
+                            Log.e("Update ShoppingList", call.toString());
+                        }
+                    });
+
+                }
+                else
+                {
+                    Toast.makeText(getContext(), "Not in this market!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {

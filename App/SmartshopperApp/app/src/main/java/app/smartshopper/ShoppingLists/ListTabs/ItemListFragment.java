@@ -41,7 +41,7 @@ import app.smartshopper.R;
 //TODO Move dialogs to extra class(es)
 public class ItemListFragment extends Fragment implements AdapterView.OnItemClickListener, ProductPresenter {
 
-    ArrayAdapter<ItemListEntry> _listAdapter;
+    ArrayAdapter<ItemEntry> _listAdapter;
     ProductHolder _productHolder;
     View view;
 
@@ -53,7 +53,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         ListView list = (ListView) view.findViewById(R.id.itemlist_list);
 
         // Create ArrayAdapter using an empty list
-        _listAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
+        _listAdapter = new ArrayAdapter<ItemEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemEntry>());
 
         productsChanged();
 
@@ -169,7 +169,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        final ItemListEntry itemEntry = _listAdapter.getItem(position);
+        final ItemEntry itemEntry = _listAdapter.getItem(position);
         _productHolder.openConfigureItemDialog(itemEntry);
     }
 
@@ -197,8 +197,8 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemClic
         //TODO solve this without an extra class. Instead use the layout to display the different strings
         for (ItemEntry itemEntry : rawItemList)
         {
-            ItemListEntry listEntry = new ItemListEntry(itemEntry);
-            _listAdapter.add(listEntry);
+
+            _listAdapter.add(itemEntry);
         }
     }
 

@@ -102,12 +102,12 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
     }
 
     /**
-     * Gets the market which has the lowest price for the given product.
+     * Gets the market entry which has the lowest price for the given product.
      *
      * @param productID The ID of the product the user wants to buy.
-     * @return The market where the product has the lowest price.
+     * @return The market entry where the product has the lowest price.
      */
-    public MarketEntry getCheapestMarketForProduct(String productID) {
+    public MarketEntry getCheapestMarketEntryForProduct(String productID) {
         List<MarketEntry> list = getEntry(DatabaseHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + productID + "'");
         if (!list.isEmpty()) {
             Collections.sort(list);

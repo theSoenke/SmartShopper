@@ -27,9 +27,11 @@ import java.util.List;
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.User;
+import app.smartshopper.Database.Tables.ItemEntryDataSource;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.GroupList.GroupExpListAdapter;
+import app.smartshopper.ShoppingLists.GroupListMaker;
 
 /**
  * Created by Marvin on 11.07.2016.
@@ -40,6 +42,7 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
     ProductHolder _productHolder;
     ExpandableListAdapter _adapter;
     ExpandableListView _list;
+    GroupListMaker _maker;
     View view;
 
     @Override
@@ -47,7 +50,7 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
     {
         view = inflater.inflate(R.layout.fragment_group_list_item_list, group, false);
 
-        ParticipantDataSource participantDataSource = new ParticipantDataSource(getContext());
+        _maker = new GroupListMaker(getContext());
         _list = (ExpandableListView) view.findViewById(R.id.grouplist_item_list);
         configAdapter();
 
@@ -62,13 +65,13 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
     }
 
     private void configAdapter() {
-        List<User> userList = _productHolder.getUserList();
+        List<User> userList = _maker.getUserList(_productHolder.getList());
         List<String> formattedUserList = new ArrayList<>();
         for(int i = 0;i< userList.size();i++){
             formattedUserList.add(userList.get(i).getEntryName());
         }
-        List<List<ItemEntry>> entries = _productHolder.groupListSetup();
-        _adapter = new GroupExpListAdapter(getContext(),formattedUserList,_productHolder.formatGroupEntries(entries)){
+        List<List<ItemEntry>> entries = _maker.groupListSetup(_productHolder.getList());
+        _adapter = new GroupExpListAdapter(getContext(),formattedUserList,_maker.formatGroupEntries(entries,_productHolder.getList())){
             @Override
             public void OnIndicatorClick(boolean isExpanded, int groupPosition) {
                 if (isExpanded) {
@@ -82,9 +85,15 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
 
             @Override
             public void OnItemClick(String entry) {
-               //TODO OPEN CONFIG ITEM DIALOG (GETTING ITEMLISTENTRY FROM STRING)
             }
         };
+        _list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                //TODO OPEN CONFIG ITEM DIALOG (GETTING ITEMENTRY FROM STRING)
+                return true;
+            }
+        });
         _list.setAdapter(_adapter);
         //listEmpty();
     }
