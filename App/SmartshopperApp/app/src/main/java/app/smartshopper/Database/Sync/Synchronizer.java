@@ -24,6 +24,7 @@ import app.smartshopper.Database.Tables.MarketDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
+import app.smartshopper.FCM.AsyncResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,6 +57,14 @@ public class Synchronizer {
     }
 
     private ApiService restClient;
+    private AsyncResponse mCallback;
+
+	public Synchronizer(){
+	}
+
+    public Synchronizer(AsyncResponse callback){
+        mCallback = callback;
+    }
 
     /**
      * Starts syncing all data sources.
@@ -140,9 +149,6 @@ public class Synchronizer {
 
 //                        Log.i("Synchronizer", "Finished synchronizing");
                         Toast.makeText(context, "Finished Market Sync", Toast.LENGTH_SHORT).show();
-
-                        List<Market> list = m.getAllEntries();
-                        Log.i("test", "");
                     }
                 }
         );
@@ -165,6 +171,10 @@ public class Synchronizer {
                     @Override
                     public void executeNextSync() {
                         Toast.makeText(context, "Finished ShoppingList Sync", Toast.LENGTH_SHORT).show();
+
+	                    if(mCallback != null){
+		                    mCallback.processFinish("");
+	                    }
                     }
 
                     @Override

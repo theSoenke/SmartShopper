@@ -36,6 +36,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		super.onCreate(savedInstanceState);
 
 		new Preferences(this);
+		String server_key = getString(R.string.server_key);
+		Preferences.setServerKey(server_key);
 
 		if (!LoginActivity.isAuthenticated(this)) {
 			startActivity(new Intent(this, LoginActivity.class));
