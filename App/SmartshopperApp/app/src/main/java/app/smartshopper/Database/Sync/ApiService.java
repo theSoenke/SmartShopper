@@ -65,4 +65,7 @@ public interface ApiService {
 
 	@POST("user/register")
 	Call<User> registerUser(@Body User user);
+
+	@GET("user")
+	Call<List<User>> user();
 }

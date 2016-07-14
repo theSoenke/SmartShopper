@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import app.smartshopper.R;
+
 /**
  * This class contains of constants that are important for the whole project (e.g. username).
  * <p/>
@@ -14,6 +16,7 @@ public class Preferences {
 	private static final String HASH = "hash";
 	private static final String USERNAME = "userName";
 	private static final String TOKEN = "token";
+	private static final String SERVER_KEY = "server_key";
 
 	private static Preferences INSTANCE;
 	private static Context mContext;
@@ -32,6 +35,15 @@ public class Preferences {
 
 	public static void setUserName(String username) {
 		saveSharedSetting(mContext, USERNAME, username);
+	}
+
+	public static void setServerKey(String serverkey)
+	{
+		saveSharedSetting(mContext,SERVER_KEY,serverkey);
+	}
+	public static String getServerKey()
+	{
+		return readSharedSetting(mContext,SERVER_KEY);
 	}
 
 	public static String getUserName() {

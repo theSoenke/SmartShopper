@@ -16,6 +16,7 @@ import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.DatabaseHelper;
+import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.Preferences;
 import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
@@ -113,6 +114,7 @@ public class Synchronizer {
                     public void executeNextSync() {
                         syncMarkets(context, p);
                         syncShoppingLists(context, p);
+                        syncUsers(context);
                     }
                 }
         );
@@ -250,15 +252,28 @@ public class Synchronizer {
         return s;
     }
 
-    private UserDataSource syncUsers(Context context, ShoppingListDataSource s) {
-        UserDataSource u = new UserDataSource(context);
+    private UserDataSource syncUsers(Context context) {
+        final UserDataSource u = new UserDataSource(context);
         Log.i("Synchronizer", "Create User data source...");
 
-        return u;
-    }
+        syncEntries(u,
+                new SyncProcessor() {
+                    @Override
+                    public void processUpdatedLocalData(List remoteList, List localList, DatabaseTable source) {
+                        removeOldLocalEntries(remoteList, localList, source);
+                    }
 
-    private void syncParticipants(Context context, ShoppingListDataSource s) {
-        UserDataSource u = syncUsers(context, s);
+                    @Override
+                    public void executeNextSync() {
+                    }
+
+                    @Override
+                    public Call<List<User>> getCall() {
+                        return restClient.user();
+                    }
+                });
+
+        return u;
     }
 
     private void syncFcmToken(String token) {
