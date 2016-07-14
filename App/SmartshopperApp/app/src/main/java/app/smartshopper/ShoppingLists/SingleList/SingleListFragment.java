@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
+import app.smartshopper.FCM.AsyncResponse;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import okhttp3.ResponseBody;
@@ -46,13 +48,13 @@ import retrofit2.Response;
  * This class also contains the "add"-dialog to create lists and manages the communication with the database.
  */
 // TODO Maybe Extract the communication and the dialog into extra classes?
-public class SingleListFragment extends Fragment {
-
+public class SingleListFragment extends Fragment implements AsyncResponse {
     private ApiService mApiService;
     private ArrayAdapter<String> mListAdapter;
     private ShoppingListDataSource mDataSource;
     private View mSingleListView;
     private Dialog mListDialog;
+	private SwipeRefreshLayout mSwipeContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
@@ -111,6 +113,18 @@ public class SingleListFragment extends Fragment {
             }
         });
 
+	    mSwipeContainer = (SwipeRefreshLayout) mSingleListView.findViewById(R.id.swipeContainer);
+
+	    // Setup refresh listener which triggers new data loading
+	    mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+	    {
+		    @Override
+		    public void onRefresh()
+		    {
+			    Synchronizer synchronizer = new Synchronizer(SingleListFragment.this);
+			    synchronizer.sync(getActivity());
+		    }
+	    });
 
         updateList();
 
@@ -126,6 +140,7 @@ public class SingleListFragment extends Fragment {
     }
 
     private void updateList() {
+	    mSwipeContainer.setRefreshing(false);
         List<ShoppingList> lists = mDataSource.getAllSingleLists();
 
         mListAdapter.clear();
@@ -352,4 +367,10 @@ public class SingleListFragment extends Fragment {
         i.putExtra("list", list);
         getActivity().startActivity(i);
     }
+
+	@Override
+	public void processFinish(String output)
+	{
+		mSwipeContainer.setRefreshing(false);
+	}
 }
