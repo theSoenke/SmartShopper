@@ -174,6 +174,8 @@ public class Synchronizer {
 	                    if(mCallback != null){
 		                    mCallback.processFinish("");
 	                    }
+
+                        context.getContentResolver().notifyChange(DatabaseHelper.LIST_CONTENT_URI, null);
                     }
 
                     @Override
