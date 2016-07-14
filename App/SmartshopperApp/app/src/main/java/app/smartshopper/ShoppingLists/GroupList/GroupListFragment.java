@@ -210,18 +210,41 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         dialog.show();
     }
 
-    private void openMakeSingleListDialog(String entry) {
+    private void openMakeSingleListDialog(final String entry) {
 
-        mListDataSource.add("imFancy");
-        ShoppingList newlist = mListDataSource.getListFromString("imFancy");
-        GroupListMaker maker = new GroupListMaker(getContext());
-        ShoppingList oldList = mListDataSource.getListFromString(entry);
-        List<ItemEntry> oldEntries = new ArrayList<>();
-        oldEntries = maker.getListForOwner(oldList);
-        for(int i= 0; i < oldEntries.size();i++) {
-            ItemEntry newItem = new ItemEntry(oldEntries.get(i).getProduct(), newlist.getId(), oldEntries.get(i).getAmount(), oldEntries.get(i).amountBought());
-            addEntry(newItem, newlist);
-        }
+
+        mListDialog = new Dialog(getContext());
+        mListDialog.setContentView(R.layout.dialog_add_group_list);
+        mListDialog.setTitle("Create your new list ");
+        final EditText listName = (EditText) mListDialog.findViewById(R.id.dialog_txtGroupListName);
+        Button btcrt = (Button) mListDialog.findViewById(R.id.dialog_btCreateGroupList);
+        btcrt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShoppingListDataSource s = new ShoppingListDataSource(getContext());
+                ShoppingList l = s.add(listName.getText().toString());
+                mApiService.addList(l);
+                listEmptyCheck();
+                mListDialog.dismiss();
+                GroupListMaker maker = new GroupListMaker(getContext());
+                ShoppingList oldList = mListDataSource.getListFromString(entry);
+                ShoppingList newlist = mListDataSource.getListFromString(listName.getText().toString());
+                List<ItemEntry> oldEntries = new ArrayList<>();
+                oldEntries = maker.getListForOwner(oldList);
+                for(int i= 0; i < oldEntries.size();i++) {
+                    ItemEntry newItem = new ItemEntry(oldEntries.get(i).getProduct(), newlist.getId(), oldEntries.get(i).getAmount(), oldEntries.get(i).amountBought());
+                    addEntry(newItem, newlist);
+                }
+            }
+        });
+        Button btabort = (Button) mListDialog.findViewById(R.id.btAbortAddGroupList);
+        btabort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListDialog.dismiss();
+            }
+        });
+        mListDialog.show();
     }
 
     private boolean addEntry(ItemEntry newItem, final ShoppingList newList) {
