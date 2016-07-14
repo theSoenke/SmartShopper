@@ -29,12 +29,14 @@ import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.DatabaseHelper;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
+import app.smartshopper.Database.Sync.Synchronizer;
 import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -288,6 +290,26 @@ public class SingleListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO DELETE LIST
+                Call<ResponseBody> call = mApiService.deleteList(mDataSource.getListFromString(entry).getId());
+
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            Log.e("Success", "List deleted");
+                            Synchronizer synchronizer = new Synchronizer();
+
+                        } else {
+                            Log.e("Error Code", String.valueOf(response.code()));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d("Failure", "List deletion failed");
+                        Log.d("List deletion", t.getMessage());
+                    }
+                });
                 mListDialog.dismiss();
             }
         });
