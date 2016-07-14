@@ -58,7 +58,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 	private List<PointF> marks;
 	private List<String> marksName;
 	private List<Integer> marksType;
-	private Map<Integer, Set<ItemListEntry>> markIndexItemListEntryMap;
+	private Map<Integer, Set<ItemEntry>> markIndexItemListEntryMap;
 	private ProductHolder _productHolder;
 
 	private BeaconManager beaconManager;
@@ -69,7 +69,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 	private static final int BOUGHT_ITEM_MARKTYPE = 2;
 
 	private Dialog itemsAtMarkListDialog;
-	private ArrayAdapter<ItemListEntry> itemsAtMarkListAdapter;
+	private ArrayAdapter<ItemEntry> itemsAtMarkListAdapter;
 	private int itemsAtMarkListMark;
 	private int itemsAtMarkListNumMarks;
 
@@ -182,7 +182,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 								ListView list = (ListView) itemsAtMarkListDialog.findViewById(R.id.items_at_mark_list);
 
 								// Create ArrayAdapter using an empty list
-								itemsAtMarkListAdapter = new ArrayAdapter<ItemListEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemListEntry>());
+								itemsAtMarkListAdapter = new ArrayAdapter<ItemEntry>(getContext(), R.layout.simple_row, new ArrayList<ItemEntry>());
 								itemsAtMarkListMark = num;
 								itemsAtMarkListNumMarks = marks.size();
 
@@ -194,7 +194,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 								list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 									@Override
 									public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-										final ItemListEntry itemEntry = itemsAtMarkListAdapter.getItem(position);
+										final ItemEntry itemEntry = itemsAtMarkListAdapter.getItem(position);
 										_productHolder.openConfigureItemDialog(itemEntry);
 									}
 								});
@@ -247,7 +247,7 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 				while (itemsAtMarkListAdapter.getCount() > 0) {
 					itemsAtMarkListAdapter.remove(itemsAtMarkListAdapter.getItem(0));
 				}
-				for (ItemListEntry item : markIndexItemListEntryMap.get(itemsAtMarkListMark)) {
+				for (ItemEntry item : markIndexItemListEntryMap.get(itemsAtMarkListMark)) {
 					itemsAtMarkListAdapter.add(item);
 				}
 			}
@@ -274,15 +274,15 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 				if (marks.get(i).equals(position)) {
 					foundPosition = true;
 					marksName.set(i, marksName.get(i) + ", " + name);
-					markIndexItemListEntryMap.get(i).add(new ItemListEntry(entry));
+					markIndexItemListEntryMap.get(i).add(entry);
 					if (!entry.isBought() && marksType.get(i) == BOUGHT_ITEM_MARKTYPE) {
 						marksType.set(i, UNBOUGHT_ITEM_MARKTYPE);
 					}
 				}
 			}
 			if (!foundPosition) {
-				markIndexItemListEntryMap.put(marks.size(), new HashSet<ItemListEntry>());
-				markIndexItemListEntryMap.get(marks.size()).add(new ItemListEntry(entry));
+				markIndexItemListEntryMap.put(marks.size(), new HashSet<ItemEntry>());
+				markIndexItemListEntryMap.get(marks.size()).add(entry);
 				marks.add(position);
 				marksName.add(name);
 				if (entry.isBought()) {

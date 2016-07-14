@@ -37,7 +37,6 @@ import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.R;
-import app.smartshopper.ShoppingLists.ListTabs.ItemListEntry;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
 import app.smartshopper.ShoppingLists.ListTabs.ProductHolder;
 import app.smartshopper.ShoppingLists.ListTabs.ProductPresenter;
@@ -90,11 +89,13 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         ShoppingListDataSource shoppingListSource = new ShoppingListDataSource(getApplicationContext());
         _shoppingList = shoppingListSource.getListFromString(listName);
 
+
         if (_shoppingList!= null) {
             _itemSource = new ItemEntryDataSource(getApplicationContext());
             _productSource = new ProductDataSource(getApplicationContext());
             _participantDataSource = new ParticipantDataSource(getApplicationContext());
             _marketEntries = new MarketEntryDataSource(getApplicationContext());
+
         } else {
 
             Toast.makeText(getApplicationContext(), "There's no list called '" + listName + "'!", Toast.LENGTH_SHORT).show();
@@ -118,8 +119,11 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         return true;
     }
 
+
+
     @Override
     public boolean addEntry(String product, int amount) {
+
         Product p = _productSource.getProductFromString(product);
         if (p == null) {
             return false;
@@ -140,7 +144,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                 List<MarketEntry> entries = marketEntryDataSource.getMarketEntryTo(market, p);
                 if (!entries.isEmpty()) {
                     _itemSource.add(e);
-
+                    Log.i("item added", "name: " + e.getProduct().getEntryName() + " list: " + e.getListID());
                     _shoppingList.addMarketProduct(e);
 
                     Call call = _apiService.updateList(_shoppingList.getId(), _shoppingList);
@@ -195,6 +199,11 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public List<Product> getAllAvailableProducts() {
         return _productSource.getAllEntries();
+    }
+
+    @Override
+    public ShoppingList getList() {
+        return _shoppingList;
     }
 
     private void updateFragments() {
@@ -254,12 +263,12 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     @Override
     public List<ItemEntry> getItemEntries() {
         List<ItemEntry> itemlist = new ArrayList<>();
-        if(_shoppingList.getParticipants()!= null && !_shoppingList.getParticipants().isEmpty()){
-            List<List<ItemEntry>> itemListList = groupListSetup();
-            itemlist = itemListList.get(getPositionInList(_shoppingList.getOwner()));
-        }else{
+     //   if(_shoppingList.getParticipants()!= null && !_shoppingList.getParticipants().isEmpty()){
+      //      List<List<ItemEntry>> itemListList = groupListSetup();
+      //      itemlist = itemListList.get(getPositionInList(_shoppingList.getOwner()));
+      //  }else{
             itemlist = _itemSource.getEntriesForList(_shoppingList.getId());
-        }
+      //  }
         return itemlist;
     }
 
@@ -269,10 +278,10 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     }
 
     @Override
-    public void openConfigureItemDialog(final ItemListEntry itemEntry) {
+    public void openConfigureItemDialog(final ItemEntry itemEntry) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_configure_item);
-        dialog.setTitle("Configure '" + itemEntry.getItemEntry().getEntryName() + "'");
+        dialog.setTitle("Configure '" + itemEntry.getEntryName() + "'");
 
         TextView tw = (TextView) dialog.findViewById(R.id.dialog_ConfigItemTextView);
         Button buttonAbort = (Button) dialog.findViewById(R.id.dialog_btAbortConfigItem);
@@ -289,21 +298,21 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeEntry(itemEntry.getItemEntry());
+                removeEntry(itemEntry);
                 dialog.dismiss();
             }
         });
         buttonBought.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openMarkItemDialog(itemEntry.getItemEntry());
+                openMarkItemDialog(itemEntry);
                 dialog.dismiss();
             }
         });
         buttonAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openChangeAmountDialog(itemEntry.getItemEntry());
+                openChangeAmountDialog(itemEntry);
                 dialog.dismiss();
             }
         });
@@ -379,102 +388,6 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     }
 
-    @Override
-    public List<List<ItemEntry>> groupListSetup(){
-        List<List<ItemEntry>> out = new ArrayList<>();
-        List<MarketEntry> interm = new ArrayList<>();
-        List<ItemEntry> in = _itemSource.getEntriesForList(_shoppingList.getId());
-        for(int i = 0;i<in.size();i++){
-            interm.add(_marketEntries.getCheapestMarketForProduct(in.get(i).getProduct().getId()));
-        }
-        List<List<MarketEntry>> list = splitGroupList(interm);
-        for(int j = 0;j<list.size();j++){
-            List<ItemEntry> midout= new ArrayList<>();
-            for(int k = 0;k<list.get(j).size();k++){
-                midout.add(_itemSource.getItemEntry(_shoppingList,_productSource.get(list.get(j).get(k).getProductID())));
-            }
-            out.add(midout);
-        }
-        return out;
-    }
-
-    public List<List<MarketEntry>> splitGroupList(List<MarketEntry> input){
-        List<List<MarketEntry>> output = new ArrayList<>();
-        Collections.sort(input);
-        Collections.reverse(input);
-        for(int i=0;i<getUserList().size();i++){
-            List<MarketEntry> buf = new ArrayList<>();
-            output.add(buf);
-        }
-        while (!input.isEmpty()){
-            output.get(0).add(input.get(0));
-            Collections.sort(output, new Comparator<List<MarketEntry>>() {
-                @Override
-                public int compare(List<MarketEntry> lhs, List<MarketEntry> rhs) {
-                    int sum_lhs=0;
-                    int sum_rhs=0;
-                    for(int i = 0; i<lhs.size();i++){
-                        sum_lhs += lhs.get(i).getPrice();
-                    }
-                    for(int j = 0; j<rhs.size();j++){
-                        sum_rhs += rhs.get(j).getPrice();
-                    }
-                    if(sum_lhs > sum_rhs){
-                        return 1;
-                    }
-                    if(sum_rhs > sum_lhs){
-                        return -1;
-                    }
-                    return 0;
-                }
-            });
-            input.remove(0);
-        }
-        return output;
-    }
-
-
-    public int getPositionInList(User user){
-        List<User> userList = getUserList();
-        for(int i = 0;i<userList.size();i++){
-            if(userList.get(i).getId().equalsIgnoreCase(user.getId())){
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    @Override
-    public HashMap<String,List<String>> formatGroupEntries(List<List<ItemEntry>> in){
-        HashMap<String,List<String>> returnmap = new HashMap<>();
-        List<User> getuser = getUserList();
-        for(int i= 0;i<getuser.size();i++){
-            List<ItemEntry> entryList = in.get(getPositionInList(getuser.get(i)));
-            Log.i("Position of user", getuser.get(i).getEntryName() + ": " + getPositionInList(getuser.get(i)));
-            Log.i("Size of List", "for user" + getuser.get(i).getEntryName() + " : " + entryList.size());
-            List<String> formatList = new ArrayList<>();
-            for(int j= 0; j < entryList.size(); j++){
-                if(entryList.get(j)!= null){
-                    formatList.add(entryList.get(i).getEntryName());
-                }else{
-                    Log.i("EntryList", "ENTRY IS NULL WTF");
-                }
-            }
-            returnmap.put(getuser.get(i).getEntryName(),formatList);
-        }
-        return returnmap;
-    }
-    @Override
-    public List<User> getUserList(){
-        Log.i("getUserList", _shoppingList.getId());
-        List<User> returnl = _participantDataSource.getUserOfList(_shoppingList.getId());
-        //returnl.add(_shoppingList.getOwner());
-        if(_shoppingList.getOwner() == null){
-            Log.i("owner is null", " we are doomed");
-        }
-        Log.i("getUserList size", "" + returnl.size());
-        return returnl;
-    }
 }
 
 
