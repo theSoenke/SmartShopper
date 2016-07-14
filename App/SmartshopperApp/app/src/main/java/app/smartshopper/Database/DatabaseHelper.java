@@ -73,7 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String USER_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + USER_TABLE_NAME + "(" +
             USER_COLUMN_ID + " VARCHAR(24) PRIMARY KEY NOT NULL," +
             USER_COLUMN_NAME + " TEXT NOT NULL," +
-            USER_COLUMN_FCMTOKEN + " TEXT NOT NULL);";
+            USER_COLUMN_FCMTOKEN + " TEXT);";
 
     private static final String PARTICIPANT_DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + PARTICIPANT_TABLE_NAME + "(" +
             PARTICIPANT_COLUMN_USER_ID + " VARCHAR(24)," +
