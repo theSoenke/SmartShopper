@@ -45,7 +45,7 @@ public class Market extends DatabaseEntry {
 
         // get the market product which is identical with the given product
         for(SyncableMarketProduct syncableMarketProduct : _marketProducts){
-            if(product.equals(syncableMarketProduct)){
+            if(syncableMarketProduct.equals(product)){
                 marketProduct = syncableMarketProduct;
                 break;
             }

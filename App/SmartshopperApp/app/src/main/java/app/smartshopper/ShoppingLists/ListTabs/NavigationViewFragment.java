@@ -47,7 +47,9 @@ import java.util.Set;
 
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Market;
+import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.Product;
+import app.smartshopper.Database.Entries.SyncableMarketProduct;
 import app.smartshopper.Database.Tables.MarketDataSource;
 import app.smartshopper.Database.Tables.MarketEntryDataSource;
 import app.smartshopper.Location.LocationTool;
