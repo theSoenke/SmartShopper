@@ -12,6 +12,7 @@ import java.util.List;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.Entries.Market;
+import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.DatabaseHelper;
@@ -137,6 +138,9 @@ public class Synchronizer {
 
 //                        Log.i("Synchronizer", "Finished synchronizing");
                         Toast.makeText(context, "Finished Market Sync", Toast.LENGTH_SHORT).show();
+
+                        List<Market> list = m.getAllEntries();
+                        Log.i("test", "");
                     }
                 }
         );

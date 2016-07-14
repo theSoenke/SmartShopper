@@ -18,6 +18,10 @@ public class Market extends DatabaseEntry {
         _marketProducts = new ArrayList<SyncableMarketProduct>();
     }
 
+    public void addProduct(SyncableMarketProduct syncableMarketProduct) {
+        _marketProducts.add(syncableMarketProduct);
+    }
+
     public List<MarketEntry> getAllMarketEntries() {
         List<MarketEntry> list = new ArrayList<MarketEntry>(_marketProducts.size());
         for (SyncableMarketProduct product : _marketProducts) {
