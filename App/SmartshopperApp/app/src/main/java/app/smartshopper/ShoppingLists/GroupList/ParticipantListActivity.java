@@ -27,7 +27,7 @@ import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
-import app.smartshopper.FCM.SendToParticipants;
+import app.smartshopper.FCM.SendNotification;
 import app.smartshopper.R;
 
 /**
@@ -128,7 +128,7 @@ public class ParticipantListActivity extends AppCompatActivity {
 				Log.i("Send", "notification");
 				String token = user.getFcmToken();
 				String notification = getString(R.string.participant_added);
-				SendToParticipants.send(notification, token);
+				SendNotification.send(notification, token);
 
 				Log.i("ListParticipants", "List Participants updated");
 				dialog.dismiss();

@@ -6,7 +6,7 @@ import android.widget.Toast;
 /**
  * Created by Felix on 12.07.2016."
  */
-public class SendToParticipants implements AsyncResponse
+public class SendNotification
 {
     /**
      * @param message Nachricht für die anderen Teilnehmer
@@ -22,11 +22,5 @@ public class SendToParticipants implements AsyncResponse
             downstreamMessage.execute(tokenArray[i],message);
         }
 
-    }
-
-    @Override
-    public void processFinish(String output)
-    {
-        Log.e("Guten TAG",output);
     }
 }

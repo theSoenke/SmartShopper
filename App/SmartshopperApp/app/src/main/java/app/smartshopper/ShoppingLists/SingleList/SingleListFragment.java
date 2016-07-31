@@ -31,12 +31,11 @@ import app.smartshopper.Database.DatabaseHelper;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Sync.Synchronizer;
-import app.smartshopper.Database.Tables.DatabaseTable;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
 import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.FCM.AsyncResponse;
-import app.smartshopper.FCM.SendToParticipants;
+import app.smartshopper.FCM.SendNotification;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.DetailedListActivity;
 import okhttp3.ResponseBody;
@@ -157,11 +156,6 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
 
     private void openAddListDialog() {
 
-        Log.e("Send", "notfi");
-        String token = "c6CNnrN3TSU:APA91bHZj9Z9d74iDcaksVDL-Ab5i_Mt3tHew0InjZOypdit7pVl4kmUvn8o4P_jOQqr5PKkAyRvZf3uju-HDUZmLzsJja1hxq3Fym7mh-0W-kWDjjR03BZPJdCnCKP3K8x_ANRQxTqB";
-        String notification = getString(R.string.participant_added);
-        SendToParticipants.send(notification, token);
-
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_add_single_list);
         dialog.setTitle("Create your new list ");
@@ -216,34 +210,13 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
                 list.addParticipant(user);
                 Log.i("ADDED PARTICIPANT", list.getId() + " - " + user.getId());
 
+	            mApiService.updateList(list.getId(), list);
+
 	            String token = user.getFcmToken();
 	            String notification = getString(R.string.participant_added);
-	            SendToParticipants.send(notification, token);
+	            SendNotification.send(notification, token);
 
-                Call<ShoppingList> call = mApiService.updateList(list.getId(), list);
-                call.enqueue(new Callback<ShoppingList>() {
-                    @Override
-                    public void onResponse(Call<ShoppingList> call, Response<ShoppingList> response) {
-                        if (!response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Hochladen der aktualisierten liste fehlgeschlagen!", Toast.LENGTH_SHORT).show();
-                            try {
-                                Log.e("Update list", response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ShoppingList> call, Throwable t) {
-                        Toast.makeText(getContext(), "Hochladen der aktualisierten liste fehlgeschlagen!", Toast.LENGTH_SHORT).show();
-                        Log.e("Update list", t.getMessage());
-                    }
-                });
-
-                Log.i("ListParticipants", "List Participants upadated");
+                Log.i("ListParticipants", "List Participants updated");
                 Log.i("List Participant", "New Size is " + participantDataSource.getUserOfList(list.getId()).size());
 
                 updateList();
