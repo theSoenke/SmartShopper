@@ -8,7 +8,10 @@ import android.widget.Toast;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import app.smartshopper.Database.Entries.DatabaseEntry;
 import app.smartshopper.Database.Entries.Market;
@@ -58,9 +61,7 @@ public class Synchronizer {
     private ApiService restClient;
     private AsyncResponse mCallback;
 
-	public Synchronizer(){
-	}
-
+    public Synchronizer(){}
     public Synchronizer(AsyncResponse callback){
         mCallback = callback;
     }
@@ -141,12 +142,6 @@ public class Synchronizer {
 
                     @Override
                     public void executeNextSync() {
-//                        Log.i("Synchronizer", "Sync user data ...");
-                        //TODO sync participants?
-//                        ShoppingListDataSource s = new ShoppingListDataSource(context);
-//                        syncParticipants(context, s);
-
-//                        Log.i("Synchronizer", "Finished synchronizing");
                         Toast.makeText(context, "Finished Market Sync", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -159,12 +154,9 @@ public class Synchronizer {
         final ShoppingListDataSource s = new ShoppingListDataSource(context);
 
         syncEntries(s,
-                new SyncProcessor() {
+                new SyncProcessor<ShoppingList>() {
                     @Override
-                    public void processLocalData(List remoteList, List localList, DatabaseTable source) {
-                        // do not remove local lists that are not at the remote server but upload them
-                        //TODO upload local lists
-                        //TODO IMPORTANT update and upload item entries!
+                    public void processLocalData(List<ShoppingList> remoteList, List<ShoppingList> localList, DatabaseTable source) {
                     }
 
                     @Override
@@ -184,72 +176,6 @@ public class Synchronizer {
                     }
                 });
 
-//        s.beginTransaction();
-//        // single lists
-//        s.add("Baumarkt");
-//        s.add("Wocheneinkauf");
-//        s.add("Getränkemarkt");
-//
-//        // group lists
-//        s.add("Geburtstag von Max Mustermann");
-//        s.add("Vereinstreffen");
-//        s.add("OE-Liste");
-//
-//        s.endTransaction();
-
-        return s;
-    }
-
-    private ShoppingListDataSource syncItemEntries(ItemEntryDataSource i, ShoppingListDataSource s, ProductDataSource p) {
-        List<Product> listOfProducts = p.getAllEntries();
-
-        ShoppingList Baumarkt = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Baumarkt'").get(0);
-        ShoppingList Wocheneinkauf = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Wocheneinkauf'").get(0);
-        ShoppingList Greänkemarkt = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Getränkemarkt'").get(0);
-        ShoppingList Geburtstag = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Geburtstag von Max Mustermann'").get(0);
-        ShoppingList Vereinstreffen = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'Vereinstreffen'").get(0);
-        ShoppingList OE = s.getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = 'OE-Liste'").get(0);
-
-        Log.i("Synchronizer", "Create shopping list data source...");
-
-        i.beginTransaction();
-
-        i.add((Product) getEntryByName(listOfProducts, "Bohrmaschine"), Baumarkt, 4);
-        i.add((Product) getEntryByName(listOfProducts, "Farbe"), Baumarkt, 1);
-
-        i.add((Product) getEntryByName(listOfProducts, "Wurst"), Wocheneinkauf, 1);
-        i.add((Product) getEntryByName(listOfProducts, "Käse"), Wocheneinkauf, 5);
-
-        // just to have a already bought item that's in the middle of the list
-//        ItemEntry entry = new ItemEntry();
-//        entry.setEntryName("Tiefkühlpizza");
-//        entry.setAmount(1);
-//        entry.setBought(1);
-//        entry.setListID(Wocheneinkauf.getId());
-//        entry.setProduct((Product)getEntryByName(listOfProducts, "Tiefkühlpizza"));
-//        i.add(entry);
-
-        Call<List<ShoppingList>> call = restClient.listForUser();
-
-        call.enqueue(new Callback<List<ShoppingList>>() {
-            @Override
-            public void onResponse(Call<List<ShoppingList>> call, Response<List<ShoppingList>> response) {
-                if (response.isSuccessful()) {
-                    Log.d("ShoppingListSync", "gotem");
-
-                } else {
-                    Log.e("ShoppingListSync", "didnt getem");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<ShoppingList>> call, Throwable t) {
-                Log.e("ShoppingListSync", "we lost");
-            }
-        });
-
-        Log.i("Synchronizer", "shopping list data source synced");
-
         return s;
     }
 
@@ -266,7 +192,7 @@ public class Synchronizer {
 
                     @Override
                     public void executeNextSync() {
-                        List<User> user = u.getAllEntries();
+
                     }
 
                     @Override
@@ -380,23 +306,5 @@ public class Synchronizer {
                 source.removeEntryFromDatabase(entry);
             }
         }
-    }
-
-    /**
-     * Gets a database entry with the given name. This is a solution for finding entries without the database.
-     * Use this to prevent deadlocks in mysql transactions.
-     *
-     * @param list The list with database entries.
-     * @param name The name of the entry you want to know.
-     * @return The database entry with the given name or {@code null} when the entry doesn't exist.
-     */
-    @Nullable
-    private DatabaseEntry getEntryByName(List<? extends DatabaseEntry> list, String name) {
-        for (DatabaseEntry entry : list) {
-            if (entry.getEntryName().equals(name)) {
-                return entry;
-            }
-        }
-        return null;
     }
 }

@@ -96,12 +96,6 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
         return entry;
     }
 
-    public boolean EntryExists(String MarketID, String ProductID) {
-        List<MarketEntry> list = getEntry(DatabaseHelper.MARKETENTRY_COLUMN_MARKET_ID + " = '" + MarketID + "'"
-                + " AND " + DatabaseHelper.MARKETENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'");
-        return !list.isEmpty();
-    }
-
     /**
      * Gets the market entry which has the lowest price for the given product.
      *
@@ -116,8 +110,6 @@ public class MarketEntryDataSource extends DatabaseTable<MarketEntry> {
         }
         return null;
     }
-
-
 
     /**
      * Gets the market entry to the given market-product combination.

@@ -6,56 +6,63 @@ import com.google.gson.annotations.SerializedName;
  * Created by hauke on 10.05.16.
  */
 public class ItemEntry extends DatabaseEntry {
-    @SerializedName("product")
-    private Product product;
-    private transient String listID;
+    @SerializedName("_product")
+    private Product _product;
+    private transient String _list;
     @SerializedName("total")
-    private int amount;
+    private int _amount;
     @SerializedName("bought")
-    private int amountBought;
+    private int _amountBought;
 
-    public ItemEntry(Product product, String list, int amount, int bought){
-        this.product = product;
-        listID = list;
-        this.amount = amount;
-        this.amountBought = bought;
-
+    /**
+     * Creates a new item entry object.
+     *
+     * @param product The product of the entry.
+     * @param listID  The ID of the shopping list this product is in.
+     * @param amount  The amount of products that should be bought.
+     * @param bought  The amount of products that're already bought.
+     */
+    public ItemEntry(Product product, String listID, int amount, int bought) {
+        this._product = product;
+        this._list = listID;
+        this._amount = amount;
+        this._amountBought = bought;
     }
 
     public Product getProduct() {
-        return product;
+        return _product;
     }
 
     public void setProduct(Product productID) {
-        this.product = productID;
+        this._product = productID;
     }
 
-    public String getListID() {
-        return listID;
+    public String getList() {
+        return _list;
     }
 
-    public void setListID(String listID) {
-        this.listID = listID;
+    public void setList(String list) {
+        this._list = list;
     }
 
     public int getAmount() {
-        return amount;
+        return _amount;
     }
 
     public void setAmount(int amount) {
-        this.amount = amount;
+        this._amount = amount;
     }
 
     public boolean isBought() {
-        return amount == amountBought;
+        return _amount == _amountBought;
     }
 
     public int amountBought() {
-        return amountBought;
+        return _amountBought;
     }
 
     public void setBought(int bought) {
-        amountBought = bought;
+        _amountBought = bought;
     }
 
     @Override
@@ -63,7 +70,7 @@ public class ItemEntry extends DatabaseEntry {
         if (obj instanceof Object && obj != null) {
             ItemEntry e = (ItemEntry) obj;
             return e.getProduct().equals(getProduct()) &&
-                    e.getListID().equals(getListID()) &&
+                    e.getList().equals(getList()) &&
                     e.getAmount() == getAmount() &&
                     e.amountBought() == amountBought();
         }
@@ -74,6 +81,4 @@ public class ItemEntry extends DatabaseEntry {
     public String toString() {
         return getEntryName() + " ( " + amountBought() + " / " + getAmount() + " ) ";
     }
-
-
 }

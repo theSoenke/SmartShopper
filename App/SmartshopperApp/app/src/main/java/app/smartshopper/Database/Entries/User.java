@@ -7,19 +7,20 @@ import com.google.gson.annotations.SerializedName;
  */
 public class User extends DatabaseEntry implements Comparable {
 	@SerializedName("fcmToken")
-	private String FcmToken;
+	private String _fcmToken;
 	@SerializedName("__v")
-	private Integer version;
+	private Integer _version;
     @SerializedName("password")
-    private static String password = "";
+    private static String _password = "";
 
 	public String getFcmToken() {
-		return FcmToken;
+		return _fcmToken;
 	}
 
 	public void setFcmToken(String token) {
-		FcmToken = token;
+		_fcmToken = token;
 	}
+
 	/**
 	 * Compares this object to the specified object to determine their relative
 	 * order.

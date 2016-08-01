@@ -40,6 +40,12 @@ public class UserDataSource extends DatabaseTable<User> {
         return DatabaseHelper.USER_COLUMN_ID + " = '" + entry.getId() + "'";
     }
 
+    /**
+     * Gets the user with the given ID or {@code null} when no user with this ID exists.
+     *
+     * @param id The ID of the user.
+     * @return The user or {@code null}.
+     */
     public User get(String id) {
         List<User> listOfUser = getEntry(DatabaseHelper.USER_COLUMN_ID + " = '" + id + "'");
         if (listOfUser != null && !listOfUser.isEmpty()) {
@@ -81,36 +87,6 @@ public class UserDataSource extends DatabaseTable<User> {
                 Log.e("User creation", t.getMessage());
             }
         });
-    }
-
-    /**
-     * Adds the user to the database and to the remote server using a synchronous connection. This may take a while depending on the connection speed.
-     *
-     * @param user The user to add.
-     */
-    public void addSynchronously(User user) {
-        Call<User> userCall = new APIFactory().getInstance().registerUser(user);
-
-        try {
-            Response<User> response = userCall.execute();
-
-            if (response.isSuccessful()) {
-                Toast.makeText(getContext(), "Erstellen des Nutzers war erfolgreich.", Toast.LENGTH_LONG).show();
-                User newUser = response.body();
-                addLocally(newUser);
-            } else {
-                Toast.makeText(getContext(), "Erstellen des Nutzers war nicht erfolgreich!", Toast.LENGTH_LONG).show();
-                try {
-                    Log.e("User creation", response.errorBody().string());
-                } catch (IOException e) {
-                    Log.e("User creation Error output", "The printing of the error output failed.");
-                }
-            }
-        } catch (IOException e) {
-            Toast.makeText(getContext(), "Erstellen des Nutzers war nicht erfolgreich!", Toast.LENGTH_LONG).show();
-            Log.e("User creation", userCall.toString());
-            Log.e("User creation", e.getMessage());
-        }
     }
 
     @Override
@@ -157,6 +133,12 @@ public class UserDataSource extends DatabaseTable<User> {
         return user;
     }
 
+    /**
+     * Gets the user by its name.
+     *
+     * @param userName The name of the user.
+     * @return The user or {@code null} when no user with the given name exists.
+     */
     public User getUserByName(String userName) {
         List<User> listOfUser = getEntry(DatabaseHelper.USER_COLUMN_NAME + " = '" + userName + "'");
         if (listOfUser != null && !listOfUser.isEmpty()) {
@@ -164,6 +146,4 @@ public class UserDataSource extends DatabaseTable<User> {
         }
         return null;
     }
-
-
 }

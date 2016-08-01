@@ -12,37 +12,29 @@ import com.google.gson.annotations.SerializedName;
  */
 public class SyncableLocation {
     @SerializedName("x")
-    private int x;
+    private int _x;
     @SerializedName("y")
-    private int y;
+    private int _y;
 
     public SyncableLocation(int x, int y) {
-        this.x = x;
-        this.y = y;
+        _x = x;
+        _y = y;
     }
 
     public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
+        return _x;
     }
 
     public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+        return _y;
     }
 
     @Override
     public SyncableLocation clone(){
-        return new SyncableLocation(x, y);
+        return new SyncableLocation(_x, _y);
     }
 
     public PointF toPointF() {
-        return new PointF(x, y);
+        return new PointF(_x, _y);
     }
 }

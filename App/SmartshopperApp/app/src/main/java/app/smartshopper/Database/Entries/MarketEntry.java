@@ -99,8 +99,4 @@ public class MarketEntry extends DatabaseEntry implements Comparable{
         }
         return 0;
     }
-
-    public SyncableLocation getLocation() {
-        return new SyncableLocation(getPosX(), getPosY());
-    }
 }

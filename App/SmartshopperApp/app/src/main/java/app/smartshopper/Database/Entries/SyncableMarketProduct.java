@@ -7,10 +7,10 @@ import app.smartshopper.Database.Entries.Product;
 
 /**
  * This is a class that is syncable via the retrofit framework. The normal {@link MarketEntry} class is not compatible with retrofit.
- * <p>
+ * A syncable market entry is also not a database entry and does not need an ID or a name, that's why this and the MerketEntry are separate classes.
+ * <p/>
  * Created by Hauke on 01.07.2016.
  */
-//TODO check if this class the the MarketEntry could be merged together
 public class SyncableMarketProduct {
     @SerializedName("product")
     private Product _product;
@@ -33,7 +33,7 @@ public class SyncableMarketProduct {
         return _product.getId();
     }
 
-    public void setProduct(Product product){
+    public void setProduct(Product product) {
         _product = product;
     }
 
@@ -41,31 +41,11 @@ public class SyncableMarketProduct {
         return _price;
     }
 
-    public void setPrice(float price){
-        _price = price;
-    }
-
     public SyncableLocation getLocation() {
         return _location.clone();
     }
 
-    public void setLocation(SyncableLocation location){
-        _location = location;
-    }
-
-    //FIXME is quick&dirty, just implement the todo above
-    public MarketEntry toMarketEntry(){
-        MarketEntry entry = new MarketEntry();
-
-        entry.setPosX(_location.getX());
-        entry.setPosY(_location.getY());
-        entry.setPrice(_price);
-        entry.setProductID(_product.getId());
-
-        return entry;
-    }
-
-    public static SyncableMarketProduct fromMarketEntry(MarketEntry entry, Product product){
+    public static SyncableMarketProduct fromMarketEntry(MarketEntry entry, Product product) {
         SyncableMarketProduct marketProduct = new SyncableMarketProduct();
 
         marketProduct._location = new SyncableLocation(entry.getPosX(), entry.getPosY());

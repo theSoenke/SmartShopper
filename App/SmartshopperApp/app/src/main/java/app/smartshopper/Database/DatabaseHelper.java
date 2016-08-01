@@ -121,6 +121,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + PARTICIPANT_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MARKET_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MARKETENTRY_TABLE_NAME);
-//        db.execSQL("DROP DATABASE " + DATABASE_NAME);
     }
 }

@@ -40,10 +40,10 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     @Override
     public void add(Participant entry) {
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID, entry.getmShoppingListId());
+        values.put(DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID, entry.getShoppingListId());
         values.put(DatabaseHelper.PARTICIPANT_COLUMN_USER_ID, entry.getId());
 
-        String insertQuery = DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getmShoppingListId() + "'" +
+        String insertQuery = DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListId() + "'" +
                 " AND " + DatabaseHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getId() + "'";
 
         super.addEntryToDatabase(
@@ -59,7 +59,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
 
     @Override
     public String getWhereClause(Participant entry) {
-        return DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getmShoppingListId() + "' AND " +
+        return DatabaseHelper.PARTICIPANT_COLUMN_SHOPPING_LIST_ID + " = '" + entry.getShoppingListId() + "' AND " +
                 DatabaseHelper.PARTICIPANT_COLUMN_USER_ID + " = '" + entry.getId() + "'";
     }
 
@@ -95,7 +95,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
      */
     public Participant add(ShoppingList shoppingList, User user) {
         Participant entry = new Participant();
-        entry.setmShoppingListId(shoppingList.getId());
+        entry.setShoppingListId(shoppingList.getId());
         entry.setId(user.getId());
 
         if (user != null) {
@@ -110,7 +110,7 @@ public class ParticipantDataSource extends DatabaseTable<Participant> {
     @Override
     public Participant cursorToEntry(Cursor cursor) {
         Participant participant = new Participant();
-        participant.setmShoppingListId(cursor.getString(0));
+        participant.setShoppingListId(cursor.getString(0));
         participant.setId(cursor.getString(1));
 
         User user = _userDataSource.get(participant.getId());

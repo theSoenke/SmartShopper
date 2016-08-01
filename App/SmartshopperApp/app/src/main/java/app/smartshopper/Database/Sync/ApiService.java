@@ -28,9 +28,6 @@ public interface ApiService {
 	@GET("lists")
 	Call<List<ShoppingList>> listsLimit(@Query("limit") int limit);
 
-	@GET("lists")
-	Call<List<ShoppingList>> listForUser();
-
 	@POST("lists")
 	Call<ShoppingList> addList(@Body ShoppingList list);
 

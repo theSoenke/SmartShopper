@@ -74,7 +74,7 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
         _source = _maker.groupListSetup(_productHolder.getList());
         _adapter = new GroupExpListAdapter(getContext(),formattedUserList,_maker.formatGroupEntries(_source,_productHolder.getList())){
             @Override
-            public void OnIndicatorClick(boolean isExpanded, int groupPosition) {
+            public void onIndicatorClick(boolean isExpanded, int groupPosition) {
                 if (isExpanded) {
                     _list.collapseGroup(groupPosition);
                 } else {
@@ -85,7 +85,7 @@ public class GroupItemListFragment extends Fragment implements ProductPresenter 
             }
 
             @Override
-            public void OnItemClick(String entry) {
+            public void onItemClick(String entry) {
             }
         };
         _list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {

@@ -28,7 +28,6 @@ import java.util.List;
 import app.smartshopper.Database.Entries.ItemEntry;
 import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.MarketEntry;
-import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
 import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.Sync.APIFactory;
@@ -50,7 +49,7 @@ import retrofit2.Response;
  * the "add"-dialog.
  * It also handles click and the switching to the {@link app.smartshopper.ShoppingLists.DetailedListActivity}.
  */
-public class GroupListFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class GroupListFragment extends Fragment{//} implements AdapterView.OnItemClickListener {
 
     private int mExpandedParent = -1;
     private ApiService mApiService;
@@ -69,7 +68,6 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                              Bundle savedInstanceState) {
 
         mApiService = new APIFactory().getInstance();
-        Bundle extras = getArguments();
         String newList = "";
 
         mGroupListView = inflater.inflate(R.layout.fragment_group_list, null);
@@ -108,19 +106,9 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             ++i;
         }
 
-        //TODO re-write the adding routine so it uses the database. This routine also should consider that group lists consist of at least one participant
-//        if (extras != null) {
-//            newList = extras.getString("newList");
-//            newParticipants = extras.getString("participants");
-//            listgroups.add(newList);
-//            List<String> parent3childs = new ArrayList<String>();
-//            parent3childs.add(newParticipants);
-//            childlists.put(listgroups.get(3), parent3childs);
-//        }
-
-        ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists) {
+        final ExpandableListAdapter adapter = new GroupExpListAdapter(getContext(), listgroups, childlists) {
             @Override
-            public void OnIndicatorClick(boolean isExpanded, int groupPosition) {
+            public void onIndicatorClick(boolean isExpanded, int groupPosition) {
                 if (isExpanded) {
                     list.collapseGroup(groupPosition);
                 } else {
@@ -131,9 +119,15 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             }
 
             @Override
-            public void OnItemClick(String entry) {
+            public void onItemClick(String entry) {
+                Log.d("click", "Normal click event.");
+                openDetailedListFor(entry);
+            }
+            @Override
+            public boolean onLongItemClick(String entry) {
+                Log.d("click", "Long click event.");
                 openConfigGroupListDialog(entry);
-
+                return true;
             }
         };
 
@@ -201,13 +195,17 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
         btnView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(GroupListFragment.this.getActivity(), DetailedListActivity.class);
-                i.putExtra("list", entry);
-                getActivity().startActivity(i);
+                openDetailedListFor(entry);
                 dialog.dismiss();
             }
         });
         dialog.show();
+    }
+
+    private void openDetailedListFor(String entry){
+        Intent i = new Intent(GroupListFragment.this.getActivity(), DetailedListActivity.class);
+        i.putExtra("list", entry);
+        getActivity().startActivity(i);
     }
 
     private void openMakeSingleListDialog(final String entry) {
@@ -232,8 +230,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                             GroupListMaker maker = new GroupListMaker(getContext());
                             ShoppingList oldList = mListDataSource.getListFromString(entry);
                             ShoppingList newlist = mListDataSource.getListFromString(listName.getText().toString());
-                            List<ItemEntry> oldEntries = new ArrayList<>();
-                            oldEntries = maker.getListForOwner(oldList);
+                            List<ItemEntry> oldEntries = maker.getListForOwner(oldList);
                             for(int i= 0; i < oldEntries.size();i++) {
                                 ItemEntry newItem = new ItemEntry(oldEntries.get(i).getProduct(), newlist.getId(), oldEntries.get(i).getAmount(), oldEntries.get(i).amountBought());
                                 addEntry(newItem, newlist);
@@ -273,7 +270,7 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
                 List<MarketEntry> entries = marketEntryDataSource.getMarketEntryTo(market, newItem.getProduct());
                 if (!entries.isEmpty()) {
                     mItemEntrySource.add(newItem);
-                    Log.i("item added", "name: " + newItem.getProduct().getEntryName() + " list: " + newItem.getListID());
+                    Log.i("item added", "name: " + newItem.getProduct().getEntryName() + " list: " + newItem.getList());
                     newList.addMarketProduct(newItem);
 
                     Call call = mApiService.updateList(newList.getId(), newList);
@@ -311,12 +308,6 @@ public class GroupListFragment extends Fragment implements AdapterView.OnItemCli
             }
             return true;
         }
-    }
-
-
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
     }
 
     private void openAddListDialog() {

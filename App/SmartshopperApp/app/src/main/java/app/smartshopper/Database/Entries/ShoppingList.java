@@ -1,98 +1,60 @@
 package app.smartshopper.Database.Entries;
 
-import android.content.Context;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-
-import app.smartshopper.Database.Preferences;
-import app.smartshopper.Database.Tables.UserDataSource;
 
 /*
  * ShoppingList Model
  */
 public class ShoppingList extends DatabaseEntry {
-//    @SerializedName("created_at")
-    private transient String createdAt;
-//    @SerializedName("updated_at")
-    private transient String updatedAt;
     @SerializedName("owner")
-    private User owner;
+    private User _owner;
     @SerializedName("__v")
-    private Integer version;
+    private Integer _version;
     @SerializedName("participants")
-    private List<User> participants = new ArrayList<>();
+    private List<User> _participants = new ArrayList<>();
     @SerializedName("products")
-    private List<ItemEntry> products = new ArrayList<>();
-
-    /**
-     * @return The createdAt
-     */
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    /**
-     * @param createdAt The created_at
-     */
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    /**
-     * @return The updatedAt
-     */
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    /**
-     * @param updatedAt The updated_at
-     */
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    private List<ItemEntry> _products = new ArrayList<>();
 
     /**
      * @return The owner
      */
     public User getOwner() {
-        return owner;
+        return _owner;
     }
 
     /**
      * @return The version
      */
     public Integer getVersion() {
-        return version;
+        return _version;
     }
 
     /**
      * @return The participants
      */
     public List<User> getParticipants() {
-        return participants;
+        return _participants;
     }
 
     public void addParticipant(User participant){
-        this.participants.add(participant);
+        this._participants.add(participant);
     };
     /**
      * @param participants The participants
      */
     public void setParticipants(List<User> participants) {
-        this.participants = participants;
+        this._participants = participants;
     }
 
     public List<ItemEntry> getProducts() {
-        return products;
+        return _products;
     }
 
     public void setProducts(List<ItemEntry> products) {
-        this.products = products;
+        this._products = products;
     }
 
     @Override
@@ -105,6 +67,6 @@ public class ShoppingList extends DatabaseEntry {
     }
 
     public void addMarketProduct(ItemEntry newMarketProduct) {
-        products.add(newMarketProduct);
+        _products.add(newMarketProduct);
     }
 }

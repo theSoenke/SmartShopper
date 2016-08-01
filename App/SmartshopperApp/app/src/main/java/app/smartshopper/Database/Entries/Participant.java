@@ -1,26 +1,24 @@
 package app.smartshopper.Database.Entries;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by Hauke on 25.05.2016.
  */
 public class Participant extends DatabaseEntry {
-	private String mShoppingListId;
+	private String _shoppingListId;
 
-	public String getmShoppingListId() {
-		return mShoppingListId;
+	public String getShoppingListId() {
+		return _shoppingListId;
 	}
 
-	public void setmShoppingListId(String mShoppingListId) {
-		this.mShoppingListId = mShoppingListId;
+	public void setShoppingListId(String mShoppingListId) {
+		this._shoppingListId = mShoppingListId;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Object && obj != null) {
 			Participant p = (Participant) obj;
-			return p.getmShoppingListId().equals(getmShoppingListId()) &&
+			return p.getShoppingListId().equals(getShoppingListId()) &&
 					p.getId().equals(getId());
 		}
 		return false;

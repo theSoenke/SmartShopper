@@ -91,8 +91,6 @@ public class ParticipantListActivity extends AppCompatActivity {
 	}
 
 	private void openAddParticipantDialog(final ArrayAdapter<Participant> listAdapter) {
-		// TODO replace this dialog by sharing a generated token
-
 		final Dialog dialog = new Dialog(this);
 		dialog.setContentView(R.layout.dialog_add_participant);
 		dialog.setTitle("Add new participant ");
@@ -167,7 +165,7 @@ public class ParticipantListActivity extends AppCompatActivity {
 				ParticipantDataSource participantDataSource = new ParticipantDataSource(context);
 
 				participantDataSource.removeEntryFromDatabase(participant);
-				Log.i("REMOVED PARTICIPANT", participant.getmShoppingListId() + " - " + participant.getId());
+				Log.i("REMOVED PARTICIPANT", participant.getShoppingListId() + " - " + participant.getId());
 
 				listAdapter.remove(participant);
 				listAdapter.notifyDataSetChanged();

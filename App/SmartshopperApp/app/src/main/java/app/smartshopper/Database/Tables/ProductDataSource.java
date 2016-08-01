@@ -48,6 +48,11 @@ public class ProductDataSource extends DatabaseTable<Product> {
 
     @Override
     protected void setIDForEntry(Product newEntry, String id) {
+        // we have no alter, so remove and re-add the product :(
+        removeEntryFromDatabase(newEntry);
+
+        newEntry.setId(id);
+        add(newEntry);
     }
 
     @Override

@@ -90,7 +90,6 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
             @Override
             public void onFailure(Call<ShoppingList> call, Throwable throwable) {
                 Toast.makeText(getContext(), "Failed to send list: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
-                //FIXME IMPORTANT! set 'unsynced' flag to sync later
                 list.setId(generateUniqueID());
                 addLocally(list);
             }
@@ -111,6 +110,22 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         add(list);
 
         return list;
+    }
+
+    /**
+     * Gets the shopping list with the given ID.
+     * If there're multiple entries, the first one will be returned.
+     * If there's no entry, {@code null} will be returned.
+     *
+     * @param listID The ID of the list.
+     * @return The list or {@code null} when the list does not exits.
+     */
+    public ShoppingList get(String listID) {
+        List<ShoppingList> listOfShoppingLists = getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_ID + " = '" + listID + "'");
+        if (listOfShoppingLists != null && !listOfShoppingLists.isEmpty()) {
+            return listOfShoppingLists.get(0);
+        }
+        return null;
     }
 
     public void addLocally(ShoppingList list) {
@@ -144,7 +159,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         // The remaining entries are all single lists, because they have no participants.
         for (Participant p : participantList) {
             ShoppingList list = new ShoppingList();
-            list.setId(p.getmShoppingListId());
+            list.setId(p.getShoppingListId());
             shoppingListList.remove(list); // this works because of the equals-definition in ShoppingList
         }
 
@@ -168,7 +183,7 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         // It's a set, so there won't be duplicates.
         Set<ShoppingList> shoppingListSet = new LinkedHashSet<ShoppingList>();
         for (Participant participant : participantList) {
-            String listID = participant.getmShoppingListId();
+            String listID = participant.getShoppingListId();
             ShoppingList list = shoppingListMap.get(listID);
             shoppingListSet.add(list);
         }
@@ -219,6 +234,12 @@ public class ShoppingListDataSource extends DatabaseTable<ShoppingList> {
         return list;
     }
 
+    /**
+     * Gets the list to the given name or {@code null} when no list with this name exists.
+     *
+     * @param listName The name of the list.
+     * @return A list or {@code null} when there's no list.
+     */
     public ShoppingList getListFromString(String listName) {
         List<ShoppingList> listOfLists = getEntry(DatabaseHelper.SHOPPINGLIST_COLUMN_NAME + " = '" + listName + "'");
         if (!listOfLists.isEmpty()) {

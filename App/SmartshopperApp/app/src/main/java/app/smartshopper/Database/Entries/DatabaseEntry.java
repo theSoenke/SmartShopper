@@ -7,24 +7,24 @@ import com.google.gson.annotations.SerializedName;
  */
 public class DatabaseEntry {
     @SerializedName("_id")
-    protected String id;
+    protected String _id;
     @SerializedName("name")
-    private String entryName;
+    private String _entryName;
 
     public String getEntryName() {
-        return entryName;
+        return _entryName;
     }
 
     public void setEntryName(String name) {
-        this.entryName = name;
+        _entryName = name;
     }
 
     public String getId() {
-        return id;
+        return _id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        _id = id;
     }
 
 	@Override

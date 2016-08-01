@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * API factory for retrofit rest api
  */
-public class APIFactory // final verhindert Vererbung
+public class APIFactory
 {
 	private static final String API_URL = "https://api.tecfuture.de/";
 
@@ -23,7 +23,6 @@ public class APIFactory // final verhindert Vererbung
 	{
 		final String basicAuth = Preferences.getInstance().getBasicAuthHeader();
 
-//        this.client.interceptors().clear();
 		OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
 			public Response intercept(Chain chain) throws IOException {
 				Request original = chain.request();

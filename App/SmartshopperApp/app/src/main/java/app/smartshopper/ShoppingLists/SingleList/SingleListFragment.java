@@ -199,7 +199,6 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
                     return;
                 }
 
-                // TODO register user on remote server
                 Log.i("ID of the added User", user.getId());
 
                 ShoppingListDataSource shoppingListDataSource = new ShoppingListDataSource(getContext());
@@ -291,7 +290,6 @@ public class SingleListFragment extends Fragment implements AsyncResponse {
         btnDeleteSingleList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO DELETE LIST
                 final ShoppingList shoppingList = mDataSource.getListFromString(entry);
                 Call<ResponseBody> call = mApiService.deleteList(shoppingList.getId());
 

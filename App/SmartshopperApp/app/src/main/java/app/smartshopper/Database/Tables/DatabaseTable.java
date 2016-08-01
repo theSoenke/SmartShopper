@@ -94,7 +94,6 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
         } else {
             cursor.moveToFirst();
             setIDForEntry(newEntry, cursor.getString(0));
-//            newEntry.setId(cursor.getString(0));
         }
 
         cursor.close();
@@ -115,18 +114,16 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      * @return A list with all antries that have been found.
      */
     public List<T> getEntry(String query) {
-        List<T> entryList = new ArrayList<T>();
         Cursor cursor = database.query(tableName, allColumns, query, null, null, null, null);
-
         return cursorToRealEntries(cursor);
     }
 
-    public List<T> executeSQL(String query) {
-        Cursor cursor = database.rawQuery(query, null);
-
-        return cursorToRealEntries(cursor);
-    }
-
+    /**
+     * Converts a cursor object into real objects of type T.
+     *
+     * @param cursor The cursor to convert.
+     * @return A list of real objects of type T.
+     */
     private List<T> cursorToRealEntries(Cursor cursor) {
         List<T> entryList = new ArrayList<T>();
         cursor.moveToFirst();
@@ -181,19 +178,29 @@ public abstract class DatabaseTable<T extends DatabaseEntry> {
      */
     public abstract T cursorToEntry(Cursor cursor);
 
+    /**
+     * Starts a transaction. This is good for sequential writes and increases the performance of them.
+     * During a transction is no other database access permitted.
+     */
     public void beginTransaction() {
         database.beginTransactionNonExclusive();
     }
 
+    /**
+     * Finishes the transaction and writes the data to the database.
+     */
     public void endTransaction() {
         database.setTransactionSuccessful();
         database.endTransaction();
     }
 
-
-    // FIXME Remove all this when the API gives us the ID by adding or downloading
     private static int ID = 0;
 
+    /**
+     * Generates a unique id. This should only be used when the service of the remote server is not available.
+     *
+     * @return A unique ID.
+     */
     public static String generateUniqueID() {
         StringBuffer sb = new StringBuffer();
         sb.append(Integer.toHexString(ID));

@@ -16,7 +16,7 @@ import app.smartshopper.Database.DatabaseHelper;
  * Created by hauke on 10.05.16.
  */
 public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
-    private ProductDataSource _productDataSource;
+    private final ProductDataSource _productDataSource;
 
     public ItemEntryDataSource(Context context) {
         super(context,
@@ -30,17 +30,16 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         _productDataSource = new ProductDataSource(context);
     }
 
-
     @Override
     public void add(ItemEntry entry) {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID, entry.getProduct().getId());
-        values.put(DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID, entry.getListID());
+        values.put(DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID, entry.getList());
         values.put(DatabaseHelper.ITEMENTRY_COLUMN_AMOUNT, entry.getAmount());
         values.put(DatabaseHelper.ITEMENTRY_COLUMN_BOUGHT, entry.amountBought());
 
         String insertQuery = DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getProduct().getId() + "'" +
-                " AND " + DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + entry.getListID() + "'" +
+                " AND " + DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + entry.getList() + "'" +
                 " AND " + DatabaseHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + entry.getAmount() +
                 " AND " + DatabaseHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + entry.amountBought();
 
@@ -90,22 +89,7 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
     @Override
     public String getWhereClause(ItemEntry entry) {
         return DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + entry.getProduct().getId() + "'" +
-                " AND " + DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + entry.getListID() + "'";
-    }
-
-    /**
-     * Gets the amount of the given product in the given list. So this answers the question "How many things of 'product' do I want to buy?"
-     *
-     * @param list    The list the given product is in.
-     * @param product The products which amount you want to know.
-     * @return The amount of the product in the list.
-     */
-    public int getAmountOf(ShoppingList list, Product product) {
-        ItemEntry item = getItemEntry(list, product);
-        if (item != null) {
-            return item.getAmount();
-        }
-        return 0;
+                " AND " + DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + entry.getList() + "'";
     }
 
     /**
@@ -128,18 +112,6 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         return null;
     }
 
-    public ItemEntry getItemEntry(ShoppingList l, Product p, int amount, int bought) {
-        List<ItemEntry> listOfEntries = getEntry(
-                DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + p.getEntryName() + "'"
-                        + " AND " + DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + l.getId() + "'"
-                        + " AND " + DatabaseHelper.ITEMENTRY_COLUMN_AMOUNT + " = " + amount
-                        + " AND " + DatabaseHelper.ITEMENTRY_COLUMN_BOUGHT + " = " + bought);
-        if (!listOfEntries.isEmpty()) {
-            return listOfEntries.get(0);
-        }
-        return null;
-    }
-
     @Override
     public ItemEntry cursorToEntry(Cursor cursor) {
         ItemEntry entry = new ItemEntry(
@@ -151,29 +123,6 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         return entry;
     }
 
-    /**
-     * Removes all duplicate entries for the given list and the product and determines the amount of the products.
-     *
-     * @param ListId    The ID of the shopping list the product is in.
-     * @param ProductID The ID of the product which duplicates should be removed.
-     * @return The quantity of the products the user wants to buy.
-     */
-    public int removeDuplicates(String ListId, String ProductID) {
-        List<ItemEntry> doubleEntries = getEntry(DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductID + "'"
-                + " AND " + DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListId + "'");
-
-        int amountbuffer = 0;
-
-        if (doubleEntries.size() > 0) {
-            for (ItemEntry entry : doubleEntries) {
-                amountbuffer += entry.getAmount();
-                removeEntryFromDatabase(entry);
-            }
-        }
-
-        return amountbuffer;
-    }
-
     public List<ItemEntry> getEntriesForList(String shoppingListID) {
         return getEntry(DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + shoppingListID + "'");
     }
@@ -182,18 +131,5 @@ public class ItemEntryDataSource extends DatabaseTable<ItemEntry> {
         List<ItemEntry> list = getEntry(DatabaseHelper.ITEMENTRY_COLUMN_LIST_ID + " = '" + ListID + "'"
                 + " AND " + DatabaseHelper.ITEMENTRY_COLUMN_PRODUCT_ID + " = '" + ProductName + "'");
         return !list.isEmpty();
-    }
-
-    public ItemEntry getEntryFromString(String entry, ShoppingList list){
-        String[] split = entry.split("\\s+");
-        if(split.length > 5) {
-            int amount = Integer.parseInt(split[5]);
-            int bought = Integer.parseInt(split[3]);
-            ItemEntry output = new ItemEntry(_productDataSource.getProductFromString(split[1]), list.getId(), amount, bought);
-
-            return output;
-        }else{
-            return null;
-        }
     }
 }

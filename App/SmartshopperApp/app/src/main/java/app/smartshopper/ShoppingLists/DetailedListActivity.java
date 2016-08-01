@@ -15,10 +15,6 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 import app.smartshopper.Database.Entries.ItemEntry;
@@ -26,7 +22,6 @@ import app.smartshopper.Database.Entries.Market;
 import app.smartshopper.Database.Entries.MarketEntry;
 import app.smartshopper.Database.Entries.Product;
 import app.smartshopper.Database.Entries.ShoppingList;
-import app.smartshopper.Database.Entries.User;
 import app.smartshopper.Database.Sync.APIFactory;
 import app.smartshopper.Database.Sync.ApiService;
 import app.smartshopper.Database.Tables.ItemEntryDataSource;
@@ -35,7 +30,6 @@ import app.smartshopper.Database.Tables.MarketEntryDataSource;
 import app.smartshopper.Database.Tables.ParticipantDataSource;
 import app.smartshopper.Database.Tables.ProductDataSource;
 import app.smartshopper.Database.Tables.ShoppingListDataSource;
-import app.smartshopper.Database.Tables.UserDataSource;
 import app.smartshopper.R;
 import app.smartshopper.ShoppingLists.ListTabs.ListPagerAdapter;
 import app.smartshopper.ShoppingLists.ListTabs.ProductHolder;
@@ -62,22 +56,9 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
     private ApiService _apiService;
     private ParticipantDataSource _participantDataSource;
 
-    //Get Store from BeaconID
-//    StoreBeaconTool storeBeaconTool;
-//    Store store = Store.Default;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        //Laden wird bei erkennen von Beacons geändert. Nur falls hier benötigt.
-//        storeBeaconTool = new StoreBeaconTool(this) {
-//            @Override
-//            public void OnBeaconUpdate()
-//            {
-//               store = getStore();
-//            }
-//        };
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.tab_view_pager);
 
@@ -142,7 +123,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
                 List<MarketEntry> entries = marketEntryDataSource.getMarketEntryTo(market, p);
                 if (!entries.isEmpty()) {
                     _itemSource.add(e);
-                    Log.i("item added", "name: " + e.getProduct().getEntryName() + " list: " + e.getListID());
+                    Log.i("item added", "name: " + e.getProduct().getEntryName() + " list: " + e.getList());
                     _shoppingList.addMarketProduct(e);
 
                     Call call = _apiService.updateList(_shoppingList.getId(), _shoppingList);
@@ -208,18 +189,6 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         }
     }
 
-    public ItemEntry getItemEntryFromString(String entryName) {
-
-        int bought = 0;
-        String[] split = entryName.split("\\s+");
-        if (split.length > 2) {
-            if (split[2].equalsIgnoreCase("(gekauft)")) {
-                bought = 1;
-            }
-        }
-        return _itemSource.getItemEntry(_shoppingList, _productSource.getProductFromString(split[1]), Integer.parseInt(split[0]), bought);
-    }
-
     @Override
     public void changeItemAmount(ItemEntry itemEntry, int newAmount) {
         if (itemEntry != null) {
@@ -258,14 +227,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
 
     @Override
     public List<ItemEntry> getItemEntries() {
-        List<ItemEntry> itemlist = new ArrayList<>();
-        //   if(_shoppingList.getParticipants()!= null && !_shoppingList.getParticipants().isEmpty()){
-        //      List<List<ItemEntry>> itemListList = groupListSetup();
-        //      itemlist = itemListList.get(getPositionInList(_shoppingList.getOwner()));
-        //  }else{
-        itemlist = _itemSource.getEntriesForList(_shoppingList.getId());
-        //  }
-        return itemlist;
+        return _itemSource.getEntriesForList(_shoppingList.getId());
     }
 
     @Override
@@ -315,7 +277,10 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         dialog.show();
     }
 
-
+    /**
+     * Open the dialog where the user can mark items as bought.
+     * @param itemEntry The Item entry that should be marked.
+     */
     private void openMarkItemDialog(final ItemEntry itemEntry) {
 
         final Dialog dialog = new Dialog(this, R.style.CustomDialog);
@@ -337,10 +302,12 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
         buttonBoughtAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+                String amount = amountEditText.getText().toString();
+                if(amount.matches("\\d*")){
+//                try {
                     markItemAsBought(itemEntry, Integer.parseInt(amountEditText.getText().toString()));
-                } catch (NumberFormatException e) {
-                    markItemAsBought(itemEntry, 0);
+//                } catch (NumberFormatException e) {
+//                    markItemAsBought(itemEntry, 0);
                 }
                 dialog.dismiss();
             }
@@ -379,9 +346,7 @@ public class DetailedListActivity extends AbstractDetailedListActivity implement
             }
         });
         dialog.show();
-
     }
-
 }
 
 

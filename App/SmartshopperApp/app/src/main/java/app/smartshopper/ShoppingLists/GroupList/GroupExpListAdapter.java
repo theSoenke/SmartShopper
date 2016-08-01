@@ -88,10 +88,14 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
      * @param isExpanded True when the group item is already extended, false if not.
      * @param position   The position of the group item in the view.
      */
-    public void OnIndicatorClick(boolean isExpanded, int position) {
+    public void onIndicatorClick(boolean isExpanded, int position) {
     }
 
-    public void OnItemClick(String entry) {
+    public void onItemClick(String entry) {
+    }
+
+    public boolean onLongItemClick(String headerTitle) {
+        return false;
     }
 
     @Override
@@ -124,7 +128,14 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
         groupItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                OnItemClick(headerTitle);
+                onItemClick(headerTitle);
+            }
+        });
+
+        groupItem.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View view){
+                return onLongItemClick(headerTitle);
             }
         });
     }
@@ -145,7 +156,7 @@ public class GroupExpListAdapter extends BaseExpandableListAdapter {
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OnIndicatorClick(isExpanded, groupPosition);
+                onIndicatorClick(isExpanded, groupPosition);
             }
         });
     }

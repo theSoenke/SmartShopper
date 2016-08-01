@@ -374,15 +374,6 @@ public class NavigationViewFragment extends Fragment implements BeaconConsumer, 
 				Log.i("Navigation", "Laden: " + _store.toString() + " (" + _store.getEntryName() + ")");
 				Log.i("Navigation", "Laden Tool: " + locationTool.getLaden().toString());
 
-
-
-				//TODO Store Check
-//				if (!_store.getEntryName().equals(locationTool.getLaden())) {
-//					// get store from data source
-////                    _store = locationTool.getLaden();
-////					refreshMap();
-//					Log.i("Navigation", "Map changed");
-//				}
 				updatePosition(locationTool.computeSector());
 			}
 		});
