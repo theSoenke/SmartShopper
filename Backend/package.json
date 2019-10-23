@@ -10,7 +10,7 @@
 		"body-parser": "^1.15.1",
 		"express": "^4.13.4",
 		"helmet": "^2.0.0",
-		"mongoose": "^4.4.15"
+		"mongoose": "^5.7.6"
 	},
 	"devDependencies": {
 		"standard": "^7.1.1"
